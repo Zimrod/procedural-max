@@ -33,7 +33,7 @@ export async function POST() {
     // ---------------------------------------------------
     // 1. TRANSCRIBE
     // ---------------------------------------------------
-    const rawTranscription = await openai.audio.transcriptions.create({
+    const rawTranscription = await apiKey.audio.transcriptions.create({
       file: fs.createReadStream(publicPath),
       model: "whisper-1",
       response_format: "verbose_json",
