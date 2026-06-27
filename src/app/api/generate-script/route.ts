@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
     const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const completion = await openai.chat.completions.create({
+    const completion = await apiKey.chat.completions.create({
       model: "gpt-4.1",
       messages: [
         {
