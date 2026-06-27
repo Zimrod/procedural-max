@@ -1,0 +1,15 @@
+{
+  "name": "procedural-video-worker",
+  "version": "1.0.0",
+  "description": "Headless Remotion cloud rendering pipeline container",
+  "main": "server.js",
+  "dependencies": {
+    "@remotion/bundler": "^4.0.340",
+    "@remotion/renderer": "^4.0.340",
+    "express": "^4.19.2",
+    "remotion": "^4.0.340"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

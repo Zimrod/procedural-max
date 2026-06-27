@@ -1,0 +1,690 @@
+[
+  {
+    "sentenceId": "sentence-1",
+    "sentenceText": "Struggling to scale your business efficiently?",
+    "timing": {
+      "startSec": 0,
+      "endSec": 2.0199999809265137,
+      "startFrame": 0,
+      "endFrame": 61,
+      "durationFrames": 61
+    },
+    "narrativePosition": {
+      "section": "intro",
+      "progressionWeight": 0
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "growth",
+        "phrase": "Scaling a business",
+        "meaning": "The process of expanding a business to handle greater volume or complexity",
+        "importance": 0.95,
+        "emotionalWeight": 0.85,
+        "visualPotential": 0.78,
+        "abstractionLevel": 0.4,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.9
+      },
+      {
+        "id": "idea_02",
+        "type": "process",
+        "phrase": "Efficient scaling",
+        "meaning": "Achieving business growth without waste or excess resource use",
+        "importance": 0.9,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.5,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.75
+      },
+      {
+        "id": "idea_03",
+        "type": "challenge",
+        "phrase": "Struggling",
+        "meaning": "Experiencing obstacles or difficulties",
+        "importance": 0.8,
+        "emotionalWeight": 0.95,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.65,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "supporting",
+        "timingWeight": 0.8
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_03",
+        "to": "idea_01",
+        "relationshipType": "condition"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_01",
+        "relationshipType": "describes"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Business growth hindered by inefficiency",
+      "complexityScore": 0.6,
+      "emotionalIntensity": 0.85,
+      "visualDensity": 0.8,
+      "recommendedMaxVisualIdeas": 3
+    },
+    "reasoning": "The sentence presents a unified challenge: businesses face difficulty in achieving efficient growth. The core semantic idea is the struggle to scale, which merges the challenge, the process of growth, and the aspiration for efficiency. This is emotionally impactful (evoking frustration or aspiration), visually strong (growth metaphors, obstacles, or transitional animation), and structurally clear for pacing in an intro context.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-2",
+    "sentenceText": "Manual processes waste 30%  of employee time and slow growth.",
+    "timing": {
+      "startSec": 3.0399999618530273,
+      "endSec": 6.480000019073486,
+      "startFrame": 91,
+      "endFrame": 195,
+      "durationFrames": 104
+    },
+    "narrativePosition": {
+      "section": "intro",
+      "progressionWeight": 0.1111111111111111
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process/inefficiency",
+        "phrase": "Manual processes wasting 30% of employee time",
+        "meaning": "Manual operations lead to significant time loss among employees",
+        "importance": 0.95,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.9,
+        "abstractionLevel": 0.3,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.85
+      },
+      {
+        "id": "idea_02",
+        "type": "growth/economic impact",
+        "phrase": "Slowing growth",
+        "meaning": "Efficiency losses restrain organizational or business growth",
+        "importance": 0.8,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.4,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.7
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "cause/effect"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Inefficiency from manual processes hinders growth",
+      "complexityScore": 0.45,
+      "emotionalIntensity": 0.65,
+      "visualDensity": 0.88,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence presents a cause-effect structure: manual processes (primary inefficiency) cause measurable loss (30% of employee time), directly leading to slowing growth (economic/organizational impact). Both concepts are connected, providing strong visual and emotional cues (e.g., clocks wasted, stalled growth), suitable for an introductory sequence emphasizing the problem. Retaining the quantified inefficiency (30%) is crucial. The ideas are tightly connected and suitable for clear visual metaphors and pacing to establish urgency.",
+    "confidence": 0.98
+  },
+  {
+    "sentenceId": "sentence-3",
+    "sentenceText": "Missed deadlines and lost data cost companies over $200 annually.",
+    "timing": {
+      "startSec": 7.159999847412109,
+      "endSec": 10.680000305175781,
+      "startFrame": 214,
+      "endFrame": 321,
+      "durationFrames": 107
+    },
+    "narrativePosition": {
+      "section": "intro",
+      "progressionWeight": 0.2222222222222222
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "business_cost",
+        "phrase": "Missed deadlines and lost data",
+        "meaning": "Operational failures that negatively impact companies",
+        "importance": 0.9,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.5,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.9
+      },
+      {
+        "id": "idea_02",
+        "type": "finance",
+        "phrase": "over $200 annually",
+        "meaning": "Tangible financial loss occurring every year",
+        "importance": 0.8,
+        "emotionalWeight": 0.5,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.3,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_03",
+        "type": "business_entity",
+        "phrase": "companies",
+        "meaning": "Organizational actors affected by these losses",
+        "importance": 0.7,
+        "emotionalWeight": 0.4,
+        "visualPotential": 0.6,
+        "abstractionLevel": 0.2,
+        "parentRelationship": null,
+        "cinematicRole": "supporting",
+        "timingWeight": 0.7
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "causes"
+      },
+      {
+        "from": "idea_01",
+        "to": "idea_03",
+        "relationshipType": "affects"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_03",
+        "relationshipType": "is suffered by"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Cumulative operational failures result in significant annual financial costs for companies.",
+      "complexityScore": 0.4,
+      "emotionalIntensity": 0.5,
+      "visualDensity": 0.75,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence links operational failures (missed deadlines, lost data) as causative agents directly leading to quantified financial loss for companies, forming a clear cause-effect structure. The ideas are tightly coupled and relevant for visual dramatization of cascading business impact.",
+    "confidence": 0.95
+  },
+  {
+    "sentenceId": "sentence-4",
+    "sentenceText": "Meet Nimbus, SaaS built for unstoppable teams.",
+    "timing": {
+      "startSec": 11.619999885559082,
+      "endSec": 14.399999618530273,
+      "startFrame": 348,
+      "endFrame": 432,
+      "durationFrames": 84
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.3333333333333333
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "technology",
+        "phrase": "Nimbus, SaaS",
+        "meaning": "Nimbus is introduced as a software-as-a-service (SaaS) platform",
+        "importance": 0.9,
+        "emotionalWeight": 0.4,
+        "visualPotential": 0.6,
+        "abstractionLevel": 0.7,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.85
+      },
+      {
+        "id": "idea_02",
+        "type": "social impact",
+        "phrase": "unstoppable teams",
+        "meaning": "The target users are high-performing, resilient teams empowered by the platform",
+        "importance": 0.8,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.6,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_03",
+        "type": "symbolism",
+        "phrase": "Meet",
+        "meaning": "Personification and introduction of Nimbus as a character or entity",
+        "importance": 0.6,
+        "emotionalWeight": 0.5,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.8,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "supporting",
+        "timingWeight": 0.7
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "enables"
+      },
+      {
+        "from": "idea_03",
+        "to": "idea_01",
+        "relationshipType": "introduces"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Technological empowerment of resilient teams through software",
+      "complexityScore": 0.5,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.65,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence introduces Nimbus as a SaaS platform, personifying it for narrative engagement and positioning it as a catalyst for high-performing, 'unstoppable' teams. The primary concept is the SaaS platform (technology), with the secondary focus on team empowerment (social impact), and a supporting symbolic act of introduction. The relationships are enabling and introductory, suggesting a narrative of transformation and activation. Cinematically, the platform and its empowering role offer strong visual and narrative potential.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-5",
+    "sentenceText": "Automate tasks, centralize data, and boost productivity from day one.",
+    "timing": {
+      "startSec": 14.960000038146973,
+      "endSec": 18.600000381469727,
+      "startFrame": 448,
+      "endFrame": 559,
+      "durationFrames": 111
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.4444444444444444
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "technology",
+        "phrase": "automate tasks",
+        "meaning": "Leveraging technology to perform routine or repetitive tasks automatically, reducing manual intervention",
+        "importance": 0.9,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.75,
+        "abstractionLevel": 0.3,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.7
+      },
+      {
+        "id": "idea_02",
+        "type": "infrastructure",
+        "phrase": "centralize data",
+        "meaning": "Collecting and storing data in a single, unified system to improve accessibility and organization",
+        "importance": 0.85,
+        "emotionalWeight": 0.5,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.4,
+        "parentRelationship": null,
+        "cinematicRole": "secondary",
+        "timingWeight": 0.6
+      },
+      {
+        "id": "idea_03",
+        "type": "growth",
+        "phrase": "boost productivity from day one",
+        "meaning": "Significantly increasing efficiency and output immediately upon implementation",
+        "importance": 0.93,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.2,
+        "parentRelationship": [
+          "idea_01",
+          "idea_02"
+        ],
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_03",
+        "relationshipType": "enables"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_03",
+        "relationshipType": "contributes_to"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Immediate productivity gain through technological and organizational improvement",
+      "complexityScore": 0.5,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.8,
+      "recommendedMaxVisualIdeas": 3
+    },
+    "reasoning": "The sentence conveys a process structure: automating tasks and centralizing data are integrated changes that together create an immediate boost in productivity. Each step is tightly linked as a cause (automation, centralization) and an outcome (productivity), supporting a cinematic sequence showing transformation and instant results. There's strong visual and emotional potential in depicting automation, data flows, and rapid efficiency improvements.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-6",
+    "sentenceText": "Cut busy work by 45%.",
+    "timing": {
+      "startSec": 19.079999923706055,
+      "endSec": 20.899999618530273,
+      "startFrame": 572,
+      "endFrame": 627,
+      "durationFrames": 55
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.5555555555555556
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process_improvement",
+        "phrase": "cut busy work by 45%",
+        "meaning": "Substantially reduce non-essential or repetitive tasks by nearly half",
+        "importance": 0.92,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.5,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_02",
+        "type": "efficiency_gain",
+        "phrase": "45% reduction",
+        "meaning": "Quantified improvement in operational efficiency by removing busy work",
+        "importance": 0.8,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.6,
+        "abstractionLevel": 0.4,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.7
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "quantifiedBy"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Operational optimization",
+      "complexityScore": 0.5,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.7,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence conveys a transformative reduction of unproductive, repetitive work by a specified quantifiable amount (45%), indicating a focus on making operations leaner and more efficient. The primary idea is process improvement, supported by the specific magnitude of efficiency gain. This offers both emotional satisfaction (relief, progress) and visual storytelling opportunities (before/after contrast, percentage counters). The abstraction allows for universal application in a variety of industries and narrative contexts.",
+    "confidence": 0.96
+  },
+  {
+    "sentenceId": "sentence-7",
+    "sentenceText": "Increase project delivery speeds by 60%.",
+    "timing": {
+      "startSec": 20.899999618530273,
+      "endSec": 23.84000015258789,
+      "startFrame": 626,
+      "endFrame": 716,
+      "durationFrames": 90
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.6666666666666666
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process/performance",
+        "phrase": "project delivery speeds",
+        "meaning": "The rate at which projects are completed and delivered",
+        "importance": 0.92,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.6,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.75
+      },
+      {
+        "id": "idea_02",
+        "type": "growth/efficiency",
+        "phrase": "increase by 60%",
+        "meaning": "A significant improvement (60 percent) in the efficiency or speed of project delivery",
+        "importance": 0.98,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.5,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "primary",
+        "timingWeight": 0.85
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_02",
+        "to": "idea_01",
+        "relationshipType": "modifies"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Accelerated project delivery",
+      "complexityScore": 0.2,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.7,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence emphasizes a quantifiable boost to project delivery performance (60%). The concepts of speed and improvement are tightly linked, forming a cause-effect structure. This has strong cinematic potential through dynamic visuals (timelines accelerating, percentage increases), and the theme is straightforward, emphasizing growth and achievement, which supports pacing and momentum in cinematic storytelling.",
+    "confidence": 0.98
+  },
+  {
+    "sentenceId": "sentence-8",
+    "sentenceText": "Slash operational costs by up to 100K per year.",
+    "timing": {
+      "startSec": 23.84000015258789,
+      "endSec": 27.139999389648438,
+      "startFrame": 715,
+      "endFrame": 815,
+      "durationFrames": 100
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.7777777777777778
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "finance",
+        "phrase": "operational costs",
+        "meaning": "Recurring expenses for running a business or infrastructure",
+        "importance": 0.85,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.75,
+        "abstractionLevel": 0.4,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.7
+      },
+      {
+        "id": "idea_02",
+        "type": "process",
+        "phrase": "slash by up to 100K per year",
+        "meaning": "Reduce yearly expenses by as much as $100,000",
+        "importance": 0.9,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.3,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_02",
+        "to": "idea_01",
+        "relationshipType": "effect_on"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Significant cost reduction",
+      "complexityScore": 0.3,
+      "emotionalIntensity": 0.75,
+      "visualDensity": 0.8,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "This sentence focuses on the process of reducing operational costs, specifically quantifying the reduction as up to $100K per year. The primary semantic concept is financial—operational cost, with the action of slashing (reducing) as the central process. The relationship is causal: the process impacts the financial concept. The number ($100K per year) is crucial to narrative emphasis and visual power, making cost savings tangible and emotionally resonant.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-9",
+    "sentenceText": "Ready to transform your workflow?",
+    "timing": {
+      "startSec": 27.68000030517578,
+      "endSec": 28.959999084472656,
+      "startFrame": 830,
+      "endFrame": 869,
+      "durationFrames": 39
+    },
+    "narrativePosition": {
+      "section": "outro",
+      "progressionWeight": 0.8888888888888888
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process/transformation",
+        "phrase": "transform your workflow",
+        "meaning": "Initiating significant change or improvement in the way work is accomplished",
+        "importance": 1,
+        "emotionalWeight": 0.85,
+        "visualPotential": 0.9,
+        "abstractionLevel": 0.7,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 1
+      },
+      {
+        "id": "idea_02",
+        "type": "invitation/action trigger",
+        "phrase": "ready",
+        "meaning": "Prompting the audience to take action or psychologically prepare for change",
+        "importance": 0.8,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.6,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "supporting",
+        "timingWeight": 0.8
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_02",
+        "to": "idea_01",
+        "relationshipType": "enables"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Empowerment and transformation",
+      "complexityScore": 0.3,
+      "emotionalIntensity": 0.85,
+      "visualDensity": 0.75,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "This outro sentence functions as a direct invitation and motivational call-to-action, emphasizing readiness for positive change. The core meaning revolves around empowering the viewer to imagine or initiate a significant transformation of their operational processes. The concepts are tightly linked: 'ready' prepares the audience, while 'transform your workflow' is the goal, making a cause/action dynamic. The cinematic utility is high for emotional resonance and impactful visual metaphors, with a strong focus on abstract transformation visuals and transition effects for the outro.",
+    "confidence": 0.98
+  },
+  {
+    "sentenceId": "sentence-10",
+    "sentenceText": "Start your free trial with Nimbus today.",
+    "timing": {
+      "startSec": 28.959999084472656,
+      "endSec": 31.360000610351562,
+      "startFrame": 868,
+      "endFrame": 941,
+      "durationFrames": 73
+    },
+    "narrativePosition": {
+      "section": "outro",
+      "progressionWeight": 1
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process",
+        "phrase": "Start your free trial",
+        "meaning": "Invitation to begin an initial, risk-free exploration period of a product or service",
+        "importance": 0.92,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.25,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.85
+      },
+      {
+        "id": "idea_02",
+        "type": "technology",
+        "phrase": "Nimbus",
+        "meaning": "The technological platform or product being offered for trial",
+        "importance": 0.85,
+        "emotionalWeight": 0.4,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.15,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.7
+      },
+      {
+        "id": "idea_03",
+        "type": "social impact",
+        "phrase": "today",
+        "meaning": "Immediate call to action, emphasizing urgency and present opportunity",
+        "importance": 0.7,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.5,
+        "abstractionLevel": 0.4,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "supporting",
+        "timingWeight": 0.9
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "action-target"
+      },
+      {
+        "from": "idea_01",
+        "to": "idea_03",
+        "relationshipType": "temporal-urgency"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Call to action—onboarding and engagement",
+      "complexityScore": 0.3,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.7,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence serves as a clear call to action for onboarding, combining a process (the free trial) with the product (Nimbus), underlining immediacy ('today'). The primary focus is on initiating an accessible engagement, with secondary support from product identity and urgency cues. The structure naturally lends itself to simple but emotionally impactful visuals and pacing suitable for an outro or closing invitation.",
+    "confidence": 0.97
+  }
+]

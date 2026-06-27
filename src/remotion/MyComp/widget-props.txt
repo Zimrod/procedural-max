@@ -1,0 +1,461 @@
+// src/remotion/MyComp/widget-props.txt
+WaterfallChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[]; // positive = increase, negative = decrease
+    startValue?: number; // starting value (default 0)
+    finalLabel?: string; // label for the final bar (default "Total")
+  };
+  increaseColor?: string;
+  decreaseColor?: string;
+  startEndColor?: string;
+  maxValue?: number;
+  showConnectors?: boolean;
+};
+
+AreaChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  areaColor?: string;
+  lineColor?: string;
+  curveType?: 'linear' | 'curved';
+  maxValue?: number;
+  opacity?: number; // area fill opacity (0-1)
+};
+
+BarChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  barColors?: string[];
+};
+
+CounterRig:
+type Props = {
+  value: number;
+  prefix?: string;   // e.g. "$"
+  suffix?: string;   // e.g. "M"
+  durationFrames?: number;
+  fontSize?: number;
+  color?: string;
+};
+
+DonutChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  pieColors?: string[];
+};
+
+MultiAreaChartRig:
+type Series = {
+  name: string;
+  values: number[];
+  color?: string;
+};
+
+type Props = {
+  data: {
+    labels: string[];
+    series: Series[];
+  };
+  curveType?: 'linear' | 'curved';
+  maxValue?: number;
+  legendPosition?: 'right' | 'bottom';
+  areaOpacity?: number;
+  lineWidth?: number;
+};
+
+MultiBarChartRig:
+type Series = {
+  name: string;
+  values: number[];
+  color?: string;
+};
+
+type Props = {
+  data: {
+    labels: string[];
+    series: Series[];
+  };
+  maxValue?: number;
+  legendPosition?: 'right' | 'bottom';
+  groupPadding?: number; // space between groups (0-1, fraction of category width)
+};
+
+MultiLineChartRig:
+type Series = {
+  name: string;
+  values: number[];
+  color?: string;
+};
+
+type Props = {
+  data: {
+    labels: string[];
+    series: Series[];
+  };
+  curveType?: 'linear' | 'curved';
+  maxValue?: number;
+  legendPosition?: 'right' | 'bottom';
+  lineWidth?: number;
+  pointRadius?: number;
+};
+
+ProcessFlowRig:
+type Props = {
+  steps: string[];
+  durationPerStep: number;
+  nodeRadius: number;
+  nodeSpacing: number;
+  stepYOffset: number;
+  virtualHeight: number;
+};
+
+TypewriterRig:
+type Props = {
+  text?: string;
+  typingSpeed?: number;
+  boxWidth?: number;
+  boxHeight?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  cursorColor?: string;
+  startDelay?: number;
+};
+
+LineChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  lineColor?: string;
+  pointColors?: string[];
+  curveType?: 'linear' | 'curved';
+  maxValue?: number;
+};
+
+DonutComparisonRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[]; // 0-100 scores
+  };
+  donutColors?: string[];
+  maxValue?: number; // default 100
+  columns?: number; // default 3
+};
+
+DonutStepChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  pieColors?: string[];
+};
+
+StatRevealRig:
+type Props = {
+  text: string;                 
+  durationInFrames?: number;
+  fontSize?: number;
+};
+
+CircularCycleRig:
+export type ProcessStep = {
+  label: string;
+  value?: string;
+  icon?: string;
+};
+
+type Props = {
+  steps?: ProcessStep[];
+  title?: string;
+  cycleDurationSeconds?: number;
+  radius?: number; // Base radius will be scaled up dynamically
+  accentColor?: string;
+  inactiveColor?: string;
+  backgroundColor?: string;
+  fontFamily?: string;
+};
+
+MilestoneStatusRig:
+export type MilestoneItem = {
+  stageName: string;   // e.g., "MILESTONE 01"
+  title: string;       // e.g., "Architecture Setup"
+  description: string; // e.g., "Deploying isolated VPC subnets and routing tables."
+  metaValue?: string;  // e.g., "COMPLETED" or "ETA: 2 Mins"
+};
+
+type Props = {
+  milestones?: MilestoneItem[];
+  categoryTitle?: string;
+  
+  // Driving configuration
+  durationSeconds?: number;
+  
+  // Custom theme choices
+  accentColor?: string;
+  inactiveColor?: string;
+  backgroundColor?: string;
+  fontFamily?: string;
+};
+
+TimelineFlowRig:
+export type TimelineMilestone = {
+  timeLabel: string; // e.g., "Q1", "09:00 AM", "Step 01"
+  title: string;       // e.g., "Ingestion"
+  description: string; // e.g., "Processing raw CSV entries"
+};
+
+type Props = {
+  milestones?: TimelineMilestone[];
+  categoryTitle?: string;
+  
+  // Timeline Animation Configuration
+  revealDurationSeconds?: number;
+  
+  // Custom Styling Options
+  accentColor?: string;
+  inactiveColor?: string;
+  backgroundColor?: string;
+  fontFamily?: string;
+};
+
+PieChartRig:
+type Props = {
+  data: {
+    labels: string[];
+    values: number[];
+  };
+  pieColors?: string[];
+};
+
+KpiCardRig:
+type Props = {
+  title?: string;
+  targetValue?: number;
+  valuePrefix?: string;
+  valueSuffix?: string;
+  
+  // Trend Metrics
+  percentageChange?: number; // e.g., 14.5 or -3.2
+  trendLabel?: string;      // e.g., "vs last month"
+  
+  // Historical Sparkline points (Expects an array of 6-10 numeric values)
+  sparklineData?: number[];
+
+  // Styling Adjustments
+  width?: number;
+  fontFamily?: string;
+};
+
+CountryDropPinRig:
+type Point = {x: number; y: number};
+type ViewBox = {x: number; y: number; width: number; height: number};
+
+type ParsedSvgAsset = {
+  viewBox: ViewBox;
+  innerMarkup: string;
+  pivots: Record<string, Point>;
+};
+
+type Props = {
+  country?: string;
+  zoomStartFrame?: number;
+  zoomDurationFrames?: number;
+  pinDropDelayFrames?: number;
+  startScale?: number;
+  endScale?: number;
+  pinHeightRatio?: number;
+  backgroundColor?: string;
+  worldOpacity?: number;
+  focusedCountryOpacity?: number;
+  labelPosition?: "above" | "below" | "left" | "right";
+  labelOffset?: number;
+  width?: number;
+  height?: number;
+};
+
+CountryFocusRig:
+type Point = {x: number; y: number};
+
+type ViewBox = {x: number; y: number; width: number; height: number};
+
+type ParsedSvgAsset = {
+  viewBox: ViewBox;
+  innerMarkup: string;
+  pivots: Record<string, Point>;
+};
+
+type Props = {
+  country?: string;
+  zoomStartFrame?: number;
+  zoomDurationFrames?: number;
+  startScale?: number;
+  endScale?: number;
+  backgroundColor?: string;
+  worldOpacity?: number;
+  focusedCountryOpacity?: number;
+  width?: number;
+  height?: number;
+};
+
+CountryRouteRig:
+type Point = {
+  x: number;
+  y: number;
+};
+
+type ViewBox = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+type ParsedSvgAsset = {
+  viewBox: ViewBox;
+  innerMarkup: string;
+  pivots: Record<string, Point>;
+};
+
+type Props = {
+  fromCountry?: string;
+  toCountry?: string;
+  routeStartFrame?: number;
+  routeDurationFrames?: number;
+  routeLineDelayFrames?: number;
+  labelRevealDurationFrames?: number;
+  lineColor?: string;
+  lineWidth?: number;
+  arcHeight?: number;
+  backgroundColor?: string;
+  width?: number;
+  height?: number;
+  showDots?: boolean;
+  showLabels?: boolean;
+  worldOpacity?: number;
+  startScale?: number;
+};
+
+TypewriterRig:
+type Props = {
+  text?: string;               // allow undefined, default to empty string
+  typingSpeed?: number;
+  boxWidth?: number;
+  boxHeight?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  cursorColor?: string;
+  startDelay?: number;
+};
+
+TextRig:
+type Props = {
+  text:              string;
+  fontSize?:         number;
+  color?:            string;
+  fontFamily?:       string;
+  fontWeight?:       number | string;
+  background?:       string;
+  durationInFrames?: number;
+  // Fade in/out
+  fadeInFrames?:     number;
+  fadeOutFrames?:    number;
+};
+
+TitleCardRig:
+type Props = {
+  title: string;
+  subtitle?: string;
+
+  // Layout
+  align?: "left" | "center";
+  maxWidth?: number;
+
+  // Typography
+  titleFontSize?: number;
+  subtitleFontSize?: number;
+  fontFamily?: string;
+
+  // Styling
+  titleColor?: string;
+  subtitleColor?: string;
+  accentColor?: string;
+  backgroundColor?: string;
+
+  // Motion
+  revealDirection?: "up" | "down" | "left" | "right";
+  cinematic?: boolean;
+};
+
+CountdownTimerRig:
+type Props = {
+  durationSeconds: number;
+
+  size?: number;
+  strokeWidth?: number;
+
+  primaryColor?: string;
+  warningColor?: string;
+  dangerColor?: string;
+
+  trackColor?: string;
+  textColor?: string;
+
+  fontFamily?: string;
+  fontSize?: number;
+
+  showMilliseconds?: boolean;
+  glowIntensity?: number;
+};
+
+CalendarRig:
+type Props = {
+  year: number;
+  month: number; // 1 for January, 12 for December
+  markedDay: number; // The day of the month to mark with an 'X'
+  
+  width?: number;
+  primaryColor?: string; 
+  textColor?: string;    
+  accentColor?: string;  
+  fontFamily?: string;
+};
+
+ProgressBarRig:
+type Props = {
+  progress?: number; // optional manual override (0–1)
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
+  fillColor?: string;
+  delay?: number;
+  borderRadius?: number;
+};
+
+ValuationRig:
+type Props = {
+  value?: number;              // e.g. 42 (million)
+  prefix?: string;             // "$"
+  suffix?: string;             // "M"
+  text?: string;               // fallback
+  label?: string;              // "Total Project Cost"
+  color?: string;              // primary color
+  durationInFrames?: number;
+};

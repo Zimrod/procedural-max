@@ -1,0 +1,71 @@
+{
+  "rabbit": [
+    "rabbit-meditating.json"
+  ],
+  "meditating": [
+    "rabbit-meditating.json"
+  ],
+  "afraid": [
+    "afraid-emoticon.json"
+  ],
+  "melancholic": [
+    "afraid-emoticon.json"
+  ],
+  "financial": [
+    "arrow-bullseye.json",
+    "forex-trading.json",
+    "gold-coins.json"
+  ],
+  "hopeful": [
+    "arrow-bullseye.json",
+    "forex-trading.json"
+  ],
+  "shooting": [
+    "arrow-bullseye.json",
+    "arrow-bullseye-3arrows.json"
+  ],
+  "cat": [
+    "cats-kissing.json"
+  ],
+  "kissing": [
+    "cats-kissing.json"
+  ],
+  "romance": [
+    "cats-kissing.json"
+  ],
+  "love": [
+    "cats-kissing.json"
+  ],
+  "entertainment": [
+    "cats-kissing.json"
+  ],
+  "spinning": [
+    "circles.json"
+  ],
+  "technology": [
+    "forex-trading.json"
+  ],
+  "amazement": [
+    "wow-text.json"
+  ],
+  "celebratory": [
+    "wow-text.json",
+    "gold-coins.json",
+    "arrow-bullseye-3arrows.json"
+  ],
+  "happy": [
+    "wow-text.json"
+  ],
+  "falling": [
+    "gold-coins.json"
+  ],
+  "striking": [
+    "arrow-bullseye-3arrows.json"
+  ],
+  "flying": [
+    "arrow-bullseye-3arrows.json"
+  ],
+  "lighthearted": [
+    "arrow-bullseye-3arrows.json"
+  ]
+}

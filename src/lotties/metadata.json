@@ -1,0 +1,92 @@
+{
+  "rabbit-meditating.json": {
+    "duration": 4.033333333333333,
+    "frameRate": 30,
+    "tones": [
+      "rabbit",
+      "meditating"
+    ],
+    "lastUpdated": "2025-07-07T18:13:49.085Z"
+  },
+  "afraid-emoticon.json": {
+    "duration": 5,
+    "frameRate": 24,
+    "tones": [
+      "afraid",
+      "melancholic"
+    ],
+    "lastUpdated": "2025-07-07T19:19:17.420Z"
+  },
+  "arrow-bullseye.json": {
+    "duration": 4.016666666666667,
+    "frameRate": 60,
+    "tones": [
+      "financial",
+      "hopeful",
+      "shooting"
+    ],
+    "lastUpdated": "2025-07-07T19:24:26.336Z"
+  },
+  "cats-kissing.json": {
+    "duration": 1.3333333333333333,
+    "frameRate": 30,
+    "tones": [
+      "cat",
+      "kissing",
+      "romance",
+      "love",
+      "entertainment"
+    ],
+    "lastUpdated": "2025-07-07T19:26:23.185Z"
+  },
+  "circles.json": {
+    "duration": 10,
+    "frameRate": 60,
+    "tones": [
+      "spinning"
+    ],
+    "lastUpdated": "2025-07-07T19:28:51.363Z"
+  },
+  "forex-trading.json": {
+    "duration": 13.333333333333334,
+    "frameRate": 60,
+    "tones": [
+      "technology",
+      "financial",
+      "hopeful"
+    ],
+    "lastUpdated": "2025-07-07T19:29:56.224Z"
+  },
+  "wow-text.json": {
+    "duration": 3.5,
+    "frameRate": 30,
+    "tones": [
+      "amazement",
+      "celebratory",
+      "happy"
+    ],
+    "lastUpdated": "2025-07-07T19:31:13.595Z"
+  },
+  "gold-coins.json": {
+    "duration": 5.266666666666667,
+    "frameRate": 60,
+    "tones": [
+      "falling",
+      "financial",
+      "celebratory"
+    ],
+    "lastUpdated": "2025-07-07T21:12:55.921Z"
+  },
+  "arrow-bullseye-3arrows.json": {
+    "duration": 10.666666666666666,
+    "frameRate": 60,
+    "tones": [
+      "striking",
+      "shooting",
+      "flying",
+      "celebratory",
+      "lighthearted"
+    ],
+    "lastUpdated": "2025-08-21T21:09:40.465Z"
+  }
+}
