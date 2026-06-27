@@ -5,10 +5,10 @@ import {
 } from "@remotion/lambda/client";
 import { DISK, RAM, REGION, TIMEOUT } from "../../../../../config.mjs";
 import { executeApi } from "../../../../helpers/api-response";
-import { ProgressRequest, ProgressResponse } from "../../../../types/schema";
+import { TextItem, SolidItem } from "../../../../types/schema";
 
-export const POST = executeApi<ProgressResponse, typeof ProgressRequest>(
-  ProgressRequest,
+export const POST = executeApi<SolidItem, typeof TextItem>(
+  TextItem,
   async (req, body) => {
     const renderProgress = await getRenderProgress({
       bucketName: body.bucketName,

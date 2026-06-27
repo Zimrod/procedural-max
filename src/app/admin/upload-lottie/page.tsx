@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { NextRequest, NextResponse } from "next/server";
 
 // Categorized and Alphabetized TONES
 const CATEGORIZED_TONES = {
