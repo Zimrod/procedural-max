@@ -1,28 +1,27 @@
-type BaseItem = {
-    from: number;
-    durationInFrames: number;
-    id: string;
-  };
-   
-  export type SolidItem = BaseItem & {
-    type: 'solid';
-    color: string;
-  };
-   
-  export type TextItem = BaseItem & {
-    type: 'text';
-    text: string;
-    color: string;
-  };
-   
-  export type VideoItem = BaseItem & {
-    type: 'video';
-    src: string;
-  };
-   
-  export type Item = SolidItem | TextItem | VideoItem;
-   
-  export type Track = {
-    name: string;
-    items: Item[];
-  };
+import { z } from "zod";
+import { CompositionProps } from "./constants";
+
+export const RenderRequest = z.object({
+  id: z.string(),
+  inputProps: CompositionProps,
+});
+
+export const ProgressRequest = z.object({
+  bucketName: z.string(),
+  id: z.string(),
+});
+
+export type ProgressResponse =
+  | {
+      type: "error";
+      message: string;
+    }
+  | {
+      type: "progress";
+      progress: number;
+    }
+  | {
+      type: "done";
+      url: string;
+      size: number;
+    };

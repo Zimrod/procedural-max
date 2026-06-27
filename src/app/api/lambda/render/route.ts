@@ -11,10 +11,10 @@ import {
   SITE_NAME,
   TIMEOUT,
 } from "../../../../../config.mjs";
-import { SolidItem } from "../../../../types/schema";
+import { RenderRequest } from "../../../../types/schema";
 
-export const POST = executeApi<RenderMediaOnLambdaOutput, typeof SolidItem>(
-  SolidItem,
+export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
+  RenderRequest,
   async (req, body) => {
     if (
       !process.env.AWS_ACCESS_KEY_ID &&
