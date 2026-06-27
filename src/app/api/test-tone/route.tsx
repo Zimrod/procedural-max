@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { OpenAI } from "openai";
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function GET() {
   try {

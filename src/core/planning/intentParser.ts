@@ -3,7 +3,7 @@
 import OpenAI from 'openai';
 import { WidgetIntent } from '../taxonomy/widgetTaxonomy';
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export type AnalysedIntentResult = {
   intent: WidgetIntent;
@@ -22,7 +22,7 @@ export type AnalysedIntentResult = {
  */
 export async function deduceNarrativeIntentAI(text: string): Promise<AnalysedIntentResult> {
   try {
-    const response = await openai.chat.completions.create({
+    const response = await apiKey.chat.completions.create({
       model: 'gpt-4.1', // Extremely fast and cheap for classification tasks
       messages: [
         {

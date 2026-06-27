@@ -4,7 +4,7 @@ import { OpenAI } from "openai";
 import { SceneConfigItem } from "../segmentation/buildSceneConfigFromWidgets";
 
 // Initialize OpenAI connection
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /**
  * AI Quality Pass Agent to clean up, truncate, and polish layout properties
@@ -24,7 +24,7 @@ export async function inspectAndRefineConfig(config: SceneConfigItem[]): Promise
   `;
 
   try {
-    const response = await openai.chat.completions.create({
+    const response = await apiKey.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },

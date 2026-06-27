@@ -1,14 +1,13 @@
 // src/core/decisionTrees/decisionTree.ts
 import fs from 'fs';
 import path from 'path';
-
 import OpenAI from 'openai';
 
 import {
   NarrativeBeat,
 } from '../narrative/narrativeAnalyzer';
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 //
 // ============================================================

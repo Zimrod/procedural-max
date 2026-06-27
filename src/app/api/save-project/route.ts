@@ -4,7 +4,7 @@ import { OpenAI } from "openai";
 import { supabase } from "../../../lib/supabaseClient"; // 🚀 Import your initialized client link
 
 // Use the explicit API key to authenticate embedding generation requests
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST(req: Request) {
   try {

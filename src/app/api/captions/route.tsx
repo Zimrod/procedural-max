@@ -28,7 +28,7 @@ export async function POST() {
       throw new Error("Voiceover file not found.");
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     // ---------------------------------------------------
     // 1. TRANSCRIBE

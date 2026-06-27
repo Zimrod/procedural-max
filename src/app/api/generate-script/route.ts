@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const prompt = body.prompt;
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4.1",

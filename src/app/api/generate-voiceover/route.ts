@@ -10,9 +10,9 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const script = body.script;
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const speech = await openai.audio.speech.create({
+    const speech = await apiKey.audio.speech.create({
       model: "tts-1",
       voice: "alloy",
       input: script,

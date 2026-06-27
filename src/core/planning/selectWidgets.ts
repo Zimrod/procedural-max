@@ -4,7 +4,7 @@ import { NarrativeBeat } from '../narrative/narrativeAnalyzer';
 import { widgetRegistry } from '../widgetRegistry';
 import { WidgetType } from '../taxonomy/widgetTaxonomy';
 
-const apiKey = process.env.OPENAI_API_KEY;
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export type SelectedWidget = {
   beatId: string;

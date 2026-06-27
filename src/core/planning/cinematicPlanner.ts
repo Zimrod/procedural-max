@@ -3,8 +3,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import OpenAI from 'openai';
-
 import {
   NarrativeBeat,
 } from '../narrative/narrativeAnalyzer';
