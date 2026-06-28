@@ -19,10 +19,11 @@ export async function POST(req: NextRequest) {
       }
   
       const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const bytes = new Uint8Array(arrayBuffer);
       const fileName = file.name;
       const savePath = path.join(lottieFolder, fileName);
-      fs.writeFileSync(savePath, buffer);
+
+      fs.writeFileSync(savePath, bytes);
   
       function readAndParseJSON(filePath: string): any {
         if (!fs.existsSync(filePath)) {
