@@ -17,97 +17,13 @@ import {
   mergeTheme,
   type CompositionTheme,
 } from "../types/theme";
-import { widgetRegistry } from "../core/widgetRegistry";
+import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 
 import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
 
 const WIDGET_OPTIONS =
   Object.keys(widgetRegistry);
-
-const DEV_PRESET_WIDGETS = [
-  "TITLE_CARD",
-  "STAT_REVEAL",
-  "LINE_CHART",
-  "BAR_CHART",
-  "DONUT_CHART",
-  "WATERFALL_CHART",
-] as const;
-
-// const DEV_BYPASS_MODE = process.env.NODE_ENV !== "production";
-const DEV_BYPASS_MODE = false;
-
-const createDevScenePreset = () => {
-  const seedSpecs = [
-    {
-      widget: "TITLE_CARD",
-      durationFrames: 90,
-      text: "Capital Stack Overview",
-      shortSummary: "Executive framing for the composition",
-      extractedData: { stage: "intro" },
-    },
-    {
-      widget: "STAT_REVEAL",
-      durationFrames: 90,
-      text: "$48M",
-      shortSummary: "Headline metric",
-      extractedData: { value: 48 },
-    },
-    {
-      widget: "LINE_CHART",
-      durationFrames: 105,
-      text: "Momentum rises across the quarter",
-      shortSummary: "Trend progression",
-      extractedData: { trend: [12, 18, 27, 35] },
-    },
-    {
-      widget: "BAR_CHART",
-      durationFrames: 105,
-      text: "Channel performance by segment",
-      shortSummary: "Category comparison",
-      extractedData: { segments: ["North", "South", "West"] },
-    },
-    {
-      widget: "DONUT_CHART",
-      durationFrames: 90,
-      text: "Budget split across initiatives",
-      shortSummary: "Composition share",
-      extractedData: { values: [42, 33, 25] },
-    },
-    {
-      widget: "WATERFALL_CHART",
-      durationFrames: 120,
-      text: "Bridge from gross to net",
-      shortSummary: "Value bridge",
-      extractedData: { bridge: ["Gross", "Costs", "Net"] },
-    },
-  ] as const;
-
-  let startFrame = 0;
-
-  return seedSpecs.map((spec) => {
-    const definition = widgetRegistry[spec.widget];
-    const props = definition?.buildFallbackProps({
-      text: spec.text,
-      shortSummary: spec.shortSummary,
-      extractedData: spec.extractedData,
-      durationFrames: spec.durationFrames,
-    }) ?? definition?.defaultProps ?? {};
-
-    const scene = {
-      widget: spec.widget,
-      startFrame,
-      durationFrames: spec.durationFrames,
-      props: {
-        ...props,
-        durationInFrames: spec.durationFrames,
-      },
-    };
-
-    startFrame += spec.durationFrames;
-
-    return scene;
-  });
-};
+const DEFAULT_WIDGET_TYPE = WIDGET_OPTIONS[0];
 
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
@@ -137,12 +53,8 @@ export default function LandingPage() {
   } | null>(null);
 
   // Workspace Config Data Arrays
-  const [sceneConfig, setSceneConfig] = useState<any[]>(
-    () => (DEV_BYPASS_MODE ? applyThemeToScenes(createDevScenePreset(), mergeTheme(DEFAULT_COMPOSITION_THEME)) : [])
-  );
-  const [localConfig, setLocalConfig] = useState<any[]>(
-    () => (DEV_BYPASS_MODE ? applyThemeToScenes(createDevScenePreset(), mergeTheme(DEFAULT_COMPOSITION_THEME)) : [])
-  );
+  const [sceneConfig, setSceneConfig] = useState<any[]>([]);
+  const [localConfig, setLocalConfig] = useState<any[]>([]);
   const [themeConfig, setThemeConfig] = useState<CompositionTheme>(
     mergeTheme(
       COMPOSITION_THEME_PRESETS.find((item) => item.id === "light-stroke")?.theme ??
@@ -188,10 +100,6 @@ export default function LandingPage() {
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion]);
 
   const handleGenerateScript = async () => {
-    if (DEV_BYPASS_MODE) {
-      return;
-    }
-
     if (!prompt.trim()) return;
     try {
       setActiveLoading("script");
@@ -210,10 +118,6 @@ export default function LandingPage() {
   };
 
   const handleGenerateVoiceover = async () => {
-    if (DEV_BYPASS_MODE) {
-      return;
-    }
-
     if (!currentActiveScript.trim()) {
       alert("Please ensure there is a script ready before generating voiceovers.");
       return;
@@ -244,14 +148,6 @@ export default function LandingPage() {
   };
 
   const handleRenderAnimation = async () => {
-    if (DEV_BYPASS_MODE) {
-      const preset = applyThemeToScenes(createDevScenePreset(), themeConfig);
-      setSceneConfig(JSON.parse(JSON.stringify(preset)));
-      setLocalConfig(JSON.parse(JSON.stringify(preset)));
-      setTranscription(null);
-      return;
-    }
-
     try {
       setActiveLoading("animation");
       const res = await fetch("/api/captions", { method: "POST" });
@@ -262,7 +158,7 @@ export default function LandingPage() {
         // Ensure the API-returned configs use uniform uppercase structure mappings
         const sanitized = data.sceneConfig.map((s: any) => ({
           ...s,
-          widget: s.widget || s.type || "TEXT"
+          widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
         }));
         const themed = applyThemeToScenes(sanitized, themeConfig);
         setSceneConfig(themed);
@@ -310,7 +206,7 @@ export default function LandingPage() {
     const updated = [...localConfig];
 
     const definition =
-      widgetRegistry[newType];
+      getWidgetDefinition(newType);
 
     const currentScene =
       updated[sceneIndex];
@@ -429,19 +325,19 @@ export default function LandingPage() {
   ) => {
 
     const definition =
-      widgetRegistry.TEXT;
+      getWidgetDefinition(DEFAULT_WIDGET_TYPE);
 
     const newScene = {
-      widget: "TEXT",
+      widget: DEFAULT_WIDGET_TYPE,
       startFrame: 0,
       durationFrames: 90,
 
       props:
-        applyThemeToWidgetProps("TEXT", definition.buildFallbackProps({
+        applyThemeToWidgetProps(DEFAULT_WIDGET_TYPE, definition?.buildFallbackProps({
           text: "New Scene",
           shortSummary: "New scene",
           durationFrames: 90,
-        }), themeConfig),
+        }) ?? definition?.defaultProps ?? {}, themeConfig),
     };
 
     const updated = [...localConfig];
@@ -506,13 +402,6 @@ export default function LandingPage() {
         <div className="w-full">
           {/* LEFT SIDEBAR AREA */}
           <div className="w-full lg:w-[420px] lg:float-left bg-white rounded-2xl border border-black/5 p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]">
-            {DEV_BYPASS_MODE && (
-              <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-                Dev bypass is active. Script and voiceover generation are skipped, and the composition starts with six seeded widgets:
-                <span className="ml-1 font-semibold">{DEV_PRESET_WIDGETS.join(", ")}</span>
-              </div>
-            )}
-            
             <div className="flex border-b border-black/5 mb-5 p-1 bg-slate-100 rounded-xl">
               <button
                 onClick={() => setLeftTab("generate")}
@@ -543,14 +432,12 @@ export default function LandingPage() {
                 </div>
                 <button
                   onClick={handleGenerateScript}
-                  disabled={DEV_BYPASS_MODE || activeLoading !== null || !prompt.trim()}
+                  disabled={activeLoading !== null || !prompt.trim()}
                   className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
                 >
-                  {DEV_BYPASS_MODE
-                    ? "Bypassed in Dev Mode"
-                    : activeLoading === "script"
-                      ? "Processing Narrative..."
-                      : "Draft AI Core Script"}
+                  {activeLoading === "script"
+                    ? "Processing Narrative..."
+                    : "Draft AI Core Script"}
                 </button>
 
                 {aiAudioUrl && (
@@ -609,26 +496,22 @@ export default function LandingPage() {
             <div className="mt-6 pt-5 border-t border-black/5 space-y-3">
               <button
                 onClick={handleGenerateVoiceover}
-                disabled={DEV_BYPASS_MODE || activeLoading !== null || !currentActiveScript.trim()}
+                disabled={activeLoading !== null || !currentActiveScript.trim()}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
               >
-                {DEV_BYPASS_MODE
-                  ? "Bypassed in Dev Mode"
-                  : activeLoading === "voiceover"
-                    ? "Generating Audio..."
-                    : "Step 2: Synthesize Voiceover File"}
+                {activeLoading === "voiceover"
+                  ? "Generating Audio..."
+                  : "Step 2: Synthesize Voiceover File"}
               </button>
 
               <button
                 onClick={handleRenderAnimation}
-                disabled={DEV_BYPASS_MODE ? false : activeLoading !== null || !currentActiveAudio}
+                disabled={activeLoading !== null || !currentActiveAudio}
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
               >
-                {DEV_BYPASS_MODE
-                  ? "Reload Dev Scene Preset"
-                  : activeLoading === "animation"
-                    ? "Assembling Visual Timelines..."
-                    : "Step 3: Analyze & Sync Motion Rig"}
+                {activeLoading === "animation"
+                  ? "Assembling Visual Timelines..."
+                  : "Step 3: Analyze & Sync Motion Rig"}
               </button>
             </div>
 
@@ -912,7 +795,7 @@ export default function LandingPage() {
                             <div>
                               <label className="block text-[10px] font-bold text-black/40 uppercase mb-1">Widget Class</label>
                               <select
-                                value={scene.widget || "TEXT"}
+                                value={scene.widget || DEFAULT_WIDGET_TYPE}
                                 onChange={(e) => updateWidgetType(sceneIdx, e.target.value)}
                                 className="w-full p-2 bg-white border border-black/5 rounded-lg text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
                               >
@@ -929,7 +812,7 @@ export default function LandingPage() {
                                 Widget Props
                               </span>
                               {(() => {
-                                const registryEntry = widgetRegistry[scene.widget as keyof typeof widgetRegistry];
+                                const registryEntry = getWidgetDefinition(scene.widget);
                                 const schemaFields = registryEntry?.editorFields ?? [];
                                 const schemaFieldMap = new Map(schemaFields.map((item) => [item.key, item]));
                                 const orderedKeys = [
