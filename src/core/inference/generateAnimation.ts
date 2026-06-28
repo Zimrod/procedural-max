@@ -8,7 +8,7 @@
 
 import { ActorIntent, SceneIntent } from './scenePrompt';
 import { createRng }                from './seededRandom';
-import { GROUND_Y_PX, pxPerWu, worldXToPx } from '../world/worldUnits';
+import { worldXToPx } from '../world/worldUnits';
 
 // ── SVG file maps ─────────────────────────────────────────────────────────────
 // Which SVG files to load per actor variant.
