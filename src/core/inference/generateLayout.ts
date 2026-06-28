@@ -15,7 +15,6 @@
 
 import { WorldLayout, AssetPlacement } from '../world/worldLayout';
 import { assetRegistry, AssetId }      from '../world/assetRegistry';
-import { WORLD_CONFIG }                from '../world/worldUnits';
 import { SceneIntent }                 from './scenePrompt';
 import { createRng, Rng }              from './seededRandom';
 
