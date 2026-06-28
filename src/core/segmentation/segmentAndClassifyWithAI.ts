@@ -21,7 +21,7 @@ const VISUAL_STRATEGY_RIG_OVERRIDES: Partial<
   symbolic_scene: 'TEXT',
   title_card: 'TITLE_CARD',
   valuation_cinematic: 'VALUATION',
-};
+}; 
 
 export async function enrichSegmentWithAI(
   strategy: VisualStrategyOutput
