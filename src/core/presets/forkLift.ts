@@ -1,5 +1,17 @@
-export const forkLift = (frame, { from, to, start, duration }) => {
-  if (frame < start) return { forkLift: from };
+type ForkLiftProps = {
+  from: number;
+  to: number;
+  start: number;
+  duration: number;
+};
+
+export const forkLift = (
+  frame: number,
+  { from, to, start, duration }: ForkLiftProps
+) => {
+  if (frame < start) {
+    return { forkLift: from };
+  }
 
   const t = Math.min((frame - start) / duration, 1);
 
