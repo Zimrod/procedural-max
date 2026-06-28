@@ -85,9 +85,8 @@ const buildForkliftActor = (actor: ActorIntent) => {
   const BODY_PIVOTS   = { pivot_ground: {x:190.11,y:348.38}, pivot_fork_min:{x:7.8,y:301.94}, pivot_fork_max:{x:7.8,y:168.94} };
   const FORK_PIVOTS   = { pivot_fork_tip:{x:1.56,y:137.1}, pivot_fork_root:{x:163.05,y:135.5}, pivot_fork_min:{x:193.06,y:135.5} };
   const PALLET_PIVOTS = { pivot_ground:{x:191.27,y:39.2}, pivot_fork_root:{x:262.36,y:10.46}, pivot_fork_tip:{x:283.02,y:24.14}, pivot_top_left_edge:{x:3.25,y:3.4}, pivot_top_right_edge:{x:261.4,y:3.25} };
-  const BODY_VB_H = 354.63;
-  const s = actor.scale;
 
+  const s = actor.scale;
   const palletGroundX = worldXToPx(8); // place pallet at centre-left of scene
   const groundY       = actor.groundY;
 
