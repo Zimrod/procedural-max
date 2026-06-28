@@ -2,6 +2,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import OpenAI from 'openai';
 
 import {
   NarrativeBeat,
@@ -17,7 +18,7 @@ import {
 // ============================================================
 //
 
-const apiKey = process.env.OPENAI_API_KEY;
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 //
 // ============================================================
@@ -258,7 +259,7 @@ IMPORTANT:
 `;
 
   const response =
-    await apiKey.chat.completions.create({
+    await openai.chat.completions.create({
       model: 'gpt-4.1',
 
       temperature: 0.8,

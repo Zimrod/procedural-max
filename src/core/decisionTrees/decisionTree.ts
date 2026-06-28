@@ -7,7 +7,7 @@ import {
   NarrativeBeat,
 } from '../narrative/narrativeAnalyzer';
 
-const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 //
 // ============================================================
@@ -106,7 +106,7 @@ OUTPUT JSON ONLY:
 `;
 
   const response =
-    await apiKey.chat.completions.create({
+    await openai.chat.completions.create({
       model: 'gpt-4.1',
 
       temperature: 0.7,
