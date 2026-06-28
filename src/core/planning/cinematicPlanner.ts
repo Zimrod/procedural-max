@@ -168,10 +168,6 @@ async function generateShotPlan(
   decision: CinematicDecision
 ): Promise<CinematicPlan> {
 
-  const beatDuration =
-    beat.timing.endSec -
-    beat.timing.startSec;
-
   const prompt = `
 You are an AI cinematic shot planner.
 
