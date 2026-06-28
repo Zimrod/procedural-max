@@ -38,16 +38,16 @@ const ENVIRONMENT_POOLS: Record<Environment, {
     midground:  ['tree_a', 'tree_b', 'tree_c', 'tree_pine', 'building_cbd_c', 'building_cbd_d'],
     foreground: ['bench_a', 'bin_a', 'bicycle', 'tree_a', 'tree_pine'],
   },
-  warehouse: {
-    background: ['warehouse-all'],
-    midground:  [],
-    foreground: ['bin_a'],
-  },
-  industrial: {
-    background: ['warehouse-all'],
-    midground:  ['warehouse-all'],
-    foreground: ['bin_a'],
-  },
+  // industrial: {
+  //   background: ['warehouse'],
+  //   midground:  ['warehouse'],
+  //   foreground: ['bin_a'],
+  // },
+  // warehouse: {
+  //   background: ['warehouse'],
+  //   midground:  [],
+  //   foreground: ['bin_a'],
+  // },
 };
 
 // ── Sky pools per timeOfDay ───────────────────────────────────────────────────
