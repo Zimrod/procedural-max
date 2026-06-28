@@ -4,6 +4,7 @@ import { useEditorStore } from '../../stores/useEditorStore';
 
 export const EditorControls = ({ playerRef }: { playerRef: React.RefObject<PlayerRef> }) => {
   const { currentFrame, setCurrentFrame } = useEditorStore();
+  const durationInFrames = 180;
   
   return (
     <div className="timeline-controls">
