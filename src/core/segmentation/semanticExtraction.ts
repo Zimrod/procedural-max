@@ -1,6 +1,5 @@
 // src/core/segmentation/semanticExtraction.ts
 
-import OpenAI from 'openai';
 import fs from 'fs';
 import path from 'path';
 import OpenAI from 'openai';
