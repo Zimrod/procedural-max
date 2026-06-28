@@ -8,11 +8,7 @@
 // x starts off-screen left, drives to off-screen right.
 
 import { GROUND_Y_PX, worldXToPx } from './world/worldUnits';
-import { assetRegistry, scaleForAsset }          from './world/assetRegistry';
 
-// ── Car asset registration (add to assetRegistry.ts) ─────────────────────────
-// Add this block to assetRegistry.ts under a '// ── Vehicles' section:
-//
 //   car_jeep: {
 //     id:              'car_jeep',
 //     path:            'car-jeep/car_body.svg',   // body only — rig loads wheels separately
