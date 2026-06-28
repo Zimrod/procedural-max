@@ -301,25 +301,6 @@ export default function LandingPage() {
     setLocalConfig(updated);
   };
 
-  const duplicateScene = (
-    sceneIndex: number
-  ) => {
-    const updated = [...localConfig];
-
-    const clone =
-      structuredClone(
-        updated[sceneIndex]
-      );
-
-    updated.splice(
-      sceneIndex + 1,
-      0,
-      clone
-    );
-
-    setLocalConfig(updated);
-  };
-
   const addSceneAfter = (
     sceneIndex: number
   ) => {
