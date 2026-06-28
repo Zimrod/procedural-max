@@ -12,7 +12,7 @@
 //   - What sky elements suit 'morning' vs 'night'?
 //   - What ground and sky colors match timeOfDay?
 
-import { AssetId, assetRegistry } from '../world/assetRegistry';
+import { AssetId } from '../world/assetRegistry';
 import { GROUND_Y_PX, worldXToPx, pxPerWu } from '../world/worldUnits';
 import {
   ScenePrompt,
