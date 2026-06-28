@@ -28,26 +28,49 @@ import {
 // Which assets are eligible per environment and depth layer.
 // Extend as you add more assets to the registry.
 
-const ENVIRONMENT_POOLS: Record<Environment, {
-  background: AssetId[];
-  midground:  AssetId[];
-  foreground: AssetId[];
-}> = {
+const ENVIRONMENT_POOLS: Record<
+  Environment,
+  {
+    background: AssetId[];
+    midground: AssetId[];
+    foreground: AssetId[];
+  }
+> = {
   cityscape: {
-    background: ['building_cbd_a', 'building_cbd_b', 'building_cbd_c', 'building_cbd_d'],
-    midground:  ['tree_a', 'tree_b', 'tree_c', 'tree_pine', 'building_cbd_c', 'building_cbd_d'],
-    foreground: ['bench_a', 'bin_a', 'bicycle', 'tree_a', 'tree_pine'],
+    background: [
+      "building_cbd_a",
+      "building_cbd_b",
+      "building_cbd_c",
+      "building_cbd_d",
+    ],
+    midground: [
+      "tree_a",
+      "tree_b",
+      "tree_c",
+      "tree_pine",
+      "building_cbd_c",
+      "building_cbd_d",
+    ],
+    foreground: [
+      "bench_a",
+      "bin_a",
+      "bicycle",
+      "tree_a",
+      "tree_pine",
+    ],
   },
-  // industrial: {
-  //   background: ['warehouse'],
-  //   midground:  ['warehouse'],
-  //   foreground: ['bin_a'],
-  // },
-  // warehouse: {
-  //   background: ['warehouse'],
-  //   midground:  [],
-  //   foreground: ['bin_a'],
-  // },
+
+  industrial: {
+    background: [],
+    midground: [],
+    foreground: [],
+  },
+
+  warehouse: {
+    background: [],
+    midground: [],
+    foreground: [],
+  },
 };
 
 // ── Sky pools per timeOfDay ───────────────────────────────────────────────────
