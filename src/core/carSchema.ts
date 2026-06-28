@@ -7,7 +7,7 @@
 // y = GROUND_Y_PX so it rolls on the ground line.
 // x starts off-screen left, drives to off-screen right.
 
-import { GROUND_Y_PX, worldXToPx, WORLD_CONFIG } from './world/worldUnits';
+import { GROUND_Y_PX, worldXToPx } from './world/worldUnits';
 import { assetRegistry, scaleForAsset }          from './world/assetRegistry';
 
 // ── Car asset registration (add to assetRegistry.ts) ─────────────────────────
