@@ -18,9 +18,8 @@ export async function POST(req: NextRequest) {
       input: script,
     });
 
-    const audioBuffer = Buffer.from(
-      await speech.arrayBuffer()
-    );
+    const arrayBuffer = await speech.arrayBuffer();
+    const audioBytes = new Uint8Array(arrayBuffer);
 
     const outputPath = path.resolve(
       process.cwd(),
@@ -28,7 +27,7 @@ export async function POST(req: NextRequest) {
       "generated_voiceover.mp3"
     );
 
-    fs.writeFileSync(outputPath, audioBuffer);
+    fs.writeFileSync(outputPath, audioBytes);
 
     return NextResponse.json({
       success: true,
