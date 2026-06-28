@@ -44,8 +44,13 @@ export async function GET() {
         ],
     });
       
+    const content = toneResponse.choices?.[0]?.message?.content;
 
-    const tone = toneResponse.choices[0].message.content.trim().toLowerCase();
+    if (typeof content !== "string") {
+      throw new Error("OpenAI returned an empty response.");
+    }
+
+    const tone = content.trim().toLowerCase();
 
     console.log("Detected Tone:", tone);
 
