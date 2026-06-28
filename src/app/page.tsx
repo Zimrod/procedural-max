@@ -921,7 +921,7 @@ export default function LandingPage() {
               </button>
 
               <RenderAndSaveButtons 
-                rawText={transcription || ""}
+                rawText={transcription?.text || ""}
                 sceneConfig={localConfig || []}
               />
             </div>
