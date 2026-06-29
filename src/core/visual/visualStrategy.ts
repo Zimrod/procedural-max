@@ -9,7 +9,7 @@ import type {
   NarrativeBeat as NarrativeScene,
 } from '../narrative/narrativeAnalyzer';
 import type {
-  CinematicIntentOutput,
+  CinematicDecision,
 } from '../decisionTrees/decisionTree';
 import type {
   CinematicPlan,
@@ -67,7 +67,7 @@ export type VisualStrategyOutput = {
 type VisualStrategyInput = {
   semanticExtractions: SemanticExtraction[];
   narrativeScenes: NarrativeScene[];
-  decisionTreeOutput: CinematicIntentOutput[];
+  decisionTreeOutput: CinematicDecision[];
   cinematicPlans: CinematicPlan[];
 };
 

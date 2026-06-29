@@ -17,7 +17,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export type CinematicDecision = {
   beatId: string;
-
+  sourceSentenceId: string;
   visualStrategy:
     | 'title_card'
     | 'process_flow'
@@ -138,6 +138,9 @@ OUTPUT JSON ONLY:
 
   return {
     beatId: beat.beatId,
+
+    sourceSentenceId: 
+      beat.sourceSentenceId,
 
     visualStrategy:
       parsed.visualStrategy,
