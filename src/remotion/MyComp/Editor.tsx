@@ -7,55 +7,6 @@ type Track = {
   name: string;
   items: Item[];
 };
- 
-// export const Editor = () => {
-//   const [tracks, setTracks] = useState<Track[]>([
-//     {
-//       name: "Captions",
-//       items: [
-//         {
-//           type: "captions",
-//           id: "captions-1",
-//           from: 0,
-//           durationInFrames: 300,
-//           captions: transcription.words, // from state
-//           tone: "financial",
-//         },
-//       ],
-//     },
-//     {
-//       name: "Background",
-//       items: [
-//         {
-//           type: "solid",
-//           id: "bg-1",
-//           from: 0,
-//           durationInFrames: 600,
-//           color: "#ffffff",
-//         },
-//       ],
-//     },
-//   ]);
- 
-//   const inputProps = useMemo(() => {
-//     return {
-//       tracks,
-//     };
-//   }, [tracks]);
- 
-//   return (
-//     <>
-//       <Player
-//         component={Main}
-//         inputProps={{ tracks }}
-//         durationInFrames={600}
-//         compositionWidth={1080}
-//         compositionHeight={1920}
-//         fps={30}
-//       />
-//     </>
-//   );
-// };
 
 // Editor.tsx
 export const Editor = () => {
@@ -113,7 +64,7 @@ export const Editor = () => {
         />
         
         {/* Your existing UI for uploading Lottie files */}
-        <button onClick={() => addLottieAnimation(catsKissingLottie, 'cats-kissing.json')}>
+        <button>
           Add Cats Kissing Animation
         </button>
         
