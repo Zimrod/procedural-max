@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   AbsoluteFill,
   Audio,
-  Sequence,
   staticFile,
   delayRender,
   continueRender,
