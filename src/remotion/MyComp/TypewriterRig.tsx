@@ -1,6 +1,6 @@
 // src/remotion/MyComp/TypewriterRig.tsx
 import React, { useMemo } from 'react';
-import { useCurrentFrame, useVideoConfig, AbsoluteFill } from 'remotion';
+import { useCurrentFrame, AbsoluteFill } from 'remotion';
 
 type Props = {
   text?: string;
@@ -26,7 +26,6 @@ export const TypewriterRig: React.FC<Props> = ({
   durationInFrames = 120, // 💡 Default reference total running sequence size
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
 
   // Guard: if text is not a string or empty, just show empty box
   const safeText = typeof text === 'string' ? text : '';
