@@ -54,10 +54,6 @@ export const CalendarRig: React.FC<Props> = ({
     delay: 15, // Delay execution by 0.5 seconds so layout settles first
   });
 
-  // Split sequence transitions cleanly across the timeline
-  const line1Progress = interpolate(crossSpring, [0, 0.5], [0, 1], { extrapolateRight: "clamp" });
-  const line2Progress = interpolate(crossSpring, [0.5, 1], [0, 1], { extrapolateRight: "clamp" });
-
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
   const cellSize = width / 9;
 
