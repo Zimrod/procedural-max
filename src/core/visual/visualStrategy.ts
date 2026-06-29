@@ -127,7 +127,7 @@ function chooseVisualLanguage(
   if (
     hasFinance &&
     // 🚀 Fallback safety guard since cinematicPurpose isn't an explicit field on NarrativeBeat
-    ((scene as any).cinematicPurpose === 'build_trust')
+    (scene as any).cinematicPurpose === 'build_trust'
   ) {
     return {
       strategy: 'valuation_cinematic',
