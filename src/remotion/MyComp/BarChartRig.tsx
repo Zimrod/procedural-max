@@ -74,7 +74,6 @@ export const BarChartRig: React.FC<Props> = ({
   // 2. Timing Definitions (Total 3 seconds for intro)
   const introDuration = fps * 1.5;
   const axisDrawDuration = fps * 2; // 2 seconds for lines
-  const labelPopDuration = fps * 1; // 1 second for labels
   const barsStartFrame = introDuration;
 
   // 3. Axis Animation (Total length = height + width)
