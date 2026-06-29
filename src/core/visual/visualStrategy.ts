@@ -78,7 +78,7 @@ function getIdeaMap(ideas: SemanticIdea[]) {
 
 function getLeadIdeas(
   extraction: SemanticExtraction,
-  plan: CinematicPlan
+  plan: any
 ): SemanticIdea[] {
   const ideaMap = getIdeaMap(
     extraction.semanticIdeas
@@ -102,7 +102,7 @@ function chooseVisualLanguage(
   extraction: SemanticExtraction,
   scene: NarrativeScene,
   intent: CinematicIntentOutput,
-  plan: CinematicPlan
+  plan: any
 ): VisualStrategyOutput['visualLanguage'] {
   const selectedIdeas = getLeadIdeas(
     extraction,
@@ -211,7 +211,7 @@ function chooseVisualLanguage(
 function chooseWidgetSelection(
   language: VisualStrategyOutput['visualLanguage']['strategy'],
   extraction: SemanticExtraction,
-  plan: CinematicPlan
+  plan: any
 ): VisualStrategyOutput['widgetSelection'] {
   switch (language) {
     case 'title_card':
@@ -275,7 +275,7 @@ function chooseWidgetSelection(
 
 function buildProcessFlowSteps(
   extraction: SemanticExtraction,
-  plan: CinematicPlan
+  plan: any
 ): string[] {
   const ideaMap = getIdeaMap(
     extraction.semanticIdeas
@@ -300,7 +300,7 @@ function buildWidgetProps(
   strategy: VisualStrategyOutput['visualLanguage']['strategy'],
   selection: VisualStrategyOutput['widgetSelection'],
   extraction: SemanticExtraction,
-  plan: CinematicPlan
+  plan: any
 ): Record<string, any> {
   const primaryRegistry =
     widgetRegistry[selection.primaryType];
