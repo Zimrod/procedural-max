@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import type { WidgetType } from '../widgetRegistry';
+import type { WidgetType } from '../widgetRegistry-all-widgets';
 import type { VisualStrategyOutput } from '../visual/visualStrategy';
 import {
   enrichSegmentWithAI,

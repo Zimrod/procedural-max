@@ -3,7 +3,7 @@ import type {
   WidgetCategory as TaxonomyWidgetCategory,
   WidgetIntent,
   WidgetType as TaxonomyWidgetType,
-} from './taxonomy/widgetTaxonomy';
+} from './taxonomy/widgetTaxonomy-mixed-widgets';
 
 export type WidgetCategory = TaxonomyWidgetCategory;
 export type WidgetType = TaxonomyWidgetType;

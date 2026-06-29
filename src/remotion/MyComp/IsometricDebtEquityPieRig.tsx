@@ -114,7 +114,7 @@ export const IsometricDebtEquityPieRig: React.FC<IsometricDebtEquityPieProps> = 
           </filter>
           <filter id="pedestalGlow" x="-30%" y="-30%" width="160%" height="160%">
             <feGaussianBlur stdDeviation="25" result="blur" />
-          </feMerge>
+          </filter>
         </defs>
       </svg>
 

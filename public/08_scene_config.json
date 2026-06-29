@@ -2,80 +2,75 @@
   {
     "widget": "TITLE_CARD",
     "startFrame": 0,
-    "durationFrames": 91,
+    "durationFrames": 152,
     "props": {
-      "title": "Struggling to scale your business efficiently?",
-      "subtitle": "STRUGGLING TO SCALE YOUR...",
-      "durationInFrames": 51
-    }
-  },
-  {
-    "widget": "SEQUENTIAL_ELASTIC_TEXT",
-    "startFrame": 91,
-    "durationFrames": 123,
-    "props": {
-      "textToAnimate": "Manual processes waste 30%  of employee time and slow growth.",
-      "durationInFrames": 63
-    }
-  },
-  {
-    "widget": "BULLET_POINTS",
-    "startFrame": 214,
-    "durationFrames": 134,
-    "props": {
-      "items": [
-        "Missed deadlines and lost data cost companies over $200 annually.",
-        "Fully calibrated cross-platform configurations",
-        "Deterministic layout calculations wrapper"
-      ],
-      "durationInFrames": 74
+      "title": "Struggling to scale? 73%  of startups lose time on manual workflows.",
+      "subtitle": "STRUGGLING TO SCALE? 73...",
+      "durationInFrames": 92
     }
   },
   {
     "widget": "TEXT_ANIMATIONS_WORD_HIGHLIGHT",
-    "startFrame": 348,
-    "durationFrames": 100,
+    "startFrame": 152,
+    "durationFrames": 128,
     "props": {
-      "text": "MEET NIMBUS SAAS BUILT...",
-      "highlightWord": "Meet",
-      "durationInFrames": 60
+      "text": "OVER 18 TRILLION WASTED...",
+      "highlightWord": "Over",
+      "durationInFrames": 68
     }
   },
   {
-    "widget": "TEXT",
-    "startFrame": 448,
-    "durationFrames": 124,
+    "widget": "BULLET_POINTS",
+    "startFrame": 280,
+    "durationFrames": 160,
     "props": {
-      "text": "AUTOMATE TASKS CENTRALIZE DATA...",
-      "durationInFrames": 64
+      "items": [
+        "Introducing HyperCloud, your all in one SaaS accelerator. Automate processes in minutes.",
+        "Fully calibrated cross-platform configurations",
+        "Deterministic layout calculations wrapper"
+      ],
+      "durationInFrames": 100
     }
   },
   {
     "widget": "TYPEWRITER",
-    "startFrame": 572,
-    "durationFrames": 144,
+    "startFrame": 440,
+    "durationFrames": 104,
     "props": {
-      "text": "CUT BUSY WORK BY...",
-      "durationInFrames": 84
+      "text": "CONNECT DATA STREAMLINE OPERATIONS...",
+      "durationInFrames": 64
     }
   },
   {
-    "widget": "SVG_DRAW_IN_TEXT",
-    "startFrame": 715,
-    "durationFrames": 115,
+    "widget": "BULLET_POINTS",
+    "startFrame": 544,
+    "durationFrames": 159,
     "props": {
-      "textToAnimate": "Slash operation",
-      "durationInFrames": 75
+      "items": [
+        "Clients report 45%  faster onboarding and a 30%  drop in operating costs.",
+        "Fully calibrated cross-platform configurations",
+        "Deterministic layout calculations wrapper"
+      ],
+      "durationInFrames": 99
+    }
+  },
+  {
+    "widget": "SEQUENTIAL_ELASTIC_TEXT",
+    "startFrame": 703,
+    "durationFrames": 123,
+    "props": {
+      "textToAnimate": "Hundreds scale faster every quarter. Ready to transform your workflow?",
+      "durationInFrames": 63
     }
   },
   {
     "widget": "TITLE_CARD",
-    "startFrame": 830,
-    "durationFrames": 140,
+    "startFrame": 826,
+    "durationFrames": 84,
     "props": {
-      "title": "Ready to transform your workflow? Start your free trial with Nimbus today.",
-      "subtitle": "READY TO TRANSFORM YOUR...",
-      "durationInFrames": 80
+      "title": "Start your HyperCloud trial today.",
+      "subtitle": "START YOUR HYPERCLOUD TRIAL TODAY",
+      "durationInFrames": 44
     }
   }
 ]

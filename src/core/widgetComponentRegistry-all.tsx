@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { WidgetType } from './widgetRegistry';
+import { WidgetType } from './widgetRegistry-all-widgets';
 
 import { WaterfallChartRig } from '../remotion/MyComp/WaterfallChartRig';
 import { MultiAreaChartRig } from '../remotion/MyComp/MultiAreaChartRig';

@@ -18,7 +18,7 @@ import {
   widgetRegistry,
   type WidgetCategory,
   type WidgetType,
-} from '../widgetRegistry';
+} from '../widgetRegistry-all-widgets';
 
 export type VisualStrategyOutput = {
   sceneId: string;

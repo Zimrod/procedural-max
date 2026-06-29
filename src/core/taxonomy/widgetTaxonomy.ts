@@ -19,7 +19,7 @@ export const WIDGET_TAXONOMY = {
 
 export type WidgetCategory = keyof typeof WIDGET_TAXONOMY;
 export type WidgetType = {
-  [K in WidgetCategory]: typeof WIDGET_TAXONOMY[K]['types'][keyof typeof WIDGET_TAXONOMY[K]['types']]
+  [K in WidgetCategory]: keyof typeof WIDGET_TAXONOMY[K]['types']
 }[WidgetCategory];
 
 export type WidgetIntent =

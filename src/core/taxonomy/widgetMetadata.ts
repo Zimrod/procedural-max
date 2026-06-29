@@ -1,5 +1,5 @@
 // src/core/taxonomy/widgetMetadata.ts
-import { widgetRegistry, WidgetType } from '../widgetRegistry';
+import { widgetRegistry, WidgetType } from '../widgetRegistry-all-widgets';
 
 export type WidgetMetadata = {
   type: WidgetType;

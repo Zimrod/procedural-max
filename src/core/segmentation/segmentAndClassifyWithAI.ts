@@ -1,8 +1,17 @@
-import type { WidgetType } from '../widgetRegistry';
+import type { WidgetType } from '../widgetRegistry-all-widgets';
 import type { VisualStrategyOutput } from '../visual/visualStrategy';
 
+type RigId =
+  | WidgetType
+  | 'PROCESS_FLOW'
+  | 'COUNTRY_FOCUS'
+  | 'VALUATION'
+  | 'KPI_CARD'
+  | 'COUNTRY_ROUTE'
+  | 'COUNTRY_DROP_PIN';
+
 export type RigSelection = {
-  rigId: WidgetType;
+  rigId: RigId;
   confidence: number;
   reasoning: string;
   props: Record<string, any>;
@@ -11,7 +20,7 @@ export type RigSelection = {
 const VISUAL_STRATEGY_RIG_OVERRIDES: Partial<
   Record<
     VisualStrategyOutput['visualLanguage']['strategy'],
-    WidgetType
+    RigId
   >
 > = {
   data_highlight: 'STAT_REVEAL',
@@ -55,8 +64,8 @@ export async function enrichSegmentWithAI(
 
 function selectRigId(
   strategy: VisualStrategyOutput,
-  preferred: WidgetType
-): WidgetType {
+  preferred: RigId
+): RigId {
   if (
     strategy.visualLanguage.strategy ===
       'data_highlight' &&
@@ -86,8 +95,8 @@ function selectRigId(
 
 function computeConfidence(
   strategy: VisualStrategyOutput,
-  rigId: WidgetType,
-  override?: WidgetType
+  rigId: RigId,
+  override?: RigId
 ): number {
   let confidence = 0.8;
 
@@ -114,20 +123,20 @@ function computeConfidence(
 
 function buildReasoning(
   strategy: VisualStrategyOutput,
-  rigId: WidgetType,
-  override?: WidgetType
+  rigId: RigId,
+  override?: RigId
 ): string {
   const overrideNote =
     override && override !== strategy.widgetSelection.primaryType
-      ? ` Strategy override preferred '${override}' for the '${strategy.visualLanguage.strategy}' visual language.`
+      ? ' A different presentation was selected to better match the scene.'
       : '';
 
-  return `Rig selection resolved '${strategy.widgetSelection.primaryType}' into '${rigId}' for scene '${strategy.sceneId}'.${overrideNote} Props were normalized from visual strategy output so the renderer can mount the chosen rig directly.`;
+  return `Rig selection resolved the primary presentation into a compatible render target for scene '${strategy.sceneId}'.${overrideNote} Props were normalized from visual strategy output so the renderer can mount the chosen rig directly.`;
 }
 
 function normalizeRigProps(
   strategy: VisualStrategyOutput,
-  rigId: WidgetType
+  rigId: RigId
 ): Record<string, any> {
   const baseProps = {
     ...strategy.widgetProps,
