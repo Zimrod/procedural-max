@@ -49,7 +49,7 @@ export const TextRig: React.FC<Props> = ({
   const [svgContents, setSvgContents] = useState<Record<string, string>>({});
   const [ready, setReady] = useState(false);
 
-  const spaceWidth = spaceWidthProp ?? letterHeight * 0.5;
+  // const spaceWidth = spaceWidthProp ?? letterHeight * 0.5;
   const effectiveLineHeight = lineHeight ?? letterHeight * 1.2;
 
   // Load SVGs
