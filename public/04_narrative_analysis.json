@@ -2,301 +2,226 @@
   {
     "beatId": "beat_1",
     "sourceSentenceId": "sentence-1",
-    "sentenceText": "Struggling to scale?",
+    "sentenceText": "Over 60%  of startups lose revenue to manual processes.",
     "timing": {
       "startSec": 0,
-      "endSec": 0.9599999785423279,
+      "endSec": 3.319999933242798,
       "startFrame": 0,
-      "endFrame": 29,
-      "durationFrames": 29
+      "endFrame": 100,
+      "durationFrames": 100
     },
     "intent": "concept",
     "narrativeRole": "intro",
     "selectedIdeas": [
       {
         "id": "idea_01",
-        "phrase": "struggling to scale",
-        "type": "growth",
-        "importance": 1,
-        "visualPotential": 0.7
-      }
-    ],
-    "emotionalIntensity": 0.8,
-    "reasoning": "Selected primary structural focus \"struggling to scale\" (growth) out of 1 potential semantic tags."
-  },
-  {
-    "beatId": "beat_2",
-    "sourceSentenceId": "sentence-2",
-    "sentenceText": "73%  of startups lose time on manual workflows.",
-    "timing": {
-      "startSec": 1.559999942779541,
-      "endSec": 4.480000019073486,
-      "startFrame": 46,
-      "endFrame": 135,
-      "durationFrames": 89
-    },
-    "intent": "process",
-    "narrativeRole": "intro",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "73% of startups lose time",
-        "type": "process inefficiency",
-        "importance": 0.98,
-        "visualPotential": 0.9
-      }
-    ],
-    "emotionalIntensity": 0.8,
-    "reasoning": "Selected primary structural focus \"73% of startups lose time\" (process inefficiency) out of 2 potential semantic tags."
-  },
-  {
-    "beatId": "beat_3",
-    "sourceSentenceId": "sentence-3",
-    "sentenceText": "Over $1.8 trillion wasted every year on inefficiency.",
-    "timing": {
-      "startSec": 5.099999904632568,
-      "endSec": 8.5600004196167,
-      "startFrame": 152,
-      "endFrame": 257,
-      "durationFrames": 105
-    },
-    "intent": "capital_structure",
-    "narrativeRole": "intro",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "Over $1.8 trillion wasted annually",
-        "type": "finance",
-        "importance": 1,
-        "visualPotential": 0.95
-      }
-    ],
-    "emotionalIntensity": 0.8,
-    "reasoning": "Selected primary structural focus \"Over $1.8 trillion wasted annually\" (finance) out of 2 potential semantic tags."
-  },
-  {
-    "beatId": "beat_4",
-    "sourceSentenceId": "sentence-4",
-    "sentenceText": "Introducing HyperCloud, your all in one SaaS accelerator.",
-    "timing": {
-      "startSec": 9.34000015258789,
-      "endSec": 12.180000305175781,
-      "startFrame": 280,
-      "endFrame": 366,
-      "durationFrames": 86
-    },
-    "intent": "concept",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_02",
-        "phrase": "all in one SaaS accelerator",
-        "type": "product_offering",
-        "importance": 0.85,
-        "visualPotential": 0.9
-      }
-    ],
-    "emotionalIntensity": 0.65,
-    "reasoning": "Selected primary structural focus \"all in one SaaS accelerator\" (product_offering) out of 3 potential semantic tags."
-  },
-  {
-    "beatId": "beat_5",
-    "sourceSentenceId": "sentence-5",
-    "sentenceText": "Automate processes in minutes.",
-    "timing": {
-      "startSec": 12.880000114440918,
-      "endSec": 14.100000381469727,
-      "startFrame": 386,
-      "endFrame": 424,
-      "durationFrames": 38
-    },
-    "intent": "concept",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "automate processes",
-        "type": "technology",
-        "importance": 0.95,
-        "visualPotential": 0.9
-      }
-    ],
-    "emotionalIntensity": 0.7,
-    "reasoning": "Selected primary structural focus \"automate processes\" (technology) out of 2 potential semantic tags."
-  },
-  {
-    "beatId": "beat_6",
-    "sourceSentenceId": "sentence-6",
-    "sentenceText": "Connect data.",
-    "timing": {
-      "startSec": 14.680000305175781,
-      "endSec": 15.079999923706055,
-      "startFrame": 440,
-      "endFrame": 453,
-      "durationFrames": 13
-    },
-    "intent": "process",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "connect data",
-        "type": "process",
-        "importance": 0.8,
-        "visualPotential": 0.7
-      }
-    ],
-    "emotionalIntensity": 0.3,
-    "reasoning": "Selected primary structural focus \"connect data\" (process) out of 2 potential semantic tags."
-  },
-  {
-    "beatId": "beat_7",
-    "sourceSentenceId": "sentence-7",
-    "sentenceText": "Streamline operations.",
-    "timing": {
-      "startSec": 15.65999984741211,
-      "endSec": 16.280000686645508,
-      "startFrame": 469,
-      "endFrame": 489,
-      "durationFrames": 20
-    },
-    "intent": "process",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "streamline operations",
-        "type": "process",
-        "importance": 0.92,
-        "visualPotential": 0.72
-      }
-    ],
-    "emotionalIntensity": 0.4,
-    "reasoning": "Selected primary structural focus \"streamline operations\" (process) out of 1 potential semantic tags."
-  },
-  {
-    "beatId": "beat_8",
-    "sourceSentenceId": "sentence-8",
-    "sentenceText": "Boost productivity.",
-    "timing": {
-      "startSec": 16.65999984741211,
-      "endSec": 17.18000030517578,
-      "startFrame": 499,
-      "endFrame": 516,
-      "durationFrames": 17
-    },
-    "intent": "process",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "Boost productivity",
-        "type": "process",
-        "importance": 1,
-        "visualPotential": 0.7
-      }
-    ],
-    "emotionalIntensity": 0.55,
-    "reasoning": "Selected primary structural focus \"Boost productivity\" (process) out of 1 potential semantic tags."
-  },
-  {
-    "beatId": "beat_9",
-    "sourceSentenceId": "sentence-9",
-    "sentenceText": "Clients report 45%  faster onboarding and a 30%  drop in operating costs.",
-    "timing": {
-      "startSec": 18.139999389648438,
-      "endSec": 22.68000030517578,
-      "startFrame": 544,
-      "endFrame": 681,
-      "durationFrames": 137
-    },
-    "intent": "process",
-    "narrativeRole": "middle",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "45% faster onboarding",
-        "type": "process_improvement",
+        "phrase": "over 60% of startups",
+        "type": "business impact",
         "importance": 0.9,
         "visualPotential": 0.8
       }
     ],
     "emotionalIntensity": 0.7,
-    "reasoning": "Selected primary structural focus \"45% faster onboarding\" (process_improvement) out of 3 potential semantic tags."
+    "reasoning": "Selected primary structural focus \"over 60% of startups\" (business impact) out of 3 potential semantic tags."
   },
   {
-    "beatId": "beat_10",
-    "sourceSentenceId": "sentence-10",
-    "sentenceText": "Hundreds scale faster every quarter.",
+    "beatId": "beat_2",
+    "sourceSentenceId": "sentence-2",
+    "sentenceText": "Managing subscriptions wastes 10 plus hours weekly.",
     "timing": {
-      "startSec": 23.440000534057617,
-      "endSec": 25.040000915527344,
-      "startFrame": 703,
-      "endFrame": 752,
-      "durationFrames": 49
+      "startSec": 3.9200000762939453,
+      "endSec": 6.199999809265137,
+      "startFrame": 117,
+      "endFrame": 186,
+      "durationFrames": 69
+    },
+    "intent": "process",
+    "narrativeRole": "intro",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "phrase": "managing subscriptions",
+        "type": "process",
+        "importance": 0.95,
+        "visualPotential": 0.8
+      }
+    ],
+    "emotionalIntensity": 0.8,
+    "reasoning": "Selected primary structural focus \"managing subscriptions\" (process) out of 3 potential semantic tags."
+  },
+  {
+    "beatId": "beat_3",
+    "sourceSentenceId": "sentence-3",
+    "sentenceText": "Errors, costly.",
+    "timing": {
+      "startSec": 7,
+      "endSec": 7.760000228881836,
+      "startFrame": 210,
+      "endFrame": 233,
+      "durationFrames": 23
+    },
+    "intent": "capital_structure",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_02",
+        "phrase": "costly",
+        "type": "finance",
+        "importance": 0.8,
+        "visualPotential": 0.75
+      }
+    ],
+    "emotionalIntensity": 0.85,
+    "reasoning": "Selected primary structural focus \"costly\" (finance) out of 2 potential semantic tags."
+  },
+  {
+    "beatId": "beat_4",
+    "sourceSentenceId": "sentence-4",
+    "sentenceText": "Introducing CloudSync SaaS, automation for your billing, analytics, and renewals.",
+    "timing": {
+      "startSec": 8.479999542236328,
+      "endSec": 12.600000381469727,
+      "startFrame": 254,
+      "endFrame": 379,
+      "durationFrames": 125
     },
     "intent": "concept",
     "narrativeRole": "middle",
     "selectedIdeas": [
       {
         "id": "idea_01",
-        "phrase": "Hundreds scale faster",
-        "type": "growth",
+        "phrase": "CloudSync SaaS",
+        "type": "technology",
+        "importance": 0.9,
+        "visualPotential": 0.7
+      }
+    ],
+    "emotionalIntensity": 0.5,
+    "reasoning": "Selected primary structural focus \"CloudSync SaaS\" (technology) out of 3 potential semantic tags."
+  },
+  {
+    "beatId": "beat_5",
+    "sourceSentenceId": "sentence-5",
+    "sentenceText": "Set up in minutes, no coding.",
+    "timing": {
+      "startSec": 12.819999694824219,
+      "endSec": 14.399999618530273,
+      "startFrame": 384,
+      "endFrame": 432,
+      "durationFrames": 48
+    },
+    "intent": "process",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "phrase": "Set up in minutes",
+        "type": "process",
         "importance": 0.95,
         "visualPotential": 0.85
       }
     ],
-    "emotionalIntensity": 0.65,
-    "reasoning": "Selected primary structural focus \"Hundreds scale faster\" (growth) out of 2 potential semantic tags."
+    "emotionalIntensity": 0.7,
+    "reasoning": "Selected primary structural focus \"Set up in minutes\" (process) out of 2 potential semantic tags."
   },
   {
-    "beatId": "beat_11",
-    "sourceSentenceId": "sentence-11",
-    "sentenceText": "Ready to transform your workflow?",
+    "beatId": "beat_6",
+    "sourceSentenceId": "sentence-6",
+    "sentenceText": "Customers report 40%  faster invoicing and 99.9%  accuracy.",
     "timing": {
-      "startSec": 25.760000228881836,
-      "endSec": 27,
-      "startFrame": 772,
-      "endFrame": 810,
-      "durationFrames": 38
+      "startSec": 14.9399995803833,
+      "endSec": 19.079999923706055,
+      "startFrame": 448,
+      "endFrame": 573,
+      "durationFrames": 125
+    },
+    "intent": "process",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "phrase": "40% faster invoicing",
+        "type": "process_efficiency",
+        "importance": 0.9,
+        "visualPotential": 0.85
+      }
+    ],
+    "emotionalIntensity": 0.7,
+    "reasoning": "Selected primary structural focus \"40% faster invoicing\" (process_efficiency) out of 3 potential semantic tags."
+  },
+  {
+    "beatId": "beat_7",
+    "sourceSentenceId": "sentence-7",
+    "sentenceText": "Boost retention rates by up to 25%.",
+    "timing": {
+      "startSec": 19.84000015258789,
+      "endSec": 22.079999923706055,
+      "startFrame": 595,
+      "endFrame": 663,
+      "durationFrames": 68
+    },
+    "intent": "process",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "phrase": "Boost retention rates",
+        "type": "process",
+        "importance": 0.9,
+        "visualPotential": 0.8
+      }
+    ],
+    "emotionalIntensity": 0.7,
+    "reasoning": "Selected primary structural focus \"Boost retention rates\" (process) out of 2 potential semantic tags."
+  },
+  {
+    "beatId": "beat_8",
+    "sourceSentenceId": "sentence-8",
+    "sentenceText": "Scale smarter.",
+    "timing": {
+      "startSec": 22.079999923706055,
+      "endSec": 22.8799991607666,
+      "startFrame": 662,
+      "endFrame": 687,
+      "durationFrames": 25
+    },
+    "intent": "concept",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "phrase": "Scale smarter",
+        "type": "growth_strategy",
+        "importance": 0.98,
+        "visualPotential": 0.9
+      }
+    ],
+    "emotionalIntensity": 0.75,
+    "reasoning": "Selected primary structural focus \"Scale smarter\" (growth_strategy) out of 3 potential semantic tags."
+  },
+  {
+    "beatId": "beat_9",
+    "sourceSentenceId": "sentence-9",
+    "sentenceText": "Start your free trial with CloudSync now.",
+    "timing": {
+      "startSec": 23.5,
+      "endSec": 25.200000762939453,
+      "startFrame": 705,
+      "endFrame": 757,
+      "durationFrames": 52
     },
     "intent": "process",
     "narrativeRole": "outro",
     "selectedIdeas": [
       {
         "id": "idea_01",
-        "phrase": "transform your workflow",
-        "type": "process/transformation",
-        "importance": 1,
-        "visualPotential": 0.9
-      }
-    ],
-    "emotionalIntensity": 0.88,
-    "reasoning": "Selected primary structural focus \"transform your workflow\" (process/transformation) out of 2 potential semantic tags."
-  },
-  {
-    "beatId": "beat_12",
-    "sourceSentenceId": "sentence-12",
-    "sentenceText": "Start your HyperCloud trial today.",
-    "timing": {
-      "startSec": 27.540000915527344,
-      "endSec": 28.959999084472656,
-      "startFrame": 826,
-      "endFrame": 869,
-      "durationFrames": 43
-    },
-    "intent": "concept",
-    "narrativeRole": "outro",
-    "selectedIdeas": [
-      {
-        "id": "idea_01",
-        "phrase": "HyperCloud trial",
-        "type": "technology",
+        "phrase": "start free trial",
+        "type": "process",
         "importance": 0.95,
-        "visualPotential": 0.8
+        "visualPotential": 0.7
       }
     ],
     "emotionalIntensity": 0.7,
-    "reasoning": "Selected primary structural focus \"HyperCloud trial\" (technology) out of 3 potential semantic tags."
+    "reasoning": "Selected primary structural focus \"start free trial\" (process) out of 3 potential semantic tags."
   }
 ]

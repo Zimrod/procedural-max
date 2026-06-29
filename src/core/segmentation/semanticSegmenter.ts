@@ -1,3 +1,4 @@
+// src/core/segmentation/semanticSegmenter.ts
 import fs from 'fs';
 import path from 'path';
 
@@ -11,8 +12,9 @@ import {
 export type SceneConfigItem = {
   sceneId: string;
   sourceSentenceId: string;
-  widget: WidgetType;
-  rigId: WidgetType;
+  // 🚀 Change these from WidgetType to open string types to decouple from named widget configurations
+  widget: WidgetType | string;
+  rigId: WidgetType | string;
   startSec: number;
   endSec: number;
   startFrame: number;
@@ -48,8 +50,8 @@ async function buildSceneConfigItem(
     sceneId: scene.sceneId,
     sourceSentenceId:
       scene.sourceSentenceId,
-    widget: rigSelection.rigId,
-    rigId: rigSelection.rigId,
+    widget: rigSelection.rigId, // ✨ Compiles cleanly now without matching explicit registers
+    rigId: rigSelection.rigId,  // ✨ Compiles cleanly now without matching explicit registers
     startSec: scene.timing.startSec,
     endSec: scene.timing.endSec,
     startFrame: scene.timing.startFrame,

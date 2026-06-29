@@ -2,75 +2,71 @@
   {
     "widget": "TITLE_CARD",
     "startFrame": 0,
-    "durationFrames": 152,
+    "durationFrames": 117,
     "props": {
-      "title": "Struggling to scale? 73%  of startups lose time on manual workflows.",
-      "subtitle": "STRUGGLING TO SCALE? 73...",
-      "durationInFrames": 92
+      "title": "Over 60%  of startups lose revenue to manual processes.",
+      "subtitle": "OVER 60 OF STARTUPS...",
+      "durationInFrames": 77
+    }
+  },
+  {
+    "widget": "BULLET_POINTS",
+    "startFrame": 117,
+    "durationFrames": 137,
+    "props": {
+      "items": [
+        "Managing subscriptions wastes 10 plus hours weekly. Errors, costly.",
+        "Fully calibrated cross-platform configurations",
+        "Deterministic layout calculations wrapper"
+      ],
+      "durationInFrames": 77
+    }
+  },
+  {
+    "widget": "SVG_DRAW_IN_TEXT",
+    "startFrame": 254,
+    "durationFrames": 130,
+    "props": {
+      "textToAnimate": "Introducing Clo",
+      "durationInFrames": 70
+    }
+  },
+  {
+    "widget": "TEXT",
+    "startFrame": 384,
+    "durationFrames": 64,
+    "props": {
+      "text": "SET UP IN MINUTES...",
+      "durationInFrames": 24
+    }
+  },
+  {
+    "widget": "TERMINAL_TYPING_TEXT",
+    "startFrame": 448,
+    "durationFrames": 147,
+    "props": {
+      "textToAnimate": "Customers report 40%  faster invoicing and 99.9%  accuracy.",
+      "terminalTitle": "bash",
+      "durationInFrames": 87
     }
   },
   {
     "widget": "TEXT_ANIMATIONS_WORD_HIGHLIGHT",
-    "startFrame": 152,
-    "durationFrames": 128,
+    "startFrame": 595,
+    "durationFrames": 110,
     "props": {
-      "text": "OVER 18 TRILLION WASTED...",
-      "highlightWord": "Over",
-      "durationInFrames": 68
-    }
-  },
-  {
-    "widget": "BULLET_POINTS",
-    "startFrame": 280,
-    "durationFrames": 160,
-    "props": {
-      "items": [
-        "Introducing HyperCloud, your all in one SaaS accelerator. Automate processes in minutes.",
-        "Fully calibrated cross-platform configurations",
-        "Deterministic layout calculations wrapper"
-      ],
-      "durationInFrames": 100
+      "text": "BOOST RETENTION RATES BY...",
+      "highlightWord": "Boost",
+      "durationInFrames": 70
     }
   },
   {
     "widget": "TYPEWRITER",
-    "startFrame": 440,
-    "durationFrames": 104,
+    "startFrame": 705,
+    "durationFrames": 85,
     "props": {
-      "text": "CONNECT DATA STREAMLINE OPERATIONS...",
-      "durationInFrames": 64
-    }
-  },
-  {
-    "widget": "BULLET_POINTS",
-    "startFrame": 544,
-    "durationFrames": 159,
-    "props": {
-      "items": [
-        "Clients report 45%  faster onboarding and a 30%  drop in operating costs.",
-        "Fully calibrated cross-platform configurations",
-        "Deterministic layout calculations wrapper"
-      ],
-      "durationInFrames": 99
-    }
-  },
-  {
-    "widget": "SEQUENTIAL_ELASTIC_TEXT",
-    "startFrame": 703,
-    "durationFrames": 123,
-    "props": {
-      "textToAnimate": "Hundreds scale faster every quarter. Ready to transform your workflow?",
-      "durationInFrames": 63
-    }
-  },
-  {
-    "widget": "TITLE_CARD",
-    "startFrame": 826,
-    "durationFrames": 84,
-    "props": {
-      "title": "Start your HyperCloud trial today.",
-      "subtitle": "START YOUR HYPERCLOUD TRIAL TODAY",
-      "durationInFrames": 44
+      "text": "START YOUR FREE TRIAL...",
+      "durationInFrames": 45
     }
   }
 ]

@@ -1,13 +1,13 @@
 [
   {
     "sentenceId": "sentence-1",
-    "sentenceText": "Struggling to scale?",
+    "sentenceText": "Over 60%  of startups lose revenue to manual processes.",
     "timing": {
       "startSec": 0,
-      "endSec": 0.9599999785423279,
+      "endSec": 3.319999933242798,
       "startFrame": 0,
-      "endFrame": 29,
-      "durationFrames": 29
+      "endFrame": 100,
+      "durationFrames": 100
     },
     "narrativePosition": {
       "section": "intro",
@@ -16,533 +16,89 @@
     "semanticIdeas": [
       {
         "id": "idea_01",
-        "type": "growth",
-        "phrase": "struggling to scale",
-        "meaning": "Difficulty expanding operations or increasing impact",
-        "importance": 1,
-        "emotionalWeight": 0.8,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.85,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 1
-      }
-    ],
-    "semanticRelationships": [],
-    "semanticSummary": {
-      "dominantTheme": "Challenge of growth",
-      "complexityScore": 0.5,
-      "emotionalIntensity": 0.8,
-      "visualDensity": 0.7,
-      "recommendedMaxVisualIdeas": 1
-    },
-    "reasoning": "The sentence is a provocative, emotionally weighted question highlighting the central challenge of scaling—implying latent demand, ambition, or potential thwarted by obstacles. All semantic ideas are tightly connected, and 'struggling to scale' functions as a unified, abstract concept, well-suited for cinematic introduction. No clear secondary/supporting concepts appear within the phrase.",
-    "confidence": 0.99
-  },
-  {
-    "sentenceId": "sentence-2",
-    "sentenceText": "73%  of startups lose time on manual workflows.",
-    "timing": {
-      "startSec": 1.559999942779541,
-      "endSec": 4.480000019073486,
-      "startFrame": 46,
-      "endFrame": 135,
-      "durationFrames": 89
-    },
-    "narrativePosition": {
-      "section": "intro",
-      "progressionWeight": 0.09090909090909091
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "process inefficiency",
-        "phrase": "73% of startups lose time",
-        "meaning": "A substantial majority of startups are experiencing lost productivity",
-        "importance": 0.98,
-        "emotionalWeight": 0.8,
-        "visualPotential": 0.9,
-        "abstractionLevel": 0.2,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.95
-      },
-      {
-        "id": "idea_02",
-        "type": "technology/process",
-        "phrase": "manual workflows",
-        "meaning": "Outdated, non-automated business processes causing inefficiency",
-        "importance": 0.84,
-        "emotionalWeight": 0.6,
-        "visualPotential": 0.85,
-        "abstractionLevel": 0.3,
-        "parentRelationship": "idea_01",
-        "cinematicRole": "secondary",
-        "timingWeight": 0.7
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_02",
-        "to": "idea_01",
-        "relationshipType": "cause"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Widespread startup inefficiency due to outdated processes",
-      "complexityScore": 0.4,
-      "emotionalIntensity": 0.8,
-      "visualDensity": 0.85,
-      "recommendedMaxVisualIdeas": 2
-    },
-    "reasoning": "The sentence highlights a broad problem (time lost) among startups, with a specific quantitative emphasis (73%), tied directly to the root cause (manual workflows). The core narrative is the inefficiency created by outdated processes, potentially setting up a contrast to solutions or automation. The emotional impact is heightened by the sense of systemic struggle, while the visuals can effectively depict both the overwhelming scope and the tediousness involved.",
-    "confidence": 0.97
-  },
-  {
-    "sentenceId": "sentence-3",
-    "sentenceText": "Over $1.8 trillion wasted every year on inefficiency.",
-    "timing": {
-      "startSec": 5.099999904632568,
-      "endSec": 8.5600004196167,
-      "startFrame": 152,
-      "endFrame": 257,
-      "durationFrames": 105
-    },
-    "narrativePosition": {
-      "section": "intro",
-      "progressionWeight": 0.18181818181818182
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "finance",
-        "phrase": "Over $1.8 trillion wasted annually",
-        "meaning": "A vast amount of financial resources are lost each year due to inefficiency",
-        "importance": 1,
-        "emotionalWeight": 0.85,
-        "visualPotential": 0.95,
-        "abstractionLevel": 0.7,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 1
-      },
-      {
-        "id": "idea_02",
-        "type": "process",
-        "phrase": "inefficiency",
-        "meaning": "The root cause leading to monumental financial waste",
-        "importance": 0.8,
-        "emotionalWeight": 0.7,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.6,
-        "parentRelationship": "idea_01",
-        "cinematicRole": "secondary",
-        "timingWeight": 0.9
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_02",
-        "to": "idea_01",
-        "relationshipType": "cause"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Massive financial loss caused by inefficiency",
-      "complexityScore": 0.5,
-      "emotionalIntensity": 0.8,
-      "visualDensity": 0.9,
-      "recommendedMaxVisualIdeas": 2
-    },
-    "reasoning": "The sentence highlights inefficiency as the process responsible for an extraordinary scale of financial waste, quantified at over $1.8 trillion annually. This frames an urgent narrative context, shocks the audience with scale, and sets up a high visual and emotional cinematic potential.",
-    "confidence": 0.98
-  },
-  {
-    "sentenceId": "sentence-4",
-    "sentenceText": "Introducing HyperCloud, your all in one SaaS accelerator.",
-    "timing": {
-      "startSec": 9.34000015258789,
-      "endSec": 12.180000305175781,
-      "startFrame": 280,
-      "endFrame": 366,
-      "durationFrames": 86
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.2727272727272727
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "technology",
-        "phrase": "HyperCloud",
-        "meaning": "A specific, named cloud-based solution",
-        "importance": 0.8,
-        "emotionalWeight": 0.6,
-        "visualPotential": 0.8,
-        "abstractionLevel": 0.3,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.8
-      },
-      {
-        "id": "idea_02",
-        "type": "product_offering",
-        "phrase": "all in one SaaS accelerator",
-        "meaning": "A comprehensive software tool that speeds up and simplifies the process of launching and scaling SaaS (Software as a Service) projects",
-        "importance": 0.85,
-        "emotionalWeight": 0.7,
-        "visualPotential": 0.9,
-        "abstractionLevel": 0.4,
-        "parentRelationship": "idea_01",
-        "cinematicRole": "primary",
-        "timingWeight": 0.9
-      },
-      {
-        "id": "idea_03",
-        "type": "process",
-        "phrase": "introducing",
-        "meaning": "The act of presentation, signaling the arrival of something new and potentially transformative",
-        "importance": 0.6,
-        "emotionalWeight": 0.65,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.5,
-        "parentRelationship": null,
-        "cinematicRole": "secondary",
-        "timingWeight": 0.7
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_01",
-        "to": "idea_02",
-        "relationshipType": "defines"
-      },
-      {
-        "from": "idea_03",
-        "to": "idea_01",
-        "relationshipType": "announces"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Unveiling a technological solution that streamlines SaaS growth",
-      "complexityScore": 0.5,
-      "emotionalIntensity": 0.65,
-      "visualDensity": 0.8,
-      "recommendedMaxVisualIdeas": 2
-    },
-    "reasoning": "The sentence centers on the launch of a new, comprehensive technological product—HyperCloud—positioned as an all-encompassing SaaS accelerator. The primary concepts are the technology and its holistic, streamlining capabilities, complemented by the process of introduction, which carries narrative significance. This structure supports a cinematic reveal with strong visual potential for illustrating transformation and innovation in the tech domain.",
-    "confidence": 0.97
-  },
-  {
-    "sentenceId": "sentence-5",
-    "sentenceText": "Automate processes in minutes.",
-    "timing": {
-      "startSec": 12.880000114440918,
-      "endSec": 14.100000381469727,
-      "startFrame": 386,
-      "endFrame": 424,
-      "durationFrames": 38
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.36363636363636365
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "technology",
-        "phrase": "automate processes",
-        "meaning": "The act of utilizing technology to perform tasks or workflows without human intervention.",
-        "importance": 0.95,
-        "emotionalWeight": 0.6,
-        "visualPotential": 0.9,
-        "abstractionLevel": 0.5,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.8
-      },
-      {
-        "id": "idea_02",
-        "type": "process/time",
-        "phrase": "in minutes",
-        "meaning": "Rapid acceleration and dramatic reduction of time required to achieve automation.",
-        "importance": 0.85,
-        "emotionalWeight": 0.7,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.4,
-        "parentRelationship": "idea_01",
-        "cinematicRole": "secondary",
-        "timingWeight": 0.7
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_01",
-        "to": "idea_02",
-        "relationshipType": "enabledBy"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Rapid technological transformation",
-      "complexityScore": 0.4,
-      "emotionalIntensity": 0.7,
-      "visualDensity": 0.8,
-      "recommendedMaxVisualIdeas": 2
-    },
-    "reasoning": "The sentence is a unified call to action expressing the speed and efficiency of technology-driven automation, emphasizing that such process improvements happen almost instantly ('in minutes'), which amplifies emotional impact and visual potential (flowing timelines, transforming workflows). The concepts of automation and rapid time reduction are primary and closely connected, forming a cause/effect structure ideal for dynamic motion graphics. The abstraction level is moderate, focusing on transformation and immediacy, with opportunities for kinetic, time-focused visualizations.",
-    "confidence": 0.97
-  },
-  {
-    "sentenceId": "sentence-6",
-    "sentenceText": "Connect data.",
-    "timing": {
-      "startSec": 14.680000305175781,
-      "endSec": 15.079999923706055,
-      "startFrame": 440,
-      "endFrame": 453,
-      "durationFrames": 13
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.45454545454545453
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "process",
-        "phrase": "connect data",
-        "meaning": "The act of integrating or linking disparate data sources or datasets",
-        "importance": 0.8,
-        "emotionalWeight": 0.4,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.85,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.7
-      },
-      {
-        "id": "idea_02",
-        "type": "technology",
-        "phrase": "data",
-        "meaning": "Information as a digital asset or resource",
-        "importance": 0.6,
-        "emotionalWeight": 0.2,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.9,
-        "parentRelationship": "idea_01",
-        "cinematicRole": "supporting",
-        "timingWeight": 0.4
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_01",
-        "to": "idea_02",
-        "relationshipType": "actsUpon"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Integration and synthesis of information",
-      "complexityScore": 0.5,
-      "emotionalIntensity": 0.3,
-      "visualDensity": 0.65,
-      "recommendedMaxVisualIdeas": 1
-    },
-    "reasoning": "The sentence 'Connect data.' commands the action of integrating or unifying various data points or systems. The central cinematic idea is a process of synthesis—potentially visualized through merging streams or networks. This concept is abstract but visually engaging, commonly symbolized with nodes and links, and is crucial for themes of technological progress or systemic coherence.",
-    "confidence": 0.92
-  },
-  {
-    "sentenceId": "sentence-7",
-    "sentenceText": "Streamline operations.",
-    "timing": {
-      "startSec": 15.65999984741211,
-      "endSec": 16.280000686645508,
-      "startFrame": 469,
-      "endFrame": 489,
-      "durationFrames": 20
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.5454545454545454
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "process",
-        "phrase": "streamline operations",
-        "meaning": "Optimize and simplify business processes for efficiency, productivity, and cost-effectiveness",
-        "importance": 0.92,
-        "emotionalWeight": 0.55,
-        "visualPotential": 0.72,
-        "abstractionLevel": 0.88,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.7
-      }
-    ],
-    "semanticRelationships": [],
-    "semanticSummary": {
-      "dominantTheme": "Operational efficiency",
-      "complexityScore": 0.38,
-      "emotionalIntensity": 0.4,
-      "visualDensity": 0.5,
-      "recommendedMaxVisualIdeas": 1
-    },
-    "reasoning": "The sentence presents a singular, unified concept: the strategic drive to make processes more efficient and effective. This is a high-level operational principle with strong relevance to business transformation and competitive advantage, but it is abstract and generalized—no sub-processes or specific effects are revealed. Visually, it lends itself to metaphors (conveyor belts, clear pathways, reduction of clutter). Because it's part of the middle section, the concept likely functions as a bridge or accelerant in a narrative of transformation.",
-    "confidence": 0.98
-  },
-  {
-    "sentenceId": "sentence-8",
-    "sentenceText": "Boost productivity.",
-    "timing": {
-      "startSec": 16.65999984741211,
-      "endSec": 17.18000030517578,
-      "startFrame": 499,
-      "endFrame": 516,
-      "durationFrames": 17
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.6363636363636364
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "process",
-        "phrase": "Boost productivity",
-        "meaning": "Increase the efficiency and output of a system, process, or workforce",
-        "importance": 1,
-        "emotionalWeight": 0.6,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.85,
-        "parentRelationship": null,
-        "cinematicRole": "primary",
-        "timingWeight": 0.85
-      }
-    ],
-    "semanticRelationships": [
-      {
-        "from": "idea_01",
-        "to": null,
-        "relationshipType": "core motivator"
-      }
-    ],
-    "semanticSummary": {
-      "dominantTheme": "Performance enhancement",
-      "complexityScore": 0.15,
-      "emotionalIntensity": 0.55,
-      "visualDensity": 0.6,
-      "recommendedMaxVisualIdeas": 1
-    },
-    "reasoning": "The sentence 'Boost productivity.' is a concise imperative focused entirely on increasing output or efficiency, making this the sole primary concept. No explicit secondary concepts are present; any further meaning would depend on future narrative context. The idea is abstract, with clear motivational and transformational undertones suitable for cinematic use as a transition or call-to-action moment. The high abstraction favors strong, broad visual motifs—growth, acceleration, or enhancement—making it effective for visual metaphors or energetic montage sequences.",
-    "confidence": 0.98
-  },
-  {
-    "sentenceId": "sentence-9",
-    "sentenceText": "Clients report 45%  faster onboarding and a 30%  drop in operating costs.",
-    "timing": {
-      "startSec": 18.139999389648438,
-      "endSec": 22.68000030517578,
-      "startFrame": 544,
-      "endFrame": 681,
-      "durationFrames": 137
-    },
-    "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.7272727272727273
-    },
-    "semanticIdeas": [
-      {
-        "id": "idea_01",
-        "type": "process_improvement",
-        "phrase": "45% faster onboarding",
-        "meaning": "Significantly shorter timeframe for clients to begin using services",
+        "type": "business impact",
+        "phrase": "over 60% of startups",
+        "meaning": "A significant majority of new businesses",
         "importance": 0.9,
         "emotionalWeight": 0.7,
         "visualPotential": 0.8,
         "abstractionLevel": 0.4,
         "parentRelationship": null,
         "cinematicRole": "primary",
-        "timingWeight": 0.75
+        "timingWeight": 0.85
       },
       {
         "id": "idea_02",
-        "type": "financial_efficiency",
-        "phrase": "30% drop in operating costs",
-        "meaning": "Major reduction in ongoing business expenses for clients",
-        "importance": 0.88,
+        "type": "finance",
+        "phrase": "lose revenue",
+        "meaning": "Experience financial loss or reduction in earnings",
+        "importance": 0.85,
         "emotionalWeight": 0.8,
-        "visualPotential": 0.9,
-        "abstractionLevel": 0.35,
-        "parentRelationship": null,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.3,
+        "parentRelationship": "idea_01",
         "cinematicRole": "primary",
-        "timingWeight": 0.75
+        "timingWeight": 0.85
       },
       {
         "id": "idea_03",
-        "type": "social_proof",
-        "phrase": "clients report",
-        "meaning": "Credibility boosted through actual client experiences",
-        "importance": 0.75,
+        "type": "processes",
+        "phrase": "manual processes",
+        "meaning": "Inefficient, labor-intensive business operations",
+        "importance": 0.8,
         "emotionalWeight": 0.6,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.6,
-        "parentRelationship": null,
+        "visualPotential": 0.9,
+        "abstractionLevel": 0.5,
+        "parentRelationship": "idea_02",
         "cinematicRole": "secondary",
-        "timingWeight": 0.5
+        "timingWeight": 0.7
       }
     ],
     "semanticRelationships": [
       {
-        "from": "idea_03",
-        "to": "idea_01",
-        "relationshipType": "testifies_to"
-      },
-      {
-        "from": "idea_03",
-        "to": "idea_02",
-        "relationshipType": "testifies_to"
-      },
-      {
         "from": "idea_01",
         "to": "idea_02",
-        "relationshipType": "parallel_benefits"
+        "relationshipType": "experiences"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_03",
+        "relationshipType": "caused_by"
       }
     ],
     "semanticSummary": {
-      "dominantTheme": "Measurable client benefits through improved processes and reduced costs",
-      "complexityScore": 0.5,
+      "dominantTheme": "Widespread financial loss among startups due to inefficient manual operations",
+      "complexityScore": 0.6,
       "emotionalIntensity": 0.7,
       "visualDensity": 0.85,
       "recommendedMaxVisualIdeas": 2
     },
-    "reasoning": "The sentence centers on quantified improvements (process speed and cost reduction) validated by client testimony. Both primary ideas (onboarding speed, operating cost) present clear, measurable outcomes with strong visual and emotional appeal. The support from client reporting adds credibility as a secondary narrative layer.",
+    "reasoning": "The sentence presents a causal chain where a significant portion of startups (over 60%) suffer revenue loss directly as a result of manual processes. This makes the magnitude, the financial damage, and the source of inefficiency tightly linked as a single narrative unit. The visual potential is high for depicting proportion, loss, and outdated processes, all useful for an impactful intro sequence.",
     "confidence": 0.97
   },
   {
-    "sentenceId": "sentence-10",
-    "sentenceText": "Hundreds scale faster every quarter.",
+    "sentenceId": "sentence-2",
+    "sentenceText": "Managing subscriptions wastes 10 plus hours weekly.",
     "timing": {
-      "startSec": 23.440000534057617,
-      "endSec": 25.040000915527344,
-      "startFrame": 703,
-      "endFrame": 752,
-      "durationFrames": 49
+      "startSec": 3.9200000762939453,
+      "endSec": 6.199999809265137,
+      "startFrame": 117,
+      "endFrame": 186,
+      "durationFrames": 69
     },
     "narrativePosition": {
-      "section": "middle",
-      "progressionWeight": 0.8181818181818182
+      "section": "intro",
+      "progressionWeight": 0.125
     },
     "semanticIdeas": [
       {
         "id": "idea_01",
-        "type": "growth",
-        "phrase": "Hundreds scale faster",
-        "meaning": "A significant number of entities or units are increasing their operational scale at an accelerating rate.",
+        "type": "process",
+        "phrase": "managing subscriptions",
+        "meaning": "The ongoing activity of organizing, monitoring, and maintaining multiple service subscriptions.",
         "importance": 0.95,
         "emotionalWeight": 0.7,
-        "visualPotential": 0.85,
+        "visualPotential": 0.8,
         "abstractionLevel": 0.4,
         "parentRelationship": null,
         "cinematicRole": "primary",
@@ -550,104 +106,480 @@
       },
       {
         "id": "idea_02",
-        "type": "process",
-        "phrase": "every quarter",
-        "meaning": "This acceleration occurs repeatedly on a quarterly time basis, implying continual and regular progress.",
-        "importance": 0.75,
-        "emotionalWeight": 0.4,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.7,
+        "type": "time cost",
+        "phrase": "10 plus hours weekly",
+        "meaning": "Significant recurring time expenditure each week dedicated specifically to subscription management.",
+        "importance": 0.9,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.2,
         "parentRelationship": "idea_01",
-        "cinematicRole": "supporting",
-        "timingWeight": 0.8
+        "cinematicRole": "secondary",
+        "timingWeight": 0.85
+      },
+      {
+        "id": "idea_03",
+        "type": "problem",
+        "phrase": "wastes",
+        "meaning": "Represents unnecessary or unproductive use of time, framing the process as negative or inefficient.",
+        "importance": 0.92,
+        "emotionalWeight": 0.85,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.6,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "primary",
+        "timingWeight": 0.95
       }
     ],
     "semanticRelationships": [
       {
         "from": "idea_01",
         "to": "idea_02",
-        "relationshipType": "temporal amplification",
-        "description": "The idea of scaling faster is intensified by the recurrent quarterly timeframe."
+        "relationshipType": "results in"
+      },
+      {
+        "from": "idea_01",
+        "to": "idea_03",
+        "relationshipType": "is framed as"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_03",
+        "relationshipType": "exemplifies"
       }
     ],
     "semanticSummary": {
-      "dominantTheme": "Accelerating large-scale growth over time",
+      "dominantTheme": "Inefficiency of manual subscription management",
       "complexityScore": 0.5,
-      "emotionalIntensity": 0.65,
-      "visualDensity": 0.8,
+      "emotionalIntensity": 0.8,
+      "visualDensity": 0.7,
       "recommendedMaxVisualIdeas": 2
     },
-    "reasoning": "The sentence conveys that a substantial quantity ('hundreds') of entities are experiencing rapid and accelerating growth, which is happening faster at every recurring quarter. The process is cumulative and cyclical, offering strong potential for dynamic, time-based visual metaphors (e.g., multiplying graphs, expanding fields, time-lapse sequences). The main conceptual hierarchy is growth (primary) driven by temporal cycles (supporting), with emphasis on the magnitude and momentum. This is highly useful cinematically to communicate scale, speed, and acceleration.",
-    "confidence": 0.94
+    "reasoning": "The sentence expresses a singular conceptual unit: that managing subscriptions consumes over 10 hours each week, constituting an unnecessary waste of time. The narrative builds on the inefficiency and emotional frustration implied by 'waste,' emphasizing the recurring, personal cost. Cinematically, this provides opportunity for high-contrast, time-lapse, or split-screen visuals depicting lost productivity, hectic digital environments, and emotional stress.",
+    "confidence": 0.97
   },
   {
-    "sentenceId": "sentence-11",
-    "sentenceText": "Ready to transform your workflow?",
+    "sentenceId": "sentence-3",
+    "sentenceText": "Errors, costly.",
     "timing": {
-      "startSec": 25.760000228881836,
-      "endSec": 27,
-      "startFrame": 772,
-      "endFrame": 810,
-      "durationFrames": 38
+      "startSec": 7,
+      "endSec": 7.760000228881836,
+      "startFrame": 210,
+      "endFrame": 233,
+      "durationFrames": 23
     },
     "narrativePosition": {
-      "section": "outro",
-      "progressionWeight": 0.9090909090909091
+      "section": "middle",
+      "progressionWeight": 0.25
     },
     "semanticIdeas": [
       {
         "id": "idea_01",
-        "type": "process/transformation",
-        "phrase": "transform your workflow",
-        "meaning": "Invitation to initiate significant improvement or change in operational methods or productivity processes",
-        "importance": 1,
-        "emotionalWeight": 0.85,
-        "visualPotential": 0.9,
-        "abstractionLevel": 0.8,
+        "type": "process_outcome",
+        "phrase": "Errors",
+        "meaning": "Mistakes, miscalculations, or failures within a process or system",
+        "importance": 0.75,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.85,
         "parentRelationship": null,
         "cinematicRole": "primary",
-        "timingWeight": 1
+        "timingWeight": 0.9
       },
       {
         "id": "idea_02",
-        "type": "call to action",
-        "phrase": "Ready to",
-        "meaning": "Provocation of readiness, engaging the audience to consider action or commitment",
+        "type": "finance",
+        "phrase": "costly",
+        "meaning": "Significant financial or resource losses resulting from errors",
         "importance": 0.8,
-        "emotionalWeight": 0.9,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.9,
+        "emotionalWeight": 0.85,
+        "visualPotential": 0.75,
+        "abstractionLevel": 0.75,
         "parentRelationship": "idea_01",
         "cinematicRole": "secondary",
+        "timingWeight": 0.85
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "cause_effect"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Consequences of failure",
+      "complexityScore": 0.4,
+      "emotionalIntensity": 0.85,
+      "visualDensity": 0.6,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence encapsulates the idea that mistakes or failures ('errors') lead to high financial or resource costs ('costly'). The concepts are causally linked, sending a warning or emphasizing the stakes of failure. This has emotional and visual resonance for motion graphics, especially as a turning point or caution in a narrative sequence. Two tightly interconnected concepts suggest a highly focused cinematic depiction of risk and consequence.",
+    "confidence": 0.98
+  },
+  {
+    "sentenceId": "sentence-4",
+    "sentenceText": "Introducing CloudSync SaaS, automation for your billing, analytics, and renewals.",
+    "timing": {
+      "startSec": 8.479999542236328,
+      "endSec": 12.600000381469727,
+      "startFrame": 254,
+      "endFrame": 379,
+      "durationFrames": 125
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.375
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "technology",
+        "phrase": "CloudSync SaaS",
+        "meaning": "A cloud-based software-as-a-service platform",
+        "importance": 0.9,
+        "emotionalWeight": 0.4,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.5,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_02",
+        "type": "process",
+        "phrase": "automation for billing, analytics, and renewals",
+        "meaning": "Automated management and optimization of billing, analytics, and renewals processes",
+        "importance": 0.85,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.4,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_03",
+        "type": "symbolism",
+        "phrase": "streamlined operations",
+        "meaning": "Symbolizes efficiency and reduction of manual intervention",
+        "importance": 0.7,
+        "emotionalWeight": 0.5,
+        "visualPotential": 0.6,
+        "abstractionLevel": 0.7,
+        "parentRelationship": "idea_02",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.6
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "enables"
+      },
+      {
+        "from": "idea_02",
+        "to": "idea_03",
+        "relationshipType": "results_in"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Technology-driven process automation",
+      "complexityScore": 0.6,
+      "emotionalIntensity": 0.5,
+      "visualDensity": 0.7,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence introduces a new SaaS product (CloudSync SaaS) as a technological agent that enables automation across three key business processes: billing, analytics, and renewals. This hierarchy places technology as the enabler, automation as the action, and streamlined outcomes as the symbolic result. The potential for cinematic visualization comes from depicting technological interfaces, workflow automation, and abstract representations of efficiency. As the sentence appears in the middle of a narrative, it serves as a pivotal turning point to connect problem spaces (manual business processes) to automated, digital futures.",
+    "confidence": 0.96
+  },
+  {
+    "sentenceId": "sentence-5",
+    "sentenceText": "Set up in minutes, no coding.",
+    "timing": {
+      "startSec": 12.819999694824219,
+      "endSec": 14.399999618530273,
+      "startFrame": 384,
+      "endFrame": 432,
+      "durationFrames": 48
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.5
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process",
+        "phrase": "Set up in minutes",
+        "meaning": "The system or product can be quickly deployed or initialized, emphasizing speed and ease.",
+        "importance": 0.95,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.2,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
         "timingWeight": 0.9
+      },
+      {
+        "id": "idea_02",
+        "type": "technology",
+        "phrase": "no coding",
+        "meaning": "The setup process requires no programming knowledge, highlighting simplicity and accessibility.",
+        "importance": 0.85,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.75,
+        "abstractionLevel": 0.25,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.6
       }
     ],
     "semanticRelationships": [
       {
         "from": "idea_02",
         "to": "idea_01",
-        "relationshipType": "initiates"
+        "relationshipType": "enables"
       }
     ],
     "semanticSummary": {
-      "dominantTheme": "Transformative invitation",
-      "complexityScore": 0.6,
-      "emotionalIntensity": 0.88,
-      "visualDensity": 0.85,
+      "dominantTheme": "Effortless and rapid technological onboarding",
+      "complexityScore": 0.3,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.8,
       "recommendedMaxVisualIdeas": 2
     },
-    "reasoning": "The sentence serves as a closing appeal, engaging the audience by inviting them to imagine or participate in significant change regarding their workflow. The primary concept is transformation—a process-oriented, abstract idea applicable to business, productivity, or technology. The secondary, supporting idea is the call to action, focusing attention on audience readiness. The relationship is sequential and motivating. Cinematically, this works as a dramatic, high-emotion outro with strong visual potential for abstract change and action imagery.",
+    "reasoning": "The sentence promotes a technology or solution that is extremely fast to set up and requires no technical skills, which conveys simplicity, user empowerment, and accessibility. Visually, this can be represented cinematically through rapid assembly sequences, user-friendly UI motifs, and 'barrier-free' metaphors. The core cinematic importance is its invitation to immediate engagement without technical hurdles.",
+    "confidence": 0.98
+  },
+  {
+    "sentenceId": "sentence-6",
+    "sentenceText": "Customers report 40%  faster invoicing and 99.9%  accuracy.",
+    "timing": {
+      "startSec": 14.9399995803833,
+      "endSec": 19.079999923706055,
+      "startFrame": 448,
+      "endFrame": 573,
+      "durationFrames": 125
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.625
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process_efficiency",
+        "phrase": "40% faster invoicing",
+        "meaning": "The invoicing process is completed 40% more quickly than before.",
+        "importance": 0.9,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.85,
+        "abstractionLevel": 0.4,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_02",
+        "type": "accuracy",
+        "phrase": "99.9% accuracy",
+        "meaning": "The invoicing process now achieves near-perfect precision with almost no errors.",
+        "importance": 0.88,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.3,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.7
+      },
+      {
+        "id": "idea_03",
+        "type": "social_impact",
+        "phrase": "Customers report",
+        "meaning": "The improvements are validated by customer experiences and testimonials.",
+        "importance": 0.7,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.5,
+        "parentRelationship": null,
+        "cinematicRole": "supporting",
+        "timingWeight": 0.6
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_03",
+        "to": "idea_01",
+        "relationshipType": "validates"
+      },
+      {
+        "from": "idea_03",
+        "to": "idea_02",
+        "relationshipType": "validates"
+      },
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "co-occurs"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Dramatic improvement in invoicing performance and reliability, affirmed through customer experience",
+      "complexityScore": 0.4,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.8,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence communicates a direct customer-reported outcome, emphasizing both quantitative process speed (40% faster invoicing) and data accuracy (99.9%). Both metrics are tightly coupled, with customer validation providing narrative credibility and potential for on-screen testimonials or social proof motion graphics. The visual appeal lies in dynamic meter graphics, time-lapse invoicing sequences, or testimonial overlays. The structure follows a process improvement theme with social validation, suitable for quick, high-impact visual delivery.",
     "confidence": 0.97
   },
   {
-    "sentenceId": "sentence-12",
-    "sentenceText": "Start your HyperCloud trial today.",
+    "sentenceId": "sentence-7",
+    "sentenceText": "Boost retention rates by up to 25%.",
     "timing": {
-      "startSec": 27.540000915527344,
-      "endSec": 28.959999084472656,
-      "startFrame": 826,
-      "endFrame": 869,
-      "durationFrames": 43
+      "startSec": 19.84000015258789,
+      "endSec": 22.079999923706055,
+      "startFrame": 595,
+      "endFrame": 663,
+      "durationFrames": 68
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.75
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process",
+        "phrase": "Boost retention rates",
+        "meaning": "Increase the percentage of people or entities maintained over time",
+        "importance": 0.9,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.4,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.8
+      },
+      {
+        "id": "idea_02",
+        "type": "growth",
+        "phrase": "by up to 25%",
+        "meaning": "Maximum possible increase quantified at 25 percent",
+        "importance": 0.6,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.2,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.5
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "quantifies"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Maximized improvement",
+      "complexityScore": 0.5,
+      "emotionalIntensity": 0.7,
+      "visualDensity": 0.7,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The sentence describes a process-driven goal: increasing retention rates. The quantitative cap of 'up to 25%' acts as both a measurement and a motivating target, adding precision and aspiration. The idea is easily visualized (metrics rising, retention icons, progress bars), emotionally energizing (improvement, achievement), and moderately abstract, fitting a midpoint cinematic reveal or stats-morphing sequence.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-8",
+    "sentenceText": "Scale smarter.",
+    "timing": {
+      "startSec": 22.079999923706055,
+      "endSec": 22.8799991607666,
+      "startFrame": 662,
+      "endFrame": 687,
+      "durationFrames": 25
+    },
+    "narrativePosition": {
+      "section": "middle",
+      "progressionWeight": 0.875
+    },
+    "semanticIdeas": [
+      {
+        "id": "idea_01",
+        "type": "growth_strategy",
+        "phrase": "Scale smarter",
+        "meaning": "Achieve expansion by using more efficient, intelligent, or innovative approaches rather than simply increasing size or volume",
+        "importance": 0.98,
+        "emotionalWeight": 0.8,
+        "visualPotential": 0.9,
+        "abstractionLevel": 0.85,
+        "parentRelationship": null,
+        "cinematicRole": "primary",
+        "timingWeight": 0.85
+      },
+      {
+        "id": "idea_02",
+        "type": "technology_innovation",
+        "phrase": "smarter methods",
+        "meaning": "The use of advanced technology, data, or processes to enable intelligent growth",
+        "importance": 0.8,
+        "emotionalWeight": 0.7,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.75,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "secondary",
+        "timingWeight": 0.7
+      },
+      {
+        "id": "idea_03",
+        "type": "efficiency",
+        "phrase": "efficient growth",
+        "meaning": "Minimizing waste or resource consumption while achieving expansion",
+        "importance": 0.7,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.7,
+        "parentRelationship": "idea_01",
+        "cinematicRole": "supporting",
+        "timingWeight": 0.6
+      }
+    ],
+    "semanticRelationships": [
+      {
+        "from": "idea_01",
+        "to": "idea_02",
+        "relationshipType": "requires"
+      },
+      {
+        "from": "idea_01",
+        "to": "idea_03",
+        "relationshipType": "implies"
+      }
+    ],
+    "semanticSummary": {
+      "dominantTheme": "Intelligent and efficient expansion",
+      "complexityScore": 0.65,
+      "emotionalIntensity": 0.75,
+      "visualDensity": 0.85,
+      "recommendedMaxVisualIdeas": 2
+    },
+    "reasoning": "The phrase 'Scale smarter' is abstract and directive, urging a narrative shift from mere quantitative increase to qualitatively improved, intelligence-driven growth. This calls for cinematic visualization of transformation, such as a comparison between mindless expansion and innovation-led progress—potentially with visual metaphors for intelligence, optimization, and streamlined systems. This idea anchors narrative flow in the middle section, offering high abstraction and visual metaphor opportunities for dynamic motion design.",
+    "confidence": 0.97
+  },
+  {
+    "sentenceId": "sentence-9",
+    "sentenceText": "Start your free trial with CloudSync now.",
+    "timing": {
+      "startSec": 23.5,
+      "endSec": 25.200000762939453,
+      "startFrame": 705,
+      "endFrame": 757,
+      "durationFrames": 52
     },
     "narrativePosition": {
       "section": "outro",
@@ -656,41 +588,41 @@
     "semanticIdeas": [
       {
         "id": "idea_01",
-        "type": "technology",
-        "phrase": "HyperCloud trial",
-        "meaning": "Opportunity to experience advanced cloud technology through a limited-time test period",
+        "type": "process",
+        "phrase": "start free trial",
+        "meaning": "Initiation of an opportunity to test or use a product with no cost or risk",
         "importance": 0.95,
-        "emotionalWeight": 0.7,
-        "visualPotential": 0.8,
-        "abstractionLevel": 0.5,
+        "emotionalWeight": 0.75,
+        "visualPotential": 0.7,
+        "abstractionLevel": 0.3,
         "parentRelationship": null,
         "cinematicRole": "primary",
-        "timingWeight": 0.95
+        "timingWeight": 1
       },
       {
         "id": "idea_02",
-        "type": "process",
-        "phrase": "start today",
-        "meaning": "Immediate initiation of action or engagement",
+        "type": "technology",
+        "phrase": "CloudSync",
+        "meaning": "A digital/cloud-based service or solution being offered or promoted",
         "importance": 0.8,
-        "emotionalWeight": 0.6,
-        "visualPotential": 0.6,
-        "abstractionLevel": 0.3,
+        "emotionalWeight": 0.5,
+        "visualPotential": 0.8,
+        "abstractionLevel": 0.2,
         "parentRelationship": "idea_01",
-        "cinematicRole": "supporting",
-        "timingWeight": 0.85
+        "cinematicRole": "secondary",
+        "timingWeight": 0.8
       },
       {
         "id": "idea_03",
         "type": "call to action",
-        "phrase": "invitation to participate",
-        "meaning": "User empowerment and encouragement to take the next step",
-        "importance": 0.85,
-        "emotionalWeight": 0.8,
-        "visualPotential": 0.7,
-        "abstractionLevel": 0.4,
+        "phrase": "now",
+        "meaning": "Urgency and immediacy of engaging with the offer",
+        "importance": 0.7,
+        "emotionalWeight": 0.6,
+        "visualPotential": 0.6,
+        "abstractionLevel": 0.5,
         "parentRelationship": "idea_01",
-        "cinematicRole": "secondary",
+        "cinematicRole": "supporting",
         "timingWeight": 0.9
       }
     ],
@@ -703,22 +635,17 @@
       {
         "from": "idea_01",
         "to": "idea_03",
-        "relationshipType": "represents"
-      },
-      {
-        "from": "idea_03",
-        "to": "idea_02",
-        "relationshipType": "drives"
+        "relationshipType": "amplified_by"
       }
     ],
     "semanticSummary": {
-      "dominantTheme": "Empowering initiation of technological engagement",
-      "complexityScore": 0.4,
+      "dominantTheme": "Invitation and immediate engagement with a technology trial",
+      "complexityScore": 0.3,
       "emotionalIntensity": 0.7,
       "visualDensity": 0.7,
       "recommendedMaxVisualIdeas": 2
     },
-    "reasoning": "The sentence functions as an explicit call-to-action, framing the start of a 'HyperCloud trial' as an empowering and immediate opportunity for the user. The core semantic unit is the invitation to try advanced cloud technology, with immediacy ('today') adding urgency and narrative closure suitable for an outro. The concepts of technology, process initiation, and participation reinforce one another, with high cinematic use for motivating engagement, showcasing technological potential, and delivering a rousing emotional close.",
-    "confidence": 0.95
+    "reasoning": "The sentence is an outro call-to-action focusing on user agency (‘start’), risk-free engagement (‘free trial’), the identity of the service (‘CloudSync’), and a sense of immediacy (‘now’). Primary cinematic focus centers on prompting action and visually representing opportunity, connectivity, or transition. Supporting visuals may show urgency or smooth onboarding experience.",
+    "confidence": 0.97
   }
 ]

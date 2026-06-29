@@ -1,3 +1,4 @@
+// src/core/segmentation/segmentAndClassifyWithAI.ts
 import type { WidgetType } from '../widgetRegistry-all-widgets';
 import type { VisualStrategyOutput } from '../visual/visualStrategy';
 
