@@ -54,11 +54,12 @@ export type VisualStrategyOutput = {
     supportingIdeaIds: string[];
     omittedIdeaIds: string[];
   };
+  // 🚀 Change these from strict object lookups to basic primitive assignments
   animationStrategy: {
-    pacing: CinematicPlan['cinematicPlan']['pacing'];
-    transitionIn: CinematicPlan['cinematicPlan']['transitionIn'];
-    transitionOut: CinematicPlan['cinematicPlan']['transitionOut'];
-    revealOrder: CinematicPlan['cinematicPlan']['revealHierarchy'];
+    pacing: string;
+    transitionIn: string;
+    transitionOut: string;
+    revealOrder: any; // or string[] depending on your array layout
   };
   widgetProps: Record<string, any>;
   reasoning: string;
