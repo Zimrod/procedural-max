@@ -99,14 +99,16 @@ export const CaptioningDemo: React.FC<{
   const segments = useMemo(
     () =>
       groupWordsIntoSegments(
-        wordsWithFrames?.map((w) => ({
+        wordsWithFrames?.map((w: any) => ({
           word: w.word,
-          isSentenceEnd: /[.!?]$/.test(w.word) 
+          // 🚀 Fix: Ensure 'start' is passed through so it matches the required signature
+          start: w.start ?? w.startSec ?? w.startFrame ?? 0,
+          isSentenceEnd: w.isSentenceEnd ?? false,
         })),
-        effectiveFontSize,
+        fontSize,
         width
       ),
-    [wordsWithFrames, effectiveFontSize, width]
+    [wordsWithFrames, fontSize, width]
   );
 
   const currentWordIndex = useMemo(() => {
