@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {Player} from '@remotion/player';
 import type {Item} from './types';
 import {Main} from './Main';
