@@ -132,7 +132,7 @@ export const TextRig: React.FC<Props> = ({
   const startY = (canvasHeight - blockHeight) / 2;
 
   let renderingCharIndex = 0;
-  const elements: JSX.Element[] = [];
+  const elements: React.ReactElement[] = [];
 
   lines.forEach((line, lineIdx) => {
     const lineY = startY + lineIdx * effectiveLineHeight; // top of this line's bounding box
