@@ -54,13 +54,10 @@ export const TextRig: React.FC<Props> = ({
 
   // Load SVGs
   useEffect(() => {
-    const uniqueLetters = [...new Set(text.toUpperCase().split('').filter(ch => LETTERS.includes(ch)))];
-    if (uniqueLetters.length === 0) {
-      setReady(true);
-      return;
-    }
+    const allLetters = text.toUpperCase().split('').filter(ch => LETTERS.includes(ch));
+    const uniqueLetters = allLetters.filter((ch, index) => allLetters.indexOf(ch) === index);
 
-    const handle = delayRender('TextRig: loading letters');
+    const handle = delayRender();
     Promise.all(
       uniqueLetters.map(async (letter) => {
         const path = staticFile(`alphabet-stencil/${letter}.svg`);
