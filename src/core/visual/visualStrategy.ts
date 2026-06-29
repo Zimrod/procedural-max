@@ -55,10 +55,10 @@ export type VisualStrategyOutput = {
     omittedIdeaIds: string[];
   };
   animationStrategy: {
-    pacing: CinematicPlan['cinematicDesign']['pacing'];
-    transitionIn: CinematicPlan['cinematicDesign']['transitionIn'];
-    transitionOut: CinematicPlan['cinematicDesign']['transitionOut'];
-    revealOrder: CinematicPlan['cinematicDesign']['revealHierarchy'];
+    pacing: CinematicPlan['cinematicPlan']['pacing'];
+    transitionIn: CinematicPlan['cinematicPlan']['transitionIn'];
+    transitionOut: CinematicPlan['cinematicPlan']['transitionOut'];
+    revealOrder: CinematicPlan['cinematicPlan']['revealHierarchy'];
   };
   widgetProps: Record<string, any>;
   reasoning: string;
