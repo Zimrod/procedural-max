@@ -101,7 +101,7 @@ function getLeadIdeas(
 function chooseVisualLanguage(
   extraction: SemanticExtraction,
   scene: NarrativeScene,
-  intent: CinematicDecision,
+  intent: any,
   plan: any
 ): VisualStrategyOutput['visualLanguage'] {
   const selectedIdeas = getLeadIdeas(
