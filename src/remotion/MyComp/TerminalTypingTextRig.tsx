@@ -1,6 +1,6 @@
 // src/remotion/MyComp/TerminalTypingTextRig.tsx
 import React, { useMemo } from "react";
-import { useCurrentFrame, useVideoConfig, interpolate, AbsoluteFill, Easing } from "remotion";
+import { useCurrentFrame, interpolate, AbsoluteFill, Easing } from "remotion";
 
 type RigProps = {
   readonly textToAnimate: string;
@@ -36,7 +36,7 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
   terminalTitle = "bash — main_pipeline.sh",
 }) => {
   const frame = useCurrentFrame();
-  const { width, height } = useVideoConfig();
+  // const { width, height } = useVideoConfig();
   const totalCharacters = textToAnimate.length;
 
   // 💡 CENTRAL FIXED PERCENTAGE TIMING ENGINE
