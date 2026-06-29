@@ -11,7 +11,7 @@
 //   // → pass directly to Puppeteer as entities prop
 
 import { assetRegistry, AssetId, scaleForAsset } from './assetRegistry';
-import { worldXToPx, worldYToPx, GROUND_Y_PX, wuToPx } from './worldUnits';
+import { worldXToPx, GROUND_Y_PX, wuToPx } from './worldUnits';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
