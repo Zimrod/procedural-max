@@ -6,7 +6,6 @@ import {
   useVideoConfig,
   interpolate,
   spring,
-  Easing,
 } from 'remotion';
 
 type Props = {
