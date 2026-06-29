@@ -6,7 +6,7 @@ import {
   staticFile,
   delayRender,
   continueRender,
-  useVideoConfig, // 💡 Pull native configurations straight from Root mount
+  // useVideoConfig, // 💡 Pull native configurations straight from Root mount
 } from 'remotion';
 import { loadFont } from '@remotion/fonts';
 // import { CaptioningDemo } from './CaptioningDemo-primitives';
