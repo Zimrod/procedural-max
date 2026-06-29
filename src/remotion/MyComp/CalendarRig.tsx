@@ -46,14 +46,6 @@ export const CalendarRig: React.FC<Props> = ({
     return { monthName: name, daysArray: days, paddingDays: padding };
   }, [year, jsMonth, month]);
 
-  // --- ANIMATION ENGINE FOR THE CROSS MARK ---
-  const crossSpring = spring({
-    frame,
-    fps,
-    config: { stiffness: 180, damping: 14 },
-    delay: 15, // Delay execution by 0.5 seconds so layout settles first
-  });
-
   const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
   const cellSize = width / 9;
 
