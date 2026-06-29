@@ -42,11 +42,12 @@ export type VisualStrategyOutput = {
       | 'hybrid_scene';
     rationale: string;
   };
+  // 🚀 Update the categories here to accept standard strings
   widgetSelection: {
-    primaryCategory: WidgetCategory;
-    primaryType: WidgetType;
-    secondaryCategory?: WidgetCategory;
-    secondaryType?: WidgetType;
+    primaryCategory: WidgetCategory | string;
+    primaryType: WidgetType | string;
+    secondaryCategory?: WidgetCategory | string;
+    secondaryType?: WidgetType | string;
   };
   ideaAssignments: {
     leadIdeaId?: string;
@@ -54,12 +55,11 @@ export type VisualStrategyOutput = {
     supportingIdeaIds: string[];
     omittedIdeaIds: string[];
   };
-  // 🚀 Change these from strict object lookups to basic primitive assignments
   animationStrategy: {
     pacing: string;
     transitionIn: string;
     transitionOut: string;
-    revealOrder: any; // or string[] depending on your array layout
+    revealOrder: any; 
   };
   widgetProps: Record<string, any>;
   reasoning: string;
