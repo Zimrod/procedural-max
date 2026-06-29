@@ -173,7 +173,7 @@ function chooseVisualLanguage(
 
   if (
     hasFinance &&
-    scene.cinematicPurpose === 'build_trust'
+    scene.intent === 'financial_metric' || scene.intent === 'capital_structure'
   ) {
     return {
       strategy: 'valuation_cinematic',
