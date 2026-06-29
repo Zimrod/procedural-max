@@ -30,7 +30,7 @@ export const Main: React.FC<Props> = ({
   const [fontLoaded, setFontLoaded] = useState(false);
   
   // 💡 READ THE NEW EXTENDED COMPOSITION DURATION AUTOMATICALLY
-  const { durationInFrames } = useVideoConfig(); 
+  // const { durationInFrames } = useVideoConfig(); 
 
   useEffect(() => {
     const handle = delayRender('Loading Font');
