@@ -129,7 +129,6 @@ export const CaptioningDemo: React.FC<{
       
       // NEW LOGIC: Determine if we are in a "silent gap"
       const isAtEndOfVideo = actualIndex === wordsWithFrames.length - 1;
-      const nextWordStart = !isAtEndOfVideo ? wordsWithFrames[actualIndex + 1].startFrame : null;
       
       // If we've passed the final word, or if we are in a gap between words 
       // and the previous word ended a sentence, return -1 to hide
