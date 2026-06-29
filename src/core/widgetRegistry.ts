@@ -47,7 +47,7 @@ const field = (
   defaultValue,
 });
 
-export const widgetRegistry: Record<WidgetType, WidgetRegistryEntry> = {
+export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   TITLE_CARD: {
     category: 'TEXT_TYPOGRAPHY',
     intents: ['CORE_THESIS', 'STATUS_BADGE'],
