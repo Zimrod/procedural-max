@@ -32,7 +32,7 @@ export const Puppeteer: React.FC<PuppeteerProps> = ({
 
   // --- Load all SVG pivot data needed by the rigs in this scene ---
   useEffect(() => {
-    const rigTypes = new Set(entities.map((e) => e.type));
+    const rigTypes = [...new Set(entities.map((e) => e.type))];
     const requiredPartsMap: Record<string, string> = {};
 
     for (const type of rigTypes) {
