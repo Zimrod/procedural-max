@@ -9,7 +9,8 @@ type RigId =
   | 'VALUATION'
   | 'KPI_CARD'
   | 'COUNTRY_ROUTE'
-  | 'COUNTRY_DROP_PIN';
+  | 'COUNTRY_DROP_PIN'
+  | string;
 
 export type RigSelection = {
   rigId: RigId;
@@ -65,7 +66,7 @@ export async function enrichSegmentWithAI(
 
 function selectRigId(
   strategy: VisualStrategyOutput,
-  preferred: RigId
+  preferred: RigId | string
 ): RigId {
   if (
     strategy.visualLanguage.strategy ===
