@@ -39,23 +39,23 @@ export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) 
   </div>
 );
 
-// Maps runtime string types explicitly to React Component structures
+// 🚀 Fix: Update keys to UPPERCASE to exactly match the WidgetType registry contract
 const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
-  title_card: TitleCardRig,
-  typewriter: TypewriterRig,
-  text: TextRig,
-  terminal_typing_text: TerminalTypingTextRig,
-  text_animations_word_highlight: TextAnimationsWordHighlight,
-  svg_draw_in_text: SvgDrawInTextRig,
-  sliding_word_mask: SlidingWordMaskRig,
-  sequential_elastic_text: SequentialElasticTextRig,
-  bullet_points: BulletPointsRig,
-  geometric_quote: GeometricQuoteRig,
-  grid_principles: GridPrinciplesRig,
+  TITLE_CARD: TitleCardRig,
+  TYPEWRITER: TypewriterRig,
+  TEXT: TextRig,
+  TERMINAL_TYPING_TEXT: TerminalTypingTextRig,
+  TEXT_ANIMATIONS_WORD_HIGHLIGHT: TextAnimationsWordHighlight,
+  SVG_DRAW_IN_TEXT: SvgDrawInTextRig,
+  SLIDING_WORD_MASK: SlidingWordMaskRig,
+  SEQUENTIAL_ELASTIC_TEXT: SequentialElasticTextRig,
+  BULLET_POINTS: BulletPointsRig,
+  GEOMETRIC_QUOTE: GeometricQuoteRig,
+  GRID_PRINCIPLES: GridPrinciplesRig,
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {
-  // Checks against the runtime string type (e.g. 'terminal_typing_text')
-  const normalized = widgetType.toLowerCase() as WidgetType;
+  // 🚀 Fix: Convert to UPPERCASE instead of lowercase to match your type matrix keys
+  const normalized = widgetType.toUpperCase() as WidgetType;
   return componentMapping[normalized] || (() => <DiagnosticFallbackRig widget={widgetType} />);
 }
