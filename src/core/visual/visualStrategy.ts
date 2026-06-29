@@ -6,7 +6,7 @@ import type {
   SemanticIdea,
 } from '../segmentation/semanticExtraction';
 import type {
-  NarrativeScene,
+  NarrativeBeat as NarrativeScene,
 } from '../narrative/narrativeAnalyzer';
 import type {
   CinematicIntentOutput,
@@ -116,11 +116,24 @@ function chooseVisualLanguage(
       idea.type === 'technology' ||
       idea.type === 'energy_capacity'
   );
+  // ... inside chooseVisualLanguage(...)
   const hasFinance = selectedIdeas.some(
     (idea) =>
       idea.type === 'finance' ||
       idea.type === 'investment'
   );
+
+  if (
+    hasFinance &&
+    // 🚀 Fallback safety guard since cinematicPurpose isn't an explicit field on NarrativeBeat
+    ((scene as any).cinematicPurpose === 'build_trust')
+  ) {
+    return {
+      strategy: 'valuation_cinematic',
+      rationale:
+        'Finance-led meaning with persuasive intent fits a valuation-driven visual treatment.',
+    };
+  }
   const isSymbolic =
     intent.cinematicIntent.primaryMode ===
       'symbolic_tableau' ||
