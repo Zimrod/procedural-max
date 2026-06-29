@@ -178,7 +178,7 @@ export const BarChartRig: React.FC<Props> = ({
         // Label pop timing: Triggered as the line passes the bar's center point
         const distanceToLabel = containerHeight + (i + 0.5) * barWidth;
         const labelRevealFrame = interpolate(distanceToLabel, [0, totalPathLength], [0, axisDrawDuration]);
-        const labelPop = spring({ frame: frame - labelRevealFrame, fps, config: { friction: 10 } });
+        const labelPop = spring({ frame: frame - labelRevealFrame, fps, config: { damping: 10 } });
 
         // Bar animation timing: Starts only after introDuration (3s)
         const barProgress = spring({
