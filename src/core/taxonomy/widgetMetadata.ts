@@ -9,81 +9,61 @@ export type WidgetMetadata = {
   visualStyle: string;
 };
 
-const manualDescriptions: Partial<Record<WidgetType, { description: string; visualStyle: string; bestForKeywords: string[] }>> = {
-  WATERFALL_CHART: {
-    description: 'Shows how a starting total is adjusted into a final outcome with intermediate additions and subtractions.',
-    visualStyle: 'Bars cascade into a final total with connector lines and a clean editorial layout.',
-    bestForKeywords: ['bridge chart', 'reconciliation', 'gross to net', 'cash flow', 'variance'],
-  },
-  BAR_CHART: {
-    description: 'Compares discrete values across categories.',
-    visualStyle: 'Vertical bars rise from a baseline with crisp spacing and simple labels.',
-    bestForKeywords: ['compare', 'versus', 'breakdown', 'distribution', 'allocation'],
-  },
-  LINE_CHART: {
-    description: 'Displays a single trend line over time.',
-    visualStyle: 'A clean animated path draws across a grid with minimal clutter.',
-    bestForKeywords: ['trend', 'growth', 'decline', 'over time', 'projection'],
-  },
-  AREA_CHART: {
-    description: 'Highlights cumulative movement with a filled trend surface.',
-    visualStyle: 'Gradient fill expands beneath a smooth path to emphasize scale.',
-    bestForKeywords: ['cumulative', 'aggregate', 'build up', 'growth over time'],
-  },
-  DONUT_CHART: {
-    description: 'Shows a simple split of a whole into segments.',
-    visualStyle: 'Circular slices animate into place with labels placed around the ring.',
-    bestForKeywords: ['share', 'split', 'mix', 'composition', 'allocation'],
-  },
-  DONUT_STEP_CHART: {
-    description: 'Reveals donut segments step by step.',
-    visualStyle: 'Segmented circular arcs reveal sequentially for emphasis.',
-    bestForKeywords: ['tiered breakdown', 'step reveal', 'phased split'],
-  },
-  DONUT_COMPARISON: {
-    description: 'Compares two donut distributions side by side.',
-    visualStyle: 'Twin rings animate together with matching scales.',
-    bestForKeywords: ['before and after', 'old vs new', 'scenario shift'],
-  },
-  PIE_CHART: {
-    description: 'Shows categorical slices in a simple radial format.',
-    visualStyle: 'Pie segments sweep in with a restrained, chart-first style.',
-    bestForKeywords: ['fraction', 'slice', 'budget division', 'ownership breakdown'],
-  },
-  MULTI_AREA_CHART: {
-    description: 'Compares overlapping trend areas across scenarios.',
-    visualStyle: 'Layered translucent fills stack over a shared timeline.',
-    bestForKeywords: ['scenario comparison', 'stacked totals', 'overlapping trends'],
-  },
-  MULTI_BAR_CHART: {
-    description: 'Compares grouped values across matching categories.',
-    visualStyle: 'Paired bars grow in sync with contrasting accent colors.',
-    bestForKeywords: ['grouped breakdown', 'side by side comparison', 'multi-category'],
-  },
-  MULTI_LINE_CHART: {
-    description: 'Tracks several trend lines on one grid.',
-    visualStyle: 'Multiple paths draw together with a clean legend and balanced spacing.',
-    bestForKeywords: ['multiple scenarios', 'forecast comparison', 'competing trends'],
-  },
-  STAT_REVEAL: {
-    description: 'Displays one key number with a supporting label.',
-    visualStyle: 'Centered numeral snaps into view with a concise subtitle.',
-    bestForKeywords: ['single metric', 'one number', 'stat', 'headline value'],
-  },
+const manualDescriptions: Record<WidgetType, { description: string; visualStyle: string; bestForKeywords: string[] }> = {
   TITLE_CARD: {
-    description: 'Introduces a section with bold typography.',
-    visualStyle: 'Large title text lands on screen with a calm editorial reveal.',
-    bestForKeywords: ['intro', 'opening', 'chapter', 'section header'],
+    description: 'Introduces a major section, timeline milestone, or concept shift with bold typography.',
+    visualStyle: 'Large centralized block text lands on screen with a clean editorial presentation.',
+    bestForKeywords: ['intro', 'opening', 'chapter header', 'section title', 'milestone'],
   },
   TYPEWRITER: {
-    description: 'Builds text character by character.',
-    visualStyle: 'Typed text reveals steadily with a subtle cursor rhythm.',
-    bestForKeywords: ['typing reveal', 'script style text', 'live narration'],
+    description: 'Reveals script sentences or long-form paragraphs character by character simulating real-time typing.',
+    visualStyle: 'Text symbols paint sequentially with an active terminal or writing rhythm.',
+    bestForKeywords: ['typing reveal', 'script narration', 'live transcription', 'storytelling copy'],
   },
   TEXT: {
-    description: 'Renders straightforward explanatory copy.',
-    visualStyle: 'Simple text blocks with generous spacing and readable line length.',
-    bestForKeywords: ['summary text', 'caption details', 'context paragraph', 'explanatory statement'],
+    description: 'Renders straightforward explanatory paragraphs or detailed context summaries.',
+    visualStyle: 'Clean typographic layout with generous block line-height and high readability.',
+    bestForKeywords: ['summary details', 'context paragraph', 'explanatory note', 'caption body'],
+  },
+  TERMINAL_TYPING_TEXT: {
+    description: 'Simulates a code console or hacker environment with monospaced character stamping.',
+    visualStyle: 'Monospaced font typing with solid cursor blinks and technical line execution breaks.',
+    bestForKeywords: ['code block', 'developer theme', 'terminal logging', 'tech specification'],
+  },
+  TEXT_ANIMATIONS_WORD_HIGHLIGHT: {
+    description: 'Highlights text blocks incrementally word-by-word synchronizing to audio speech tracks.',
+    visualStyle: 'Dynamic color transitions cross over single words or phrases as focus moves forward.',
+    bestForKeywords: ['audio transcription', 'karaoke captions', 'lyric emphasize', 'word tracking'],
+  },
+  SVG_DRAW_IN_TEXT: {
+    description: 'Draws the vector paths or outlines of typography strokes before filling them solid.',
+    visualStyle: 'Sleek geometric line strokes trace outward before solid color weights ease in.',
+    bestForKeywords: ['logo typography', 'outline trace', 'creative branding', 'artistic header'],
+  },
+  SLIDING_WORD_MASK: {
+    description: 'Reveals full phrase blocks sliding horizontally or vertically from behind solid bounding layout borders.',
+    visualStyle: 'Sleek layout bounds mask clipping where sentences rise smoothly from empty space.',
+    bestForKeywords: ['editorial masking', 'cinematic title', 'sleek entrance', 'magazine layout'],
+  },
+  SEQUENTIAL_ELASTIC_TEXT: {
+    description: 'Staggers isolated word or letter containers using an elastic spring overshoot behavior.',
+    visualStyle: 'Bouncy spring-loaded transformations where tokens overshoot layout boundaries and settle down cleanly.',
+    bestForKeywords: ['high energy pop', 'kinetic display', 'playful bounce', 'impact tracking'],
+  },
+  BULLET_POINTS: {
+    description: 'Renders structured vertically stacked informational summaries or core lists.',
+    visualStyle: 'List parameters stagger sequentially with staggered layout index tracking adjustments.',
+    bestForKeywords: ['ordered steps', 'feature summary', 'core key list', 'bullet take-aways'],
+  },
+  GEOMETRIC_QUOTE: {
+    description: 'Frames important thesis viewpoints or impactful user quotes using structural block accents.',
+    visualStyle: 'Large graphic callout quote-marks frame centered italicized focal points.',
+    bestForKeywords: ['testimonial copy', 'profound statement', 'thesis highlight', 'founder voice'],
+  },
+  GRID_PRINCIPLES: {
+    description: 'Arranges multi-column grids or product matrix cards to illustrate layout constraints or values.',
+    visualStyle: 'Structured card layout boundaries span column spaces with consistent internal padding rules.',
+    bestForKeywords: ['company values', 'framework matrices', '3-column overview', 'modular descriptions'],
   },
 };
 
@@ -93,9 +73,9 @@ export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(wi
 
   acc[type] = {
     type,
-    category: widgetRegistry[type].category,
-    description: manual?.description ?? 'Simple finance-friendly chart or text component.',
-    visualStyle: manual?.visualStyle ?? 'Clean vector layout with restrained motion.',
+    category: widgetRegistry[type]?.category ?? 'TEXT_TYPOGRAPHY',
+    description: manual?.description ?? 'Typography-led composition element.',
+    visualStyle: manual?.visualStyle ?? 'Restrained motion layout utilizing strict type tracking parameters.',
     bestForKeywords: manual?.bestForKeywords ?? [],
   };
   return acc;
