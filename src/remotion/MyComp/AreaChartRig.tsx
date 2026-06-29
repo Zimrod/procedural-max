@@ -314,7 +314,7 @@ export const AreaChartRig: React.FC<Props> = ({
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
           fps,
-          config: { friction: 10 },
+          config: { damping: 10, mass: 0.5, stiffness: 150 },
         });
         const opacityLabel = interpolate(labelProgress, [0, 1], [0, 1]);
         const translateY = interpolate(labelProgress, [0, 1], [10, 0]);
