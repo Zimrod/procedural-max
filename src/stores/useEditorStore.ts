@@ -6,7 +6,7 @@ type EditorState = {
   clips: any;
   captions: any;
   setCurrentFrame: (frame: number) => void;
-  addClip: (clip: MediaClip) => void;
+  addClip: (clip: any) => void;
   updateCaption: (id: string, text: string) => void;
 };
 
