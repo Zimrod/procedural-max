@@ -1,10 +1,16 @@
-// rigs/forklift/register.ts
+// src/rigs/forklift/register.ts
 import { registerRig } from "../../core/rigRegistry";
 import { Forklift } from "./Forklift";
 import { createForkliftEntity } from "./createForkliftEntity";
 
 registerRig("forklift", {
-  enrich: (entity, parts) => createForkliftEntity(entity, parts.body, parts.fork),
+  // 🚀 Fix: Guard against undefined by adding optional chaining and empty string fallbacks
+  enrich: (entity, parts) => 
+    createForkliftEntity(
+      entity, 
+      parts?.body ?? "", 
+      parts?.fork ?? ""
+    ),
   component: Forklift,
   requiredParts: {
     body: "forklift/forklift_body.svg",
