@@ -11,7 +11,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
 
   // const isProductionMode = process.env.NODE_ENV === "production";
-  const isProductionMode = false;
+  const isProductionMode = true;
   
   // 🚀 VALIDATION RULE: The panel is populated if sceneConfig exists and has active scenes
   const isPopulated = sceneConfig && sceneConfig.length > 0;
