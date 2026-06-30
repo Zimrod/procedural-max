@@ -1,7 +1,6 @@
 // src/stores/useEditorStore.ts
-import create from 'zustand';
+import { create } from 'zustand';
 
-// 🚀 Fix: Define the structural interfaces expected by your store collections
 export interface MediaClip {
   id: string;
   type: string;
