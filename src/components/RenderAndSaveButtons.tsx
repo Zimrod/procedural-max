@@ -10,7 +10,8 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
 
-  const isProductionMode = process.env.NODE_ENV === "production";
+  // const isProductionMode = process.env.NODE_ENV === "production";
+  const isProductionMode = false;
   
   // 🚀 VALIDATION RULE: The panel is populated if sceneConfig exists and has active scenes
   const isPopulated = sceneConfig && sceneConfig.length > 0;
@@ -70,8 +71,8 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
       </button>
 
       {/* ☁️ Save to Supabase Cloud Storage Action Trigger */}
-      {/* {!isProductionMode && ( */}
-        {/* <button 
+      {!isProductionMode && (
+        <button
           disabled={isSaving || !isPopulated}
           style={{
             width: "100%",
@@ -91,8 +92,8 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
           onClick={handleSaveToSupabase}
         >
           {isSaving ? "⚡ Saving Embeddings..." : "☁️ Save to Supabase"}
-        </button> */}
-      {/* )} */}
+        </button>
+      )}
 
       {/* Dynamic Operational Success/Error Feedback Alerts */}
       {saveStatus === "success" && (
