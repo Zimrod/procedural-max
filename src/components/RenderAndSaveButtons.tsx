@@ -71,7 +71,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
 
       {/* ☁️ Save to Supabase Cloud Storage Action Trigger */}
       {/* {!isProductionMode && ( */}
-        <button
+        {/* <button 
           disabled={isSaving || !isPopulated}
           style={{
             width: "100%",
@@ -91,7 +91,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
           onClick={handleSaveToSupabase}
         >
           {isSaving ? "⚡ Saving Embeddings..." : "☁️ Save to Supabase"}
-        </button>
+        </button> */}
       {/* )} */}
 
       {/* Dynamic Operational Success/Error Feedback Alerts */}
