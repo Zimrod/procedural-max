@@ -3,8 +3,8 @@ import { Metadata, Viewport } from "next";
 import "./global.css";
 
 export const metadata: Metadata = {
-  title: "You Gotta Be Starting Something",
-  description: "You Gotta Be Starting Something",
+  title: "AI Video Generation Studio",
+  description: "Procedural Animation",
 };
 
 export const viewport: Viewport = {
