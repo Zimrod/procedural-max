@@ -3,8 +3,8 @@ import create from 'zustand';
 
 type EditorState = {
   currentFrame: number;
-  clips: MediaClip[];
-  captions: Caption[];
+  clips: any;
+  captions: any;
   setCurrentFrame: (frame: number) => void;
   addClip: (clip: MediaClip) => void;
   updateCaption: (id: string, text: string) => void;
