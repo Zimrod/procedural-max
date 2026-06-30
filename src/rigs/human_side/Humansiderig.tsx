@@ -12,7 +12,7 @@ import { staticFile, delayRender, continueRender } from 'remotion';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface PartData {
+interface PartData { 
   svgText: string;
   viewBox: { w: number; h: number };
   pivots: Map<string, { x: number; y: number }>;

@@ -1,6 +1,6 @@
 // src/rigs/human_side/register.ts
 import { registerRig } from "../../core/rigRegistry";
-import { HumanSideRig } from "./HumanSideRig";
+import { HumanSideRig } from "./Humansiderig";
 
 registerRig("human_side", {
   component: HumanSideRig,
