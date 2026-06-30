@@ -59,7 +59,7 @@ export const GenericRig: React.FC<Props> = ({
 }) => {
   const [svgData, setSvgData] = useState<SvgData | null>(null);
 
-  const asset = assetRegistry[assetId];
+  const asset = (assetRegistry as Record<string, any>)[assetId];
 
   // ── ADD THIS ──
 //   console.log(`[GenericRig] mount`, { assetId, x, y, scale, hasAsset: !!asset });
