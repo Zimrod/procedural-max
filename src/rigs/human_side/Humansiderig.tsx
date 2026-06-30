@@ -206,6 +206,7 @@ export const HumanSideRig: React.FC<Props> = ({
   const walkUpperLegR = upperLegAngle(t, 0.0) * walkBlend;
   const walkUpperLegL = upperLegAngle(t, 0.5) * walkBlend;
   const walkLowerLegR = lowerLegAngle(t, 0.15) * walkBlend;
+  const walkLowerLegL = lowerLegAngle(t, 0.65) * walkBlend;
   const walkArmR      = Math.sin((t + 0.5) * Math.PI * 2) * 30 * walkBlend;
   const walkArmL      = Math.sin((t + 0.0) * Math.PI * 2) * 30 * walkBlend;
   const walkForearmR  = Math.sin((t + 0.5) * Math.PI * 2) * 20 * walkBlend;
