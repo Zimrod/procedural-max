@@ -194,15 +194,11 @@ export const HumanSideRig: React.FC<Props> = ({
   const uARElbowPivot    = getPivot(parts.upper_arm_r!, 'pivot_elbow_r');
   const uALShoulderPivot = getPivot(parts.upper_arm_l!, 'pivot_shoulder_l');
   const uALElbowPivot    = getPivot(parts.upper_arm_l!, 'pivot_elbow_l');
-  const lARElbowPivot    = getPivot(parts.lower_arm_r!, 'pivot_elbow_r');
-  const lALElbowPivot    = getPivot(parts.lower_arm_l!, 'pivot_elbow_l');
 
   const uLRHipPivot  = getPivot(parts.upper_leg_r!, 'pivot_pelvis_r');
   const uLRKneePivot = getPivot(parts.upper_leg_r!, 'pivot_knee_r');
   const uLLHipPivot  = getPivot(parts.upper_leg_l!, 'pivot_pelvis_l');
   const uLLKneePivot = getPivot(parts.upper_leg_l!, 'pivot_knee_l');
-  const lLRKneePivot = getPivot(parts.lower_leg_r!, 'pivot_knee_r');
-  const lLLKneePivot = getPivot(parts.lower_leg_l!, 'pivot_knee_l');
 
   // ── Walk angles (suppressed to 0 when not walking, blended by walkBlend) ──
   const t = walkPhase;
@@ -210,7 +206,6 @@ export const HumanSideRig: React.FC<Props> = ({
   const walkUpperLegR = upperLegAngle(t, 0.0) * walkBlend;
   const walkUpperLegL = upperLegAngle(t, 0.5) * walkBlend;
   const walkLowerLegR = lowerLegAngle(t, 0.15) * walkBlend;
-  const walkLowerLegL = lowerLegAngle(t, 0.65) * walkBlend;
   const walkArmR      = Math.sin((t + 0.5) * Math.PI * 2) * 30 * walkBlend;
   const walkArmL      = Math.sin((t + 0.0) * Math.PI * 2) * 30 * walkBlend;
   const walkForearmR  = Math.sin((t + 0.5) * Math.PI * 2) * 20 * walkBlend;
