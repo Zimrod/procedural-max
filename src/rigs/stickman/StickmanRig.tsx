@@ -1,6 +1,5 @@
 // src/rigs/stickman/StickmanRig.tsx
 import React from "react";
-import { CANVAS_SIZE } from "../../core/sceneConfig";
 
 type Props = {
   x: number;
