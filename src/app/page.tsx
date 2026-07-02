@@ -99,17 +99,31 @@ export default function LandingPage() {
     }
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion]);
 
+  const API = process.env.NEXT_PUBLIC_API_URL!;
+
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
+
     try {
       setActiveLoading("script");
-      const res = await fetch("/api/generate-script", {
+
+      const res = await fetch(`${API}/script`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt,
+        }),
       });
+
+      if (!res.ok) {
+        throw new Error("Failed to generate script.");
+      }
+
       const data = await res.json();
-      setAiScript(data.script || "");
+
+      setAiScript(data.script);
     } catch (err) {
       console.error(err);
     } finally {
