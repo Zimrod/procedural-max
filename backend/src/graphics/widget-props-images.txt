@@ -1,0 +1,36 @@
+CanvasParticleLogoRig:
+type Particle = {
+  readonly originX: number;
+  readonly originY: number;
+  readonly color: string;
+  readonly angle: number;
+  readonly speed: number;
+  readonly lift: number;
+  readonly staggerDelay: number; // Staggers disintegration from left to right
+};
+type RigProps = {
+  readonly logoFileName: string;       // e.g., "my-logo.svg" or "logo.png"
+  readonly logoWidth?: number;         // Scale boundary width inside the canvas
+  readonly particleSpacing?: number;   // 💡 LOWER = High Density / More Particles (2 to 4 is sweet spot)
+  readonly backgroundColor?: string;
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number;  // 💡 MASTER CONTROLLER
+};
+
+CanvasParticleLogoAssemblyRig:
+type Particle = {
+  readonly targetX: number;  
+  readonly targetY: number;  
+  readonly startOffsetX: number; 
+  readonly startOffsetY: number; 
+  readonly color: string;
+  readonly staggerDelay: number; 
+};
+type RigProps = {
+  readonly logoFileOrUrl: string;      // 💡 Takes "logo.svg" OR a full dynamic uploaded URL string
+  readonly logoWidth?: number;         
+  readonly particleSpacing?: number;   
+  readonly backgroundColor?: string;
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number;  
+};

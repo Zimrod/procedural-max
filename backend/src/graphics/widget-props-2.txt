@@ -1,0 +1,276 @@
+// src/remotion/MyComp/widget-props-2.txt
+BankRolesInfographic:
+type RoleNode = {
+  id: string;
+  label: string;
+  subtext: string;
+  x: number; // Offset from center
+  y: number; // Offset from center
+};
+
+type Props = {
+  title?: string;
+  bankLabel?: string;
+  accentColor?: string;
+  nodeBgColor?: string;
+  textColor?: string;
+  lineColor?: string;
+};
+
+SolarCapacityRig:
+type Props = {
+  targetCapacity?: number; // e.g., 100
+  unit?: string;           // e.g., "MW"
+  label?: string;          // e.g., "PROJECT SCALE"
+  accentColor?: string;
+  panelColor?: string;
+  emptyPanelColor?: string;
+};
+
+DynamicCapitalStack:
+type Props = {
+  title?: string;
+  // Scenario 1: Default configuration target breakdown (e.g., 70/30 split)
+  targetDebt?: number;     // e.g., 70
+  targetEquity?: number;   // e.g., 30
+  targetGrant?: number;    // e.g., 0
+  
+  // Scenario 2: Shift timeline breakpoint (e.g., introducing a 10% sweetener at frame 75)
+  shiftFrame?: number;     
+  finalDebt?: number;      // e.g., 60
+  finalEquity?: number;    // e.g., 30
+  finalGrant?: number;     // e.g., 10
+
+  debtColor?: string;
+  equityColor?: string;
+  grantColor?: string;
+};
+
+DramaticEmphasisCard:
+type Props = {
+  emphasisText?: string;   // e.g., "BUT HERE’S THE KICKER:" or "BUT THE REAL VALUE?"
+  subtext?: string;        // e.g., "Each role means a separate revenue stream."
+  accentColor?: string;
+  flashColor?: string;
+};
+
+SolarRevenueMultiplier:
+type RevenueStream = {
+  id: string;
+  label: string;
+  baseFee: number;
+  subtext: string;
+};
+
+type Props = {
+  title?: string;
+  currency?: string;
+  accentColor?: string;
+  infrastructureColor?: string;
+};
+
+GlobalFinancialFlow:
+type Props = {
+  title?: string;
+  sourceLabel?: string;
+  destinationLabel?: string;
+  flowColor?: string;
+  infrastructureColor?: string;
+};
+
+DSCRBridge:
+type Props = {
+  title?: string;
+  noiValue?: number;         // Net Operating Income (e.g., $1.3M)
+  debtServiceValue?: number; // Debt Service Obligation (e.g., $1.0M)
+  currency?: string;
+  accentColor?: string;      // Color for passing health status
+  dangerColor?: string;      // Color if DSCR drops below safety threshold
+};
+
+SolarGlowRig:
+type Props = {
+  title?: string;
+  metricLabel?: string;
+  glowColor?: string;       // The primary emissive glow color (e.g., bright electric cyan/green)
+  basePanelColor?: string;  // Solid silicon backglass foundation color
+};
+
+FullscreenSolarField:
+type Props = {
+  glowColor?: string;        // The primary emissive glow color (Light Green)
+  basePanelColor?: string;   // Deep industrial silicon foundation color
+  gridRows?: number;         // Vertical density
+  gridCols?: number;         // Horizontal density
+};
+
+WindTurbinesRig:
+type TurbineProps = {
+  xPos: number;         // Horizontal anchor position on the canvas
+  yBaseline: number;    // Vertical ground level anchor
+  scale: number;        // Scaling factor for depth perspective
+  spinSpeed: number;    // Degrees of rotation per frame
+  introDelay: number;   // Frame stagger delay for assembly
+  accentColor: string;
+};
+
+SunriseHarvestRig:
+type Props = {
+  glowColor?: string;        // Light Green accent for panel activation
+  basePanelColor?: string;   // Dark unactivated silicon color
+};
+
+SolarStorageBessRig:
+type Props = {
+  title?: string;
+  solarMetricLabel?: string;
+  storageMetricLabel?: string;
+  accentColor?: string; // Battery/solar charging state color (Light Green)
+  chassisColor?: string; // Industrial dark slate enclosure
+};
+
+RooftopSolarRig:
+type Props = {
+  title?: string;
+  metricLabel?: string;
+  accentColor?: string; // Light Green for panel highlights
+  houseStructureColor?: string; // Dark slate blueprint foundation
+};
+
+ElectricGridPerspectiveRig:
+type PylonProps = {
+  scale: number;        // Spatial perspective scale (1.0 = foreground, 0.4 = background)
+  xAnchor: number;      // Horizontal positioning on canvas
+  yBaseline: number;    // Ground seating point coordinate
+  introDelay: number;   // Staggered assembly timing fence
+  accentColor: string;
+};
+
+ElectricGridPerspectiveWhite:
+type PylonProps = {
+  scale: number;        // Spatial perspective scale (1.0 = foreground, 0.4 = background)
+  xAnchor: number;      // Horizontal positioning on canvas
+  yBaseline: number;    // Ground seating point coordinate
+  introDelay: number;   // Staggered assembly timing fence
+  accentColor: string;  // Primary dark surge color
+};
+
+PowerPurchaseAgreementRig:
+no props;
+
+IsometricCapitalStackRig:
+export type CapitalLayerConfig = {
+  key: string;
+  label: string;
+  percentageText: string;
+  subText: string;        // Context description rendered inside the right dashboard cards
+  baseColor: string;      // Front-Left face color
+  sideColor: string;      // Front-Right face color
+  topColor: string;       // Top cap face color and pointer colour
+};
+
+export type IsometricCapitalStackProps = {
+  backgroundColor?: string;
+  stageScale?: number;
+  stageOffsetX?: number;
+  stageOffsetY?: number;
+  
+  // Prism Dimensions
+  prismWidth?: number;         // Width dimension of the prism base
+  prismLength?: number;        // Depth extension dimension running along isometric vector
+  layerHeight?: number;        // Thickness profile of individual segments
+  layerGap?: number;           // Gap spacing between sections
+  isometricAngle?: number;     // Vector projection angle radian modifier
+  
+  // Dynamics & Timings
+  dropStaggerFrames?: number;
+  springDamping?: number;
+  springMass?: number;
+  springStiffness?: number;
+  
+  layers?: CapitalLayerConfig[];
+};
+
+IsometricCashflowWaterfallRig:
+export type WaterfallLevelConfig = {
+  key: string;
+  label: string;
+  allocationText: string;
+  subText: string;
+  baseColor: string;       // Front-Left structural wall color
+  sideColor: string;       // Front-Right structural wall color
+  poolColor: string;       // Horizontal liquid pooling deck color
+  waterSurgeColor: string; // Color of the cascading stream active over this block
+};
+
+export type IsometricCashflowWaterfallProps = {
+  // Master Canvas Layout Configuration
+  backgroundColor?: string;
+  stageScale?: number;
+  stageOffsetX?: number;
+  stageOffsetY?: number;
+
+  // Isometric Structural Proportions
+  blockWidth?: number;         // Isometric width dimension (Left axis)
+  blockLength?: number;        // Isometric length dimension (Right axis)
+  stepDropHeight?: number;     // Vertical height drop of each waterfall landing step
+  layerGap?: number;           // Vertical overhang offset for cascading fluid path (FIXED)
+  isometricAngle?: number;     // Skew translation projection factor
+
+  // Physics, Speeds & Timings
+  fluidSpeedFrames?: number;   // Full duration loop for the streaming liquid texture
+  dropStaggerFrames?: number;  // Stagger gate delay for structural entry
+  springDamping?: number;
+  springMass?: number;
+  springStiffness?: number;
+
+  // Fully programmatic Cashflow Allocation Levels array schema
+  levels?: WaterfallLevelConfig[];
+};
+
+IsometricDebtEquityPieRig:
+export type PieSliceConfig = {
+  key: string;
+  label: string;
+  percentage: number;       // Value from 0 to 100 (Must sum up to 100)
+  baseColor: string;        // Upright flat front face color
+  sideColor: string;        // Extruded 3D rim edge color
+  legendTextColor: string;  // Explicit color mapping for the side legend metrics
+};
+
+export type IsometricDebtEquityPieProps = {
+  backgroundColor?: string;
+  stageScale?: number;
+  stageOffsetX?: number;
+  stageOffsetY?: number;
+
+  // Exact geometric configurations for the upright disc match
+  pieRadiusX?: number;
+  pieRadiusY?: number;
+  pieThickness?: number;
+  globalRotationOffset?: number; // Adjusts where the 60% slice begins its rotation
+
+  introDelayFrames?: number;
+  springDamping?: number;
+  springMass?: number;
+  springStiffness?: number;
+
+  slices?: PieSliceConfig[];
+};
+
+IsometricSolarGlowRig:
+no props;
+
+GanttChartRig:
+interface GanttTask {
+  id: string;
+  name: string;
+  phase: string;
+  startWeek: number;  // 0 to 8 mapping framework
+  durationWeeks: number;
+  progress: number;   // Internal filling value 0 to 1
+  color: string;
+};
+
+EpcFinancingRig:
+no props;

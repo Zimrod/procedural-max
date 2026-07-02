@@ -1,0 +1,232 @@
+TerminalTypingTextRig:
+type RigProps = {
+  readonly textToAnimate: string;
+  
+  // Custom Typography & Sizing Configuration
+  readonly fontSize?: number;
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number; // 💡 MASTER TIMELINE LIMIT CONTROLLER
+
+  // Full System Theme Injection Properties
+  readonly textColor?: string;
+  readonly cursorColor?: string;
+  readonly backgroundColor?: string;
+  readonly borderColor?: string;
+  readonly headerBgColor?: string;
+  readonly titleColor?: string;
+  readonly terminalTitle?: string;
+};
+
+TextRig:
+type Props = {
+  text: string;
+  letterSpacing?: number;
+  spaceWidth?: number;
+  startDelay?: number;
+  durationInFrames?: number;
+  scaleFrom?: 'ground' | 'center';
+  baseY?: number;           
+  letterHeight?: number;
+  letterScale?: number;
+  color?: string;
+  maxLineWidthPercent?: number;
+  lineHeight?: number;
+  textAlign?: 'left' | 'center';
+};
+
+TitleCardRig:
+type Props = {
+  title: string;
+  subtitle?: string;
+
+  // Layout
+  align?: "left" | "center";
+  maxWidth?: number;
+
+  // Typography
+  titleFontSize?: number;
+  subtitleFontSize?: number;
+  fontFamily?: string;
+
+  // Styling
+  titleColor?: string;
+  subtitleColor?: string;
+  accentColor?: string;
+  backgroundColor?: string;
+
+  // Motion
+  revealDirection?: "up" | "down" | "left" | "right";
+  cinematic?: boolean;
+
+  // 💡 SINGLE TIMING PROP: All phase parameters calculate straight from this boundary window
+  durationInFrames?: number;
+};
+
+TypewriterRig:
+type Props = {
+  text?: string;
+  boxWidth?: number;
+  boxHeight?: number;
+  fontSize?: number;
+  fontFamily?: string;
+  textColor?: string;
+  backgroundColor?: string;
+  cursorColor?: string;
+  durationInFrames?: number;
+};
+
+TextAnimationsWordHighlight:
+type Props = {
+  // Content & Target Configs
+  text?: string;
+  highlightWord?: string;
+  
+  // Styling Parameters
+  fontSize?: number;
+  fontWeight?: number;
+  colorBg?: string;
+  colorText?: string;
+  colorHighlight?: string;
+  durationInFrames?: number;
+};
+
+SvgDrawInTextRig:
+type AnimatedLetterProps = {
+  readonly char: string;
+  readonly globalIndex: number;
+  readonly totalChars: number; // Used to divide stagger milestones perfectly
+  readonly size: number;
+  readonly strokeColor: string;
+  readonly fillColor: string;
+  readonly startFrameOffset: number;
+  readonly durationInFrames: number;
+};
+type RigProps = {
+  readonly textToAnimate: string;
+  readonly size?: number;
+  readonly strokeColor?: string; 
+  readonly fillColor?: string;   
+  readonly backgroundColor?: string;
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number;
+};
+
+SlidingWordMaskRig:
+type RigProps = {
+  readonly prefixText: string;     
+  readonly wordsToCycle: string[]; 
+  
+  // Custom Typography & Sizing Selectors
+  readonly fontSize?: number;
+  readonly fontWeight?: string | number;
+  readonly fontFamily?: string;
+  
+  // Full System Environment Theme Properties
+  readonly wordColor?: string;     
+  readonly baseTextColor?: string; 
+  readonly backgroundColor?: string;
+
+  // Master Animation Timelines
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number; 
+};
+
+SequentialElasticTextRig:
+type LetterProps = {
+  readonly char: string;
+  readonly globalIndex: number;
+  readonly totalChars: number;
+  readonly size: number;
+  readonly baseColor: string;
+  readonly startFrameOffset: number;
+  readonly durationInFrames: number;
+};
+type RigProps = {
+  readonly textToAnimate: string;
+  readonly fontSize?: number;
+  readonly fontWeight?: string | number;
+  readonly fontFamily?: string;
+  readonly letterSpacing?: string;
+  
+  // System Theme Properties
+  readonly baseColor?: string;
+  readonly backgroundColor?: string;
+  
+  // Master Animation Timelines
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number; // 💡 MASTER LIMIT: Changing this scales every moving element
+};
+
+BulletPointsRig:
+type BulletItemProps = {
+  readonly text: string;
+  readonly itemIndex: number;
+  readonly totalItems: number;
+  readonly fontSize: number;
+  readonly bulletColor: string;
+  readonly textColor: string;
+  readonly startFrameOffset: number;
+  readonly durationInFrames: number;
+};
+type RigProps = {
+  readonly items?: string[];
+  readonly fontSize?: number;
+  readonly fontWeight?: string | number;
+  readonly fontFamily?: string;
+  readonly itemGap?: number;
+  
+  // Custom System Theme Injections
+  readonly textColor?: string;
+  readonly bulletColor?: string;
+  readonly backgroundColor?: string;
+
+  // Master Timelines
+  readonly startFrameOffset?: number;
+  readonly durationInFrames?: number; 
+};
+
+GeometricQuoteRig:
+type Props = {
+  quoteText?: string;
+  authorName?: string;
+  authorTitle?: string;
+  
+  // 💡 NEW TYPOGRAPHY EXPOSURES
+  quoteFontSize?: number;
+  authorFontSize?: number;
+  titleFontSize?: number;
+
+  // System theme fallback injections
+  textColor?: string;
+  accentColor?: string;
+  backgroundColor?: string;
+  fontFamily?: string;
+  durationInFrames?: number;
+};
+
+GridPrinciplesRig:
+type PrincipleItem = {
+  title: string;
+  description: string;
+};
+type Props = {
+  sectionTitle?: string;
+  principles?: PrincipleItem[];
+  
+  // Explicit typography prop shaping
+  sectionFontSize?: number;
+  cardTitleFontSize?: number;
+  cardDescFontSize?: number;
+
+  // System theme fallback injections
+  textColor?: string;
+  mutedTextColor?: string;
+  accentColor?: string;
+  surfaceColor?: string;
+  backgroundColor?: string;
+  borderColor?: string;
+  fontFamily?: string;
+
+  // SINGLE TIMING PROP: Math engines now anchor perfectly to this value
+  durationInFrames?: number;
+};
