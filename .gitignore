@@ -28,6 +28,7 @@ yarn-error.log*
 # local env files
 .env
 .local
+!.env.example
 
 # vercel
 .vercel
@@ -37,3 +38,7 @@ yarn-error.log*
 next-env.d.ts
 out/
 .envprocedural-max.zip
+
+# IDE
+.vscode/
+.idea/
