@@ -5,19 +5,19 @@ import React from 'react';
 import { WidgetType } from './widgetRegistry';
 
 // Existing Rig Imports
-import { TextRig } from '../remotion/MyComp/TextRig';
-import { TitleCardRig } from '../remotion/MyComp/TitleCardRig';
-import { TypewriterRig } from '../remotion/MyComp/TypewriterRig';
+import { TextRig } from '../graphics/TextRig';
+import { TitleCardRig } from '../graphics/TitleCardRig';
+import { TypewriterRig } from '../graphics/TypewriterRig';
 
 // Newly Integrated Rig Imports
-import { TerminalTypingTextRig } from '../remotion/MyComp/TerminalTypingTextRig';
-import { TextAnimationsWordHighlight } from '../remotion/MyComp/TextAnimationsWordHighlight';
-import { SvgDrawInTextRig } from '../remotion/MyComp/SvgDrawInTextRig';
-import { SlidingWordMaskRig } from '../remotion/MyComp/SlidingWordMaskRig';
-import { SequentialElasticTextRig } from '../remotion/MyComp/SequentialElasticTextRig';
-import { BulletPointsRig } from '../remotion/MyComp/BulletPointsRig';
-import { GeometricQuoteRig } from '../remotion/MyComp/GeometricQuoteRig';
-import { GridPrinciplesRig } from '../remotion/MyComp/GridPrinciplesRig';
+import { TerminalTypingTextRig } from '../graphics/TerminalTypingTextRig';
+import { TextAnimationsWordHighlight } from '../graphics/TextAnimationsWordHighlight';
+import { SvgDrawInTextRig } from '../graphics/SvgDrawInTextRig';
+import { SlidingWordMaskRig } from '../graphics/SlidingWordMaskRig';
+import { SequentialElasticTextRig } from '../graphics/SequentialElasticTextRig';
+import { BulletPointsRig } from '../graphics/BulletPointsRig';
+import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig';
+import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div

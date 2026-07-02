@@ -5,7 +5,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { VOICEOVER_DELAY_SECONDS } from "../../types/constants";
+import { VOICEOVER_DELAY_SECONDS } from "../types/constants";
 
 const MAX_LINE_WIDTH = 0.8; // Slightly wider to accommodate smaller text
 

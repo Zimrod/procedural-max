@@ -6,11 +6,11 @@ import {
 import {
   DEFAULT_COMPOSITION_THEME,
   type CompositionTheme,
-} from '../../types/theme';
+} from '../types/theme';
 
 import {
   getWidgetComponent,
-} from '../../core/widgetComponentRegistry';
+} from '../core/widgetComponentRegistry';
 
 type SceneConfigItem = {
   widget: string;

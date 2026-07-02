@@ -23,7 +23,7 @@ const eslintConfig = [
         return { ...acc, [key]: "off" };
       }, {}),
     },
-    files: ["src/remotion/**"],
+    files: ["src/graphics/**"],
   },
 ];
 

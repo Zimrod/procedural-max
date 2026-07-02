@@ -18,7 +18,7 @@ app.post("/api/execute-render", async (req, requireResponse) => {
     console.log(`🎬 Starting cloud render job: ${renderId}`);
     
     // 1. Point to your main Remotion entry file 
-    const entryPoint = path.resolve(__dirname, "../src/remotion/index.ts"); 
+    const entryPoint = path.resolve(__dirname, "../src/graphics/index.ts"); 
     const compositionId = "MainVideoComposition"; // Your Remotion composition ID
 
     // 2. Build the bundle asset matrix 

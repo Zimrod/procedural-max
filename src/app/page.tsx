@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Player, PlayerRef } from "@remotion/player";
-import { Main } from "../remotion/MyComp/Main";
+import { Main } from "../graphics/Main";
 import {
   VIDEO_FPS,
   VIDEO_HEIGHT,
