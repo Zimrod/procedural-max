@@ -32,6 +32,7 @@
     "src/graphics/**",
     "src/core/**",
     "src/services/**",
+    "src/lib/**",
 
     "src/**/*.draft.ts",
     "src/**/*.draft.tsx",
