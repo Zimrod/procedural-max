@@ -1,8 +1,8 @@
 // src/core/planning/selectWidgets.ts
 import OpenAI from 'openai';
-import { NarrativeBeat } from '../narrative/narrativeAnalyzer';
-import { widgetRegistry } from '../widgetRegistry';
-import { WidgetType } from '../taxonomy/widgetTaxonomy';
+import { NarrativeBeat } from '../narrative/narrativeAnalyzer.js';
+import { widgetRegistry } from '../widgetRegistry.js';
+import { WidgetType } from '../taxonomy/widgetTaxonomy.js';
 
 const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -157,3 +157,4 @@ export async function selectWidgets(beats: NarrativeBeat[]): Promise<SelectedWid
     };
   });
 }
+

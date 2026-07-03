@@ -1,17 +1,11 @@
-"use strict";
 // src/core/planning/intentParser.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.deduceNarrativeIntentAI = deduceNarrativeIntentAI;
-const openai_1 = __importDefault(require("openai"));
-const apiKey = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
+import OpenAI from 'openai';
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 /**
  * Uses a small, fast LLM with strict JSON schema definitions to extract
  * deep semantic intent and real entities without brittle string matching.
  */
-async function deduceNarrativeIntentAI(text) {
+export async function deduceNarrativeIntentAI(text) {
     try {
         const response = await apiKey.chat.completions.create({
             model: 'gpt-4.1', // Extremely fast and cheap for classification tasks

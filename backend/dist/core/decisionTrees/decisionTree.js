@@ -1,14 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.decisionTree = decisionTree;
 // src/core/decisionTrees/decisionTree.ts
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const openai_1 = __importDefault(require("openai"));
-const openai = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
+import fs from 'fs';
+import path from 'path';
+import OpenAI from 'openai';
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 //
 // ============================================================
 // AI VISUAL DIRECTOR
@@ -78,7 +72,7 @@ OUTPUT JSON ONLY:
         reasoning: parsed.reasoning ?? '',
     };
 }
-async function decisionTree({ semanticExtractions, narrativeScenes, }) {
+export async function decisionTree({ semanticExtractions, narrativeScenes, }) {
     const decisions = [];
     // 2. Safeguard input processing with an array check runtime guard
     const beatsToProcess = Array.isArray(narrativeScenes) ? narrativeScenes : [];
@@ -91,8 +85,8 @@ async function decisionTree({ semanticExtractions, narrativeScenes, }) {
     // SAVE
     // ==========================================================
     //
-    const outputPath = path_1.default.resolve(process.cwd(), 'public', '05_decision_tree_output.json');
-    fs_1.default.writeFileSync(outputPath, JSON.stringify(decisions, null, 2));
+    const outputPath = path.resolve(process.cwd(), 'public', '05_decision_tree_output.json');
+    fs.writeFileSync(outputPath, JSON.stringify(decisions, null, 2));
     console.log('Decision tree output saved:', outputPath);
     return decisions;
 }

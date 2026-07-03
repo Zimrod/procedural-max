@@ -9,8 +9,8 @@ import {
   // useVideoConfig, // 💡 Pull native configurations straight from Root mount
 } from 'remotion';
 import { loadFont } from '@remotion/fonts';
-// import { CaptioningDemo } from './CaptioningDemo-primitives';
-import { VoiceoverScene } from './VoiceoverScene';
+// import { CaptioningDemo } from './CaptioningDemo-primitives.js';
+import { VoiceoverScene } from './VoiceoverScene.js';
 
 type Props = {
   captions?: { word: string; start: number; end: number; }[];

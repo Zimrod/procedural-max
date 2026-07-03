@@ -3,7 +3,7 @@
 // Accepts an array of fork carriage Y phases and resolves the active one.
 // Replaces multiple sequential forkCarriageY entries in the timeline.
 
-import { forkCarriageY } from './forkCarriageY';
+import { forkCarriageY } from './forkCarriageY.js';
 
 type Phase = {
   from: number;

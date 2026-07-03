@@ -5,9 +5,9 @@
 
 import React from 'react';
 import { AbsoluteFill } from 'remotion';
-import { Puppeteer }    from '../puppeteer/Puppeteer';
-import { compileScene } from '../core/inference/compileScene';
-import { SceneConfig }  from '../core/inference/scenePrompt';
+import { Puppeteer }    from '../puppeteer/Puppeteer.js';
+import { compileScene } from '../core/inference/compileScene.js';
+import { SceneConfig }  from '../core/inference/scenePrompt.js';
 
 const sceneConfig: SceneConfig = {
   seed: 9,

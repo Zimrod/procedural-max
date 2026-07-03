@@ -1,7 +1,7 @@
 // src/core/planning/intentParser.ts
 
 import OpenAI from 'openai';
-import { WidgetIntent } from '../taxonomy/widgetTaxonomy';
+import { WidgetIntent } from '../taxonomy/widgetTaxonomy.js';
 
 const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -89,3 +89,4 @@ export async function deduceNarrativeIntentAI(text: string): Promise<AnalysedInt
     };
   }
 }
+

@@ -1,4 +1,3 @@
-"use strict";
 // src/core/inference/seededRandom.ts
 //
 // Deterministic pseudo-random number generator using mulberry32.
@@ -12,9 +11,7 @@
 //   rng.int(0, 5)      // integer 0–5 inclusive
 //   rng.pick(['a','b','c'])  // random element
 //   rng.bool(0.7)      // true 70% of the time
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createRng = void 0;
-const createRng = (seed) => {
+export const createRng = (seed) => {
     let s = seed >>> 0;
     const next = () => {
         s += 0x6d2b79f5;
@@ -39,5 +36,4 @@ const createRng = (seed) => {
         },
     };
 };
-exports.createRng = createRng;
 //# sourceMappingURL=seededRandom.js.map

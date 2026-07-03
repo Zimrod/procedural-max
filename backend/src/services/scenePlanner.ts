@@ -3,20 +3,20 @@
 import fs from "fs";
 import path from "path";
 
-import { openai } from "../lib/openai";
+import { openai } from "../lib/openai.js";
 
-import { enrichTranscription } from "../core/transcription/enrichTranscription";
+import { enrichTranscription } from "../core/transcription/enrichTranscription.js";
 
 import {
   semanticExtractionPipeline,
   segmentTranscriptionIntoSentences,
-} from "../core/segmentation/semanticExtraction";
+} from "../core/segmentation/semanticExtraction.js";
 
-import { narrativeAnalyzer } from "../core/narrative/narrativeAnalyzer";
+import { narrativeAnalyzer } from "../core/narrative/narrativeAnalyzer.js";
 
-import { selectWidgetsRobust } from "../core/planning/selectWidgetsRobust";
+import { selectWidgetsRobust } from "../core/planning/selectWidgetsRobust.js";
 
-import { buildSceneConfigFromWidgets } from "../core/segmentation/buildSceneConfigFromWidgets";
+import { buildSceneConfigFromWidgets } from "../core/segmentation/buildSceneConfigFromWidgets.js";
 
 export async function buildScene() {
 

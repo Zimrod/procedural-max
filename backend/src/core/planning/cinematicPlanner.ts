@@ -6,11 +6,11 @@ import OpenAI from 'openai';
 
 import {
   NarrativeBeat,
-} from '../narrative/narrativeAnalyzer';
+} from '../narrative/narrativeAnalyzer.js';
 
 import {
   CinematicDecision,
-} from '../decisionTrees/decisionTree';
+} from '../decisionTrees/decisionTree.js';
 
 //
 // ============================================================

@@ -1,8 +1,5 @@
-"use strict";
 // src/core/transcription/enrichTranscription.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.enrichTranscription = enrichTranscription;
-function enrichTranscription(transcription) {
+export function enrichTranscription(transcription) {
     const fullText = transcription.text;
     const words = [...transcription.words];
     let textIndex = 0;

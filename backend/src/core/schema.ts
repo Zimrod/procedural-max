@@ -1,6 +1,6 @@
 // src/remotion/core/schema.ts
 
-import { forkliftSceneConfig, CANVAS_SIZE } from './sceneConfig';
+import { forkliftSceneConfig, CANVAS_SIZE } from './sceneConfig.js';
 
 const BODY_PIVOTS = {
   pivot_ground:   { x: 190.11, y: 348.38 },
@@ -200,3 +200,4 @@ export const scene = {
     },
   ],
 };
+

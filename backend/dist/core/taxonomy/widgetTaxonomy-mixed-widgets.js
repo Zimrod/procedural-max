@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WIDGET_TAXONOMY = void 0;
-exports.WIDGET_TAXONOMY = {
+export const WIDGET_TAXONOMY = {
     DATA_REPORTING: {
         label: 'Data & Charts',
         types: {

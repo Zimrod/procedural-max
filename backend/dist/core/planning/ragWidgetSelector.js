@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateRAGSceneConfig = generateRAGSceneConfig;
 // src/core/planning/ragWidgetSelector.ts
-const openai_1 = require("openai");
-const supabaseClient_1 = require("../../lib/supabaseClient");
-const openai = new openai_1.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-async function generateRAGSceneConfig(newScriptSentences) {
+import { OpenAI } from "openai";
+import { supabase } from "../../lib/supabaseClient.js";
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export async function generateRAGSceneConfig(newScriptSentences) {
     const finalInferredConfig = [];
     let currentTimelinePointer = 0;
     for (const sentence of newScriptSentences) {
@@ -16,7 +13,7 @@ async function generateRAGSceneConfig(newScriptSentences) {
         });
         const [queryEmbedding] = embeddingResponse.data.map(d => d.embedding);
         // 2. Query Supabase Vectors to find the closest layout match among your 10 scripts
-        const { data: matches, error } = await supabaseClient_1.supabase.rpc("match_video_segments", {
+        const { data: matches, error } = await supabase.rpc("match_video_segments", {
             query_embedding: queryEmbedding,
             match_threshold: 0.3, // Filter out weak context matches
             match_count: 1 // Grab the absolute best layout anchor
@@ -35,7 +32,7 @@ async function generateRAGSceneConfig(newScriptSentences) {
         }
         const bestMatch = matches[0];
         // 3. Retrieve the full parent scene configuration
-        const { data: project } = await supabaseClient_1.supabase
+        const { data: project } = await supabase
             .from("video_projects")
             .select("scene_config")
             .eq("id", bestMatch.project_id)

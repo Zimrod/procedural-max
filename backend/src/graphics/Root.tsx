@@ -1,7 +1,7 @@
 // src/remotion/Root.tsx
 import { Composition } from "remotion";
-import { Main } from "./MyComp/Main";
-import { VIDEO_FPS, VIDEO_WIDTH, VIDEO_HEIGHT } from "../types/constants";
+import { Main } from "./MyComp/Main.js";
+import { VIDEO_FPS, VIDEO_WIDTH, VIDEO_HEIGHT } from "../types/constants.js";
 
 // Import your raw pipeline data payloads safely
 import captionsData from "../../public/02_transcription.json";

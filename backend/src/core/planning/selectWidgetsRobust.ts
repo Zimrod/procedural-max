@@ -2,10 +2,10 @@
 
 import fs from 'fs';
 import path from 'path';
-import { NarrativeBeat } from '../narrative/narrativeAnalyzer';
-import { widgetRegistry } from '../widgetRegistry';
-import { WidgetType } from '../taxonomy/widgetTaxonomy';
-import { supabase } from '../../lib/supabaseClient';
+import { NarrativeBeat } from '../narrative/narrativeAnalyzer.js';
+import { widgetRegistry } from '../widgetRegistry.js';
+import { WidgetType } from '../taxonomy/widgetTaxonomy.js';
+import { supabase } from '../../lib/supabaseClient.js';
 
 export type SelectedWidget = {
   beatId: string;
@@ -132,3 +132,4 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
 
   return selectedWidgets;
 }
+

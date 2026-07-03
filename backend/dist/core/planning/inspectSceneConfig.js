@@ -1,15 +1,12 @@
-"use strict";
 // src/core/planning/inspectSceneConfig.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.inspectAndRefineConfig = inspectAndRefineConfig;
-const openai_1 = require("openai");
+import { OpenAI } from "openai";
 // Initialize OpenAI connection
-const apiKey = new openai_1.OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 /**
  * AI Quality Pass Agent to clean up, truncate, and polish layout properties
  * right before saving out to 08_scene_config.json
  */
-async function inspectAndRefineConfig(config) {
+export async function inspectAndRefineConfig(config) {
     const systemPrompt = `
     You are an expert video editor and automated video design QA engine. Your core task is to inspect an array of timeline scene config structures, fixing text length or structural framing errors based on rigid rules:
 

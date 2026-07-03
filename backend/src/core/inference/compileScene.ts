@@ -10,11 +10,11 @@
 // Change seed → different video, same narrative intent.
 // Change prompt → different scene entirely.
 
-import { SceneConfig }           from './scenePrompt';
-import { resolveIntent }         from './resolveIntent';
-import { generateLayout }        from './generateLayout';
-import { generateAnimation }     from './generateAnimation';
-import { buildWorldLayout, applyDepthScaling, sortByDepth } from '../world/worldLayout';
+import { SceneConfig }           from './scenePrompt.js';
+import { resolveIntent }         from './resolveIntent.js';
+import { generateLayout }        from './generateLayout.js';
+import { generateAnimation }     from './generateAnimation.js';
+import { buildWorldLayout, applyDepthScaling, sortByDepth } from '../world/worldLayout.js';
 
 export type CompiledScene = {
   entities:    any[];

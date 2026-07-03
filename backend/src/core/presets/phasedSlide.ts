@@ -7,7 +7,7 @@
 // Mirrors ForkliftScene's phase-array pattern exactly:
 //   const activePhase = [...phases].reverse().find(p => frame >= p.start) ?? phases[0];
 
-import { fadeSlide } from './fadeSlide';
+import { fadeSlide } from './fadeSlide.js';
 
 type Phase = {
   fromX: number;

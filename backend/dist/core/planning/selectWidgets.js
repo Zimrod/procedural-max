@@ -1,16 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectWidgets = selectWidgets;
 // src/core/planning/selectWidgets.ts
-const openai_1 = __importDefault(require("openai"));
-const widgetRegistry_1 = require("../widgetRegistry");
-const apiKey = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
-async function selectWidgets(beats) {
+import OpenAI from 'openai';
+import { widgetRegistry } from '../widgetRegistry.js';
+const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export async function selectWidgets(beats) {
     // 1. Build a dynamic registry manifest directly from the code definitions
-    const runtimeRegistryPayload = Object.entries(widgetRegistry_1.widgetRegistry).map(([type, meta]) => ({
+    const runtimeRegistryPayload = Object.entries(widgetRegistry).map(([type, meta]) => ({
         widgetType: type,
         purpose: meta.purpose,
         bestFor: meta.bestFor,
@@ -126,7 +120,7 @@ async function selectWidgets(beats) {
             type = 'TEXT';
         }
         // Only verify against active registry keys to protect against stray string generation
-        if (!Object.prototype.hasOwnProperty.call(widgetRegistry_1.widgetRegistry, type)) {
+        if (!Object.prototype.hasOwnProperty.call(widgetRegistry, type)) {
             type = 'TEXT';
         }
         seenWidgets.add(type);

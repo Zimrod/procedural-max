@@ -1,12 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = voiceoverRoutes;
-const voiceoverGenerator_1 = require("../services/voiceoverGenerator");
-async function voiceoverRoutes(fastify) {
+import { generateVoiceover } from "../services/voiceoverGenerator.js";
+export default async function voiceoverRoutes(fastify) {
     fastify.post("/voiceover", async (request, reply) => {
         try {
             const { script } = request.body;
-            const audioUrl = await (0, voiceoverGenerator_1.generateVoiceover)(script);
+            const audioUrl = await generateVoiceover(script);
             return reply.send({
                 success: true,
                 audioUrl,

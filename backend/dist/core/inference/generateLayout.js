@@ -1,4 +1,3 @@
-"use strict";
 // src/core/inference/generateLayout.ts
 //
 // Stage 3: SceneIntent + seed → WorldLayout
@@ -13,10 +12,8 @@
 //   - Foreground assets placed in lower one-third of world width
 //   - Sky assets distributed across upper portion of canvas
 //   - Minimum spacing between same-type assets
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateLayout = void 0;
-const assetRegistry_1 = require("../world/assetRegistry");
-const seededRandom_1 = require("./seededRandom");
+import { assetRegistry } from '../world/assetRegistry.js';
+import { createRng } from './seededRandom.js';
 // ── Placement rules ───────────────────────────────────────────────────────────
 // X ranges per depth layer (world units)
 const X_RANGES = {
@@ -30,7 +27,7 @@ const MIN_GAP = 1.5;
 const SKY_Y_RANGE = [5, 9]; // worldY for sky assets
 // ── Overlap checker ───────────────────────────────────────────────────────────
 const getAssetWidth = (assetId, scaleMultiplier = 1) => {
-    const asset = assetRegistry_1.assetRegistry[assetId];
+    const asset = assetRegistry[assetId];
     if (!asset)
         return 2;
     // Approximate world-unit width from canonical height and aspect ratio
@@ -101,8 +98,8 @@ const placeSkyElements = (skyPool, rng) => {
     });
 };
 // ── Main generator ────────────────────────────────────────────────────────────
-const generateLayout = (intent, seed) => {
-    const rng = (0, seededRandom_1.createRng)(seed);
+export const generateLayout = (intent, seed) => {
+    const rng = createRng(seed);
     const placements = [];
     // Place each depth layer
     for (const layer of intent.layers) {
@@ -115,5 +112,4 @@ const generateLayout = (intent, seed) => {
     placements.push(...skyPlacements);
     return { placements };
 };
-exports.generateLayout = generateLayout;
 //# sourceMappingURL=generateLayout.js.map

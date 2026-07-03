@@ -3,7 +3,7 @@
 // Same phase-array pattern as phasedSlide, but for numeric blend values.
 // Avoids last-write-wins when multiple blendTo entries share the same outputKey.
 
-import { blendTo } from './blendTo';
+import { blendTo } from './blendTo.js';
 
 type Phase = {
   from: number;

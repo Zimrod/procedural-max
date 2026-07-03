@@ -1,7 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.widgetRegistry = void 0;
-exports.getWidgetDefinition = getWidgetDefinition;
 const field = (key, label, kind, options, defaultValue) => ({
     key,
     label,
@@ -9,7 +5,7 @@ const field = (key, label, kind, options, defaultValue) => ({
     options,
     defaultValue,
 });
-exports.widgetRegistry = {
+export const widgetRegistry = {
     TITLE_CARD: {
         category: 'TEXT_TYPOGRAPHY',
         intents: ['CORE_THESIS', 'STATUS_BADGE'],
@@ -275,7 +271,7 @@ exports.widgetRegistry = {
     //   }),
     // },
 };
-function getWidgetDefinition(widget) {
-    return exports.widgetRegistry[widget];
+export function getWidgetDefinition(widget) {
+    return widgetRegistry[widget];
 }
 //# sourceMappingURL=widgetRegistry.js.map

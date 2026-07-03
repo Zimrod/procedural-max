@@ -1,4 +1,4 @@
-import { openai } from "../lib/openai";
+import { openai } from "../lib/openai.js";
 
 export async function generateScript(
     prompt: string

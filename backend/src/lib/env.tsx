@@ -60,4 +60,3 @@ export const VoiceoverScene: React.FC<Props> = ({
     </AbsoluteFill>
   );
 };
-

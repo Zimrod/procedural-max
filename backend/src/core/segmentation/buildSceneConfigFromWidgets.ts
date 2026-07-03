@@ -3,9 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 
-import { NarrativeBeat } from '../narrative/narrativeAnalyzer';
-import { SelectedWidget } from '../planning/selectWidgetsRobust';
-import { widgetRegistry } from '../widgetRegistry';
+import { NarrativeBeat } from '../narrative/narrativeAnalyzer.js';
+import { SelectedWidget } from '../planning/selectWidgetsRobust.js';
+import { widgetRegistry } from '../widgetRegistry.js';
 
 export type SceneConfigItem = {
   widget: string;
@@ -226,3 +226,4 @@ export function buildSceneConfigFromWidgets(
 
   return configurations;
 }
+

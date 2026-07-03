@@ -10,8 +10,8 @@
 //   const entities = buildWorldLayout(cityscapeLayout);
 //   // → pass directly to Puppeteer as entities prop
 
-import { assetRegistry, AssetId, scaleForAsset } from './assetRegistry';
-import { worldXToPx, GROUND_Y_PX, wuToPx } from './worldUnits';
+import { assetRegistry, AssetId, scaleForAsset } from './assetRegistry.js';
+import { worldXToPx, GROUND_Y_PX, wuToPx } from './worldUnits.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

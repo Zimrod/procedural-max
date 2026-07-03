@@ -6,9 +6,9 @@
 // based on actor type and action. Same pattern as the hand-authored schemas
 // (schema.ts, carSchema.ts) but generated from intent.
 
-import { ActorIntent, SceneIntent } from './scenePrompt';
-import { createRng }                from './seededRandom';
-import { worldXToPx } from '../world/worldUnits';
+import { ActorIntent, SceneIntent } from './scenePrompt.js';
+import { createRng }                from './seededRandom.js';
+import { worldXToPx } from '../world/worldUnits.js';
 
 // ── SVG file maps ─────────────────────────────────────────────────────────────
 // Which SVG files to load per actor variant.

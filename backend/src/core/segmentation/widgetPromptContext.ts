@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { WIDGET_TAXONOMY, WidgetCategory, WidgetType } from '../taxonomy/widgetTaxonomy';
-import { widgetRegistry } from '../widgetRegistry';
+import { WIDGET_TAXONOMY, WidgetCategory, WidgetType } from '../taxonomy/widgetTaxonomy.js';
+import { widgetRegistry } from '../widgetRegistry.js';
 
 const WIDGET_PROPS_FILE = path.resolve(
   process.cwd(),
@@ -47,3 +47,4 @@ export const getWidgetPropSchemas = (): string => {
 
   return cachedWidgetPropSchemas;
 };
+

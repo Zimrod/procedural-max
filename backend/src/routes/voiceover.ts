@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { generateVoiceover } from "../services/voiceoverGenerator";
+import { generateVoiceover } from "../services/voiceoverGenerator.js";
 
 export default async function voiceoverRoutes(
     fastify: FastifyInstance

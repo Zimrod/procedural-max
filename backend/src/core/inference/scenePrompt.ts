@@ -6,7 +6,7 @@
 // SceneIntent  — resolved decisions derived from the prompt
 // SceneConfig  — prompt + seed = fully reproducible scene
 
-import { AssetId } from '../world/assetRegistry';
+import { AssetId } from '../world/assetRegistry.js';
 
 // ── Enumerations ──────────────────────────────────────────────────────────────
 

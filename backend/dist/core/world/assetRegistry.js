@@ -1,13 +1,9 @@
-"use strict";
 // src/core/world/assetRegistry.ts
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.assetRegistry = exports.scaleForAsset = void 0;
-const worldUnits_1 = require("./worldUnits");
+import { pxPerWu } from './worldUnits.js';
 // ── Scale helper ──────────────────────────────────────────────────────────────
-const scaleForAsset = (asset) => (asset.canonicalHeight * worldUnits_1.pxPerWu) / asset.svgHeight;
-exports.scaleForAsset = scaleForAsset;
+export const scaleForAsset = (asset) => (asset.canonicalHeight * pxPerWu) / asset.svgHeight;
 // ── Registry ──────────────────────────────────────────────────────────────────
-exports.assetRegistry = {
+export const assetRegistry = {
     // ── Grounded props ─────────────────────────────────────────────────────────
     bench_a: {
         id: 'bench_a',

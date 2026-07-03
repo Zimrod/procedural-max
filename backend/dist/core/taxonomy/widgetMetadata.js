@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.widgetMetadata = void 0;
 // src/core/taxonomy/widgetMetadata.ts
-const widgetRegistry_1 = require("../widgetRegistry");
+import { widgetRegistry } from '../widgetRegistry.js';
 const manualDescriptions = {
     TITLE_CARD: {
         description: 'Introduces a major section, timeline milestone, or concept shift with bold typography.',
@@ -60,12 +57,12 @@ const manualDescriptions = {
         bestForKeywords: ['company values', 'framework matrices', '3-column overview', 'modular descriptions'],
     },
 };
-exports.widgetMetadata = Object.keys(widgetRegistry_1.widgetRegistry).reduce((acc, key) => {
+export const widgetMetadata = Object.keys(widgetRegistry).reduce((acc, key) => {
     const type = key;
     const manual = manualDescriptions[type];
     acc[type] = {
         type,
-        category: widgetRegistry_1.widgetRegistry[type]?.category ?? 'TEXT_TYPOGRAPHY',
+        category: widgetRegistry[type]?.category ?? 'TEXT_TYPOGRAPHY',
         description: manual?.description ?? 'Typography-led composition element.',
         visualStyle: manual?.visualStyle ?? 'Restrained motion layout utilizing strict type tracking parameters.',
         bestForKeywords: manual?.bestForKeywords ?? [],

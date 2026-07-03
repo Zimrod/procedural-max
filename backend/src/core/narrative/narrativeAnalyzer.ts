@@ -1,7 +1,7 @@
 // src/core/narrative/narrativeAnalyzer.ts
 import fs from 'fs';
 import path from 'path';
-import { SemanticExtraction } from '../segmentation/semanticExtraction';
+import { SemanticExtraction } from '../segmentation/semanticExtraction.js';
 
 export type NarrativeIntent =
   | 'concept'

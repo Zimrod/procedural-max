@@ -1,4 +1,3 @@
-"use strict";
 // src/core/inference/generateAnimation.ts
 //
 // Stage 4: SceneIntent + seed → animation entities, timeline, constraints
@@ -6,10 +5,8 @@
 // For each actor in the intent, builds the correct entity + timeline entries
 // based on actor type and action. Same pattern as the hand-authored schemas
 // (schema.ts, carSchema.ts) but generated from intent.
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAnimation = void 0;
-const seededRandom_1 = require("./seededRandom");
-const worldUnits_1 = require("../world/worldUnits");
+import { createRng } from './seededRandom.js';
+import { worldXToPx } from '../world/worldUnits.js';
 // ── SVG file maps ─────────────────────────────────────────────────────────────
 // Which SVG files to load per actor variant.
 // Extend as you add more vehicles/characters.
@@ -77,7 +74,7 @@ const buildForkliftActor = (actor) => {
     const FORK_PIVOTS = { pivot_fork_tip: { x: 1.56, y: 137.1 }, pivot_fork_root: { x: 163.05, y: 135.5 }, pivot_fork_min: { x: 193.06, y: 135.5 } };
     const PALLET_PIVOTS = { pivot_ground: { x: 191.27, y: 39.2 }, pivot_fork_root: { x: 262.36, y: 10.46 }, pivot_fork_tip: { x: 283.02, y: 24.14 }, pivot_top_left_edge: { x: 3.25, y: 3.4 }, pivot_top_right_edge: { x: 261.4, y: 3.25 } };
     const s = actor.scale;
-    const palletGroundX = (0, worldUnits_1.worldXToPx)(8); // place pallet at centre-left of scene
+    const palletGroundX = worldXToPx(8); // place pallet at centre-left of scene
     const groundY = actor.groundY;
     const palletGroundWorld = { x: palletGroundX, y: groundY };
     const palletForkTipWorld = {
@@ -148,8 +145,8 @@ const buildForkliftActor = (actor) => {
     return { entities, timeline, constraints };
 };
 // ── Main generator ────────────────────────────────────────────────────────────
-const generateAnimation = (intent, seed) => {
-    const rng = (0, seededRandom_1.createRng)(seed + 1000); // offset seed so layout and animation RNG don't correlate
+export const generateAnimation = (intent, seed) => {
+    const rng = createRng(seed + 1000); // offset seed so layout and animation RNG don't correlate
     const allEntities = [];
     const allTimeline = [];
     const allConstraints = [];
@@ -177,5 +174,4 @@ const generateAnimation = (intent, seed) => {
         constraints: allConstraints,
     };
 };
-exports.generateAnimation = generateAnimation;
 //# sourceMappingURL=generateAnimation.js.map

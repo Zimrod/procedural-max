@@ -13,10 +13,10 @@
 //   - Sky assets distributed across upper portion of canvas
 //   - Minimum spacing between same-type assets
 
-import { WorldLayout, AssetPlacement } from '../world/worldLayout';
-import { assetRegistry, AssetId }      from '../world/assetRegistry';
-import { SceneIntent }                 from './scenePrompt';
-import { createRng, Rng }              from './seededRandom';
+import { WorldLayout, AssetPlacement } from '../world/worldLayout.js';
+import { assetRegistry, AssetId }      from '../world/assetRegistry.js';
+import { SceneIntent }                 from './scenePrompt.js';
+import { createRng, Rng }              from './seededRandom.js';
 
 // ── Placement rules ───────────────────────────────────────────────────────────
 

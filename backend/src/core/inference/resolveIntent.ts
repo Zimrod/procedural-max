@@ -12,8 +12,8 @@
 //   - What sky elements suit 'morning' vs 'night'?
 //   - What ground and sky colors match timeOfDay?
 
-import { AssetId } from '../world/assetRegistry';
-import { GROUND_Y_PX, worldXToPx, pxPerWu } from '../world/worldUnits';
+import { AssetId } from '../world/assetRegistry.js';
+import { GROUND_Y_PX, worldXToPx, pxPerWu } from '../world/worldUnits.js';
 import {
   ScenePrompt,
   SceneIntent,
@@ -22,7 +22,7 @@ import {
   Environment,
   Mood,
   TimeOfDay,
-} from './scenePrompt';
+} from './scenePrompt.js';
 
 // ── Asset pools per environment ───────────────────────────────────────────────
 // Which assets are eligible per environment and depth layer.

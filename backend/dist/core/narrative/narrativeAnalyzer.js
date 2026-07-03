@@ -1,12 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.narrativeAnalyzer = narrativeAnalyzer;
 // src/core/narrative/narrativeAnalyzer.ts
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
+import fs from 'fs';
+import path from 'path';
 /**
  * Maps semantic tags to programmatic widget taxonomy intents
  */
@@ -32,7 +26,7 @@ function mapIdeaTypeToIntent(type) {
         return 'entity';
     return 'concept';
 }
-function narrativeAnalyzer(extractions) {
+export function narrativeAnalyzer(extractions) {
     const beats = [];
     for (let i = 0; i < extractions.length; i++) {
         const sentence = extractions[i];
@@ -89,8 +83,8 @@ function narrativeAnalyzer(extractions) {
         });
     }
     // Write out the pristine un-duplicated sequence file mapping perfectly to your transcription
-    const outputPath = path_1.default.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
-    fs_1.default.writeFileSync(outputPath, JSON.stringify(beats, null, 2));
+    const outputPath = path.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
+    fs.writeFileSync(outputPath, JSON.stringify(beats, null, 2));
     return beats;
 }
 //# sourceMappingURL=narrativeAnalyzer.js.map

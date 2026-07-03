@@ -1,20 +1,12 @@
-"use strict";
 // src/core/segmentation/semanticExtraction.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.segmentTranscriptionIntoSentences = segmentTranscriptionIntoSentences;
-exports.extractSemanticMeaning = extractSemanticMeaning;
-exports.semanticExtractionPipeline = semanticExtractionPipeline;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const openai_1 = __importDefault(require("openai"));
+import fs from 'fs';
+import path from 'path';
+import OpenAI from 'openai';
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
     throw new Error("OPENAI_API_KEY is not set");
 }
-const openai = new openai_1.default({ apiKey });
+const openai = new OpenAI({ apiKey });
 //
 // --------------------------------------------------------
 // HELPERS
@@ -36,7 +28,7 @@ function clamp(value, min = 0, max = 1) {
 function isSentenceBoundary(word) {
     return /[.!?]["')\]]*$/.test(word);
 }
-function segmentTranscriptionIntoSentences(words, fps = 30) {
+export function segmentTranscriptionIntoSentences(words, fps = 30) {
     const segments = [];
     let currentWords = [];
     for (let i = 0; i < words.length; i++) {
@@ -210,7 +202,7 @@ Return ONLY valid JSON.
 // SINGLE EXTRACTION
 // --------------------------------------------------------
 //
-async function extractSemanticMeaning(segment, index, total) {
+export async function extractSemanticMeaning(segment, index, total) {
     const narrativeSection = determineNarrativeSection(index, total);
     const prompt = buildPrompt(segment, narrativeSection);
     const response = await openai.chat.completions.create({
@@ -312,7 +304,7 @@ function createFallbackExtraction(segment, index, total) {
 // PIPELINE
 // --------------------------------------------------------
 //
-async function semanticExtractionPipeline(segments) {
+export async function semanticExtractionPipeline(segments) {
     const results = [];
     for (let i = 0; i < segments.length; i++) {
         const segment = segments[i];
@@ -329,8 +321,8 @@ async function semanticExtractionPipeline(segments) {
     //
     // SAVE OUTPUT
     //
-    const outputPath = path_1.default.resolve(process.cwd(), 'public', '03_semantic_extraction.json');
-    fs_1.default.writeFileSync(outputPath, JSON.stringify(results, null, 2));
+    const outputPath = path.resolve(process.cwd(), 'public', '03_semantic_extraction.json');
+    fs.writeFileSync(outputPath, JSON.stringify(results, null, 2));
     console.log('Semantic extraction saved:', outputPath);
     return results;
 }

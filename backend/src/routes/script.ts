@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { generateScript } from "../services/scriptGenerator";
+import { generateScript } from "../services/scriptGenerator.js";
 
 export default async function scriptRoutes(
     fastify: FastifyInstance

@@ -2,22 +2,22 @@
 'use client';
 
 import React from 'react';
-import { WidgetType } from './widgetRegistry';
+import { WidgetType } from './widgetRegistry.js';
 
 // Existing Rig Imports
-import { TextRig } from '../graphics/TextRig';
-import { TitleCardRig } from '../graphics/TitleCardRig';
-import { TypewriterRig } from '../graphics/TypewriterRig';
+import { TextRig } from '../graphics/TextRig.js';
+import { TitleCardRig } from '../graphics/TitleCardRig.js';
+import { TypewriterRig } from '../graphics/TypewriterRig.js';
 
 // Newly Integrated Rig Imports
-import { TerminalTypingTextRig } from '../graphics/TerminalTypingTextRig';
-import { TextAnimationsWordHighlight } from '../graphics/TextAnimationsWordHighlight';
-import { SvgDrawInTextRig } from '../graphics/SvgDrawInTextRig';
-import { SlidingWordMaskRig } from '../graphics/SlidingWordMaskRig';
-import { SequentialElasticTextRig } from '../graphics/SequentialElasticTextRig';
-import { BulletPointsRig } from '../graphics/BulletPointsRig';
-import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig';
-import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig';
+import { TerminalTypingTextRig } from '../graphics/TerminalTypingTextRig.js';
+import { TextAnimationsWordHighlight } from '../graphics/TextAnimationsWordHighlight.js';
+import { SvgDrawInTextRig } from '../graphics/SvgDrawInTextRig.js';
+import { SlidingWordMaskRig } from '../graphics/SlidingWordMaskRig.js';
+import { SequentialElasticTextRig } from '../graphics/SequentialElasticTextRig.js';
+import { BulletPointsRig } from '../graphics/BulletPointsRig.js';
+import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig.js';
+import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig.js';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
@@ -59,3 +59,4 @@ export function getWidgetComponent(widgetType: string): React.ComponentType<any>
   const normalized = widgetType.toUpperCase() as WidgetType;
   return componentMapping[normalized] || (() => <DiagnosticFallbackRig widget={widgetType} />);
 }
+

@@ -1,7 +1,7 @@
 // src/core/planning/inspectSceneConfig.ts
 
 import { OpenAI } from "openai";
-import { SceneConfigItem } from "../segmentation/buildSceneConfigFromWidgets";
+import { SceneConfigItem } from "../segmentation/buildSceneConfigFromWidgets.js";
 
 // Initialize OpenAI connection
 const apiKey = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });

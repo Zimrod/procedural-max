@@ -1,13 +1,7 @@
-"use strict";
 // src/core/segmentation/buildSceneConfigFromWidgets.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildSceneConfigFromWidgets = buildSceneConfigFromWidgets;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const widgetRegistry_1 = require("../widgetRegistry");
+import fs from 'fs';
+import path from 'path';
+import { widgetRegistry } from '../widgetRegistry.js';
 // Strict pacing configurations (At 30 FPS)
 const MIN_SCENE_DURATION_FRAMES = 90; // 3.0 seconds minimum limit
 const MAX_SCENE_DURATION_FRAMES = 180; // 6.0 seconds maximum limit
@@ -42,12 +36,12 @@ function resolveTranscriptTargetFrames(transcription, beats, fps) {
     return Math.max(1, Math.ceil(transcriptionSeconds * fps));
 }
 function readTranscriptionFromDisk() {
-    const transcriptionPath = path_1.default.resolve(process.cwd(), 'public', '02_transcription.json');
-    if (!fs_1.default.existsSync(transcriptionPath)) {
+    const transcriptionPath = path.resolve(process.cwd(), 'public', '02_transcription.json');
+    if (!fs.existsSync(transcriptionPath)) {
         return null;
     }
     try {
-        const raw = fs_1.default.readFileSync(transcriptionPath, 'utf-8');
+        const raw = fs.readFileSync(transcriptionPath, 'utf-8');
         return JSON.parse(raw);
     }
     catch {
@@ -56,7 +50,7 @@ function readTranscriptionFromDisk() {
 }
 function buildSceneProps(widgetType, text, durationFrames, combinedDataHints) {
     const punchyTextSnippet = toPunchyPhrase(text);
-    const registryEntry = widgetRegistry_1.widgetRegistry[widgetType];
+    const registryEntry = widgetRegistry[widgetType];
     const props = registryEntry?.buildFallbackProps({
         shortSummary: punchyTextSnippet,
         extractedData: combinedDataHints,
@@ -72,7 +66,7 @@ function buildSceneProps(widgetType, text, durationFrames, combinedDataHints) {
         stylizedProps.metricLabel = punchyTextSnippet;
     return stylizedProps;
 }
-function buildSceneConfigFromWidgets(beats, selectedWidgets, fps = 30, transcription) {
+export function buildSceneConfigFromWidgets(beats, selectedWidgets, fps = 30, transcription) {
     const beatMap = new Map(beats.map((beat) => [beat.beatId, beat]));
     const configurations = [];
     const diskTranscription = readTranscriptionFromDisk();

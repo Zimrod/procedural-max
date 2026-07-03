@@ -1,6 +1,6 @@
 // src/core/world/assetRegistry.ts
 
-import { pxPerWu } from './worldUnits';
+import { pxPerWu } from './worldUnits.js';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

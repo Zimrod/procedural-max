@@ -1,11 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = sceneRoutes;
-const scenePlanner_1 = require("../services/scenePlanner");
-async function sceneRoutes(fastify) {
+import { buildScene } from "../services/scenePlanner.js";
+export default async function sceneRoutes(fastify) {
     fastify.post("/scene", async (request, reply) => {
         try {
-            const result = await (0, scenePlanner_1.buildScene)();
+            const result = await buildScene();
             return reply.send({
                 success: true,
                 ...result,

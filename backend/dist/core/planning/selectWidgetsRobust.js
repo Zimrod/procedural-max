@@ -1,25 +1,19 @@
-"use strict";
 // src/core/planning/selectWidgetsRobust.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectWidgetsRobust = selectWidgetsRobust;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const widgetRegistry_1 = require("../widgetRegistry");
-const supabaseClient_1 = require("../../lib/supabaseClient");
-async function selectWidgetsRobust(beats) {
+import fs from 'fs';
+import path from 'path';
+import { widgetRegistry } from '../widgetRegistry.js';
+import { supabase } from '../../lib/supabaseClient.js';
+export async function selectWidgetsRobust(beats) {
     const usedWidgetsGlobal = new Set();
     const batchPassTallies = {};
     // Read from the provided narrative analysis first, then fall back to disk.
     let sourceBeats = beats;
     if (!sourceBeats) {
-        const analysisPath = path_1.default.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
-        if (!fs_1.default.existsSync(analysisPath)) {
+        const analysisPath = path.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
+        if (!fs.existsSync(analysisPath)) {
             throw new Error(`Execution failed: ${analysisPath} does not exist on disk.`);
         }
-        sourceBeats = JSON.parse(fs_1.default.readFileSync(analysisPath, 'utf-8'));
+        sourceBeats = JSON.parse(fs.readFileSync(analysisPath, 'utf-8'));
     }
     const resolvedBeats = sourceBeats ?? [];
     console.log(`\n==== SELECTING WIDGETS FROM DISK: 04_NARRATIVE_ANALYSIS.JSON (${resolvedBeats.length} Beats) ====`);
@@ -35,7 +29,7 @@ async function selectWidgetsRobust(beats) {
         let highestScore = -Infinity;
         let validCandidates = [];
         // Loop through ALL widgets declared in the widget registry dynamically
-        for (const [widgetType, meta] of Object.entries(widgetRegistry_1.widgetRegistry)) {
+        for (const [widgetType, meta] of Object.entries(widgetRegistry)) {
             const shouldAvoid = (meta.avoidFor ?? []).some((keyword) => text.includes(keyword.toLowerCase()));
             if (shouldAvoid)
                 continue;
@@ -71,7 +65,7 @@ async function selectWidgetsRobust(beats) {
             selectedWidgetType = validCandidates[Math.floor(Math.random() * validCandidates.length)];
         }
         else {
-            selectedWidgetType = Object.keys(widgetRegistry_1.widgetRegistry)[0];
+            selectedWidgetType = Object.keys(widgetRegistry)[0];
         }
         usedWidgetsGlobal.add(selectedWidgetType);
         if (!batchPassTallies[selectedWidgetType]) {
@@ -97,7 +91,7 @@ async function selectWidgetsRobust(beats) {
             global_render_count: data.count,
             updated_at: new Date().toISOString(),
         }));
-        Promise.resolve(supabaseClient_1.supabase.rpc('increment_widget_tallies', { payload: upsertPayload })).catch((err) => {
+        Promise.resolve(supabase.rpc('increment_widget_tallies', { payload: upsertPayload })).catch((err) => {
             console.warn('Telemetry tally logging skipped:', err);
         });
     }

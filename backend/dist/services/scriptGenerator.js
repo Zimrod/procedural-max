@@ -1,9 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateScript = generateScript;
-const openai_1 = require("../lib/openai");
-async function generateScript(prompt) {
-    const completion = await openai_1.openai.chat.completions.create({
+import { openai } from "../lib/openai.js";
+export async function generateScript(prompt) {
+    const completion = await openai.chat.completions.create({
         model: "gpt-4.1",
         messages: [
             {

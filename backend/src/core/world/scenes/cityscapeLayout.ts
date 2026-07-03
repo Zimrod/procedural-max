@@ -11,7 +11,7 @@
 //   1 = midground
 //   0 = foreground (full size, full detail)
 
-import { WorldLayout } from '../worldLayout';
+import { WorldLayout } from '../worldLayout.js';
 
 export const cityscapeLayout: WorldLayout = {
   placements: [

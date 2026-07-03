@@ -1,12 +1,9 @@
-"use strict";
 // src/core/world/worldUnits.ts
 //
 // World unit system. 1 world unit (wu) = 1 real-world meter equivalent.
 // The canvas is mapped to a world of fixed dimensions. Everything scales
 // from these two numbers — change them and the entire scene rescales.
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.GROUND_Y_PX = exports.worldYToPx = exports.worldXToPx = exports.wuToPx = exports.pxPerWu = exports.WORLD_CONFIG = void 0;
-exports.WORLD_CONFIG = {
+export const WORLD_CONFIG = {
     // World dimensions in human-scale meters.
     // These are INDEPENDENT of canvas pixel dimensions.
     // 20wu wide = a city block roughly 20 meters across.
@@ -18,17 +15,14 @@ exports.WORLD_CONFIG = {
 };
 // Pixels per world unit — how many canvas pixels = 1 meter
 // 1080px canvas / 10wu = 108px per meter
-exports.pxPerWu = exports.WORLD_CONFIG.canvasHeight / exports.WORLD_CONFIG.worldHeight;
+export const pxPerWu = WORLD_CONFIG.canvasHeight / WORLD_CONFIG.worldHeight;
 // Convert world units → pixels
-const wuToPx = (wu) => wu * exports.pxPerWu;
-exports.wuToPx = wuToPx;
+export const wuToPx = (wu) => wu * pxPerWu;
 // Convert a world-space X position (0 = left edge, worldWidth = right edge) → canvas px
-const worldXToPx = (worldX) => (worldX / exports.WORLD_CONFIG.worldWidth) * exports.WORLD_CONFIG.canvasWidth;
-exports.worldXToPx = worldXToPx;
+export const worldXToPx = (worldX) => (worldX / WORLD_CONFIG.worldWidth) * WORLD_CONFIG.canvasWidth;
 // Convert a world-space Y position (0 = ground, positive = up) → canvas px
 // Canvas Y is inverted: ground is at canvasHeight * groundFraction
-const worldYToPx = (worldY) => exports.WORLD_CONFIG.canvasHeight * exports.WORLD_CONFIG.groundFraction - (0, exports.wuToPx)(worldY);
-exports.worldYToPx = worldYToPx;
+export const worldYToPx = (worldY) => WORLD_CONFIG.canvasHeight * WORLD_CONFIG.groundFraction - wuToPx(worldY);
 // Ground Y in canvas pixels — the baseline everything anchors to
-exports.GROUND_Y_PX = exports.WORLD_CONFIG.canvasHeight * exports.WORLD_CONFIG.groundFraction;
+export const GROUND_Y_PX = WORLD_CONFIG.canvasHeight * WORLD_CONFIG.groundFraction;
 //# sourceMappingURL=worldUnits.js.map

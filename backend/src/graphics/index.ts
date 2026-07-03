@@ -1,5 +1,6 @@
 // src/remotion.index.ts
 import { registerRoot } from "remotion";
-import { Root } from "./Root";
+import { Root } from "./Root.js";
 
 registerRoot(Root);
+

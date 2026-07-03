@@ -1,4 +1,3 @@
-"use strict";
 // src/remotion/core/inference/resolveIntent.ts
 //
 // Stage 2: ScenePrompt → SceneIntent
@@ -12,9 +11,7 @@
 //   - How many background layers does mood 'busy' need vs 'calm'?
 //   - What sky elements suit 'morning' vs 'night'?
 //   - What ground and sky colors match timeOfDay?
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolveIntent = void 0;
-const worldUnits_1 = require("../world/worldUnits");
+import { GROUND_Y_PX, worldXToPx, pxPerWu } from '../world/worldUnits.js';
 // ── Asset pools per environment ───────────────────────────────────────────────
 // Which assets are eligible per environment and depth layer.
 // Extend as you add more assets to the registry.
@@ -90,7 +87,7 @@ const ACTOR_SVG_HEIGHTS = {
     human: 500,
 };
 // ── Main resolver ─────────────────────────────────────────────────────────────
-const resolveIntent = (prompt) => {
+export const resolveIntent = (prompt) => {
     const { environment, mood, timeOfDay, actors, duration } = prompt;
     const pools = ENVIRONMENT_POOLS[environment] ?? ENVIRONMENT_POOLS.cityscape;
     const density = MOOD_DENSITY[mood];
@@ -130,19 +127,19 @@ const resolveIntent = (prompt) => {
     const actorIntents = actors.map((actor, i) => {
         const canonicalH = ACTOR_HEIGHTS[actor.variant ?? actor.type] ?? 1.8;
         const svgH = ACTOR_SVG_HEIGHTS[actor.variant ?? actor.type] ?? 250;
-        const scale = (canonicalH * worldUnits_1.pxPerWu) / svgH;
+        const scale = (canonicalH * pxPerWu) / svgH;
         // Stagger actor start times slightly so they don't all enter simultaneously
         const staggerFrames = i * 20;
         const startFrame = staggerFrames;
         const endFrame = totalFrames;
         // Entry and exit positions based on entry direction
-        const offscreenLeft = (0, worldUnits_1.worldXToPx)(-2);
-        const offscreenRight = (0, worldUnits_1.worldXToPx)(22);
+        const offscreenLeft = worldXToPx(-2);
+        const offscreenRight = worldXToPx(22);
         const entryX = actor.entry === 'right' ? offscreenRight
-            : actor.entry === 'already_present' ? (0, worldUnits_1.worldXToPx)(10)
+            : actor.entry === 'already_present' ? worldXToPx(10)
                 : offscreenLeft;
         const exitX = actor.entry === 'right' ? offscreenLeft
-            : actor.entry === 'already_present' ? (0, worldUnits_1.worldXToPx)(10)
+            : actor.entry === 'already_present' ? worldXToPx(10)
                 : offscreenRight;
         return {
             actorPrompt: actor,
@@ -150,7 +147,7 @@ const resolveIntent = (prompt) => {
             endFrame,
             entryX,
             exitX,
-            groundY: worldUnits_1.GROUND_Y_PX,
+            groundY: GROUND_Y_PX,
             scale,
         };
     });
@@ -165,5 +162,4 @@ const resolveIntent = (prompt) => {
         actorIntents,
     };
 };
-exports.resolveIntent = resolveIntent;
 //# sourceMappingURL=resolveIntent.js.map

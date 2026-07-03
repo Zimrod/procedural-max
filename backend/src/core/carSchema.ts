@@ -7,7 +7,7 @@
 // y = GROUND_Y_PX so it rolls on the ground line.
 // x starts off-screen left, drives to off-screen right.
 
-import { GROUND_Y_PX, worldXToPx } from './world/worldUnits';
+import { GROUND_Y_PX, worldXToPx } from './world/worldUnits.js';
 
 //   car_jeep: {
 //     id:              'car_jeep',
@@ -27,7 +27,7 @@ import { GROUND_Y_PX, worldXToPx } from './world/worldUnits';
 // ── Derived values ────────────────────────────────────────────────────────────
 
 // Assume car_jeep is registered. Import pxPerWu for wheel radius calculation.
-import { pxPerWu } from './world/worldUnits';
+import { pxPerWu } from './world/worldUnits.js';
 
 // Car scale from registry
 // canonicalHeight=1.8wu, svgHeight=250px → scale = (1.8 * 108) / 250 = 0.778

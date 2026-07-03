@@ -1,19 +1,13 @@
-"use strict";
 // src/core/cinematicPlanner/cinematicPlanner.ts
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.cinematicPlanner = cinematicPlanner;
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const openai_1 = __importDefault(require("openai"));
+import fs from 'fs';
+import path from 'path';
+import OpenAI from 'openai';
 //
 // ============================================================
 // OPENAI
 // ============================================================
 //
-const openai = new openai_1.default({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 //
 // ============================================================
 // HELPERS
@@ -149,7 +143,7 @@ IMPORTANT:
 // MAIN ENGINE
 // ============================================================
 //
-async function cinematicPlanner(input) {
+export async function cinematicPlanner(input) {
     // Fallback assignment captures both the original and route parameter names cleanly
     const beats = input.narrativeBeats || input.narrativeScenes || [];
     const decisions = input.cinematicDecisions || input.decisionTreeOutput || [];
@@ -264,8 +258,8 @@ async function cinematicPlanner(input) {
     // SAVE
     // ==========================================================
     //
-    const outputPath = path_1.default.resolve(process.cwd(), 'public', '06_cinematic_plan.json');
-    fs_1.default.writeFileSync(outputPath, JSON.stringify(plans, null, 2));
+    const outputPath = path.resolve(process.cwd(), 'public', '06_cinematic_plan.json');
+    fs.writeFileSync(outputPath, JSON.stringify(plans, null, 2));
     console.log('Cinematic planner output saved:', outputPath);
     return plans;
 }
