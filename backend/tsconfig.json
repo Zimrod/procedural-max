@@ -2,40 +2,26 @@
   "compilerOptions": {
     "target": "ES2022",
 
-    "module": "node20",
-    "moduleResolution": "node20",
+    "module": "CommonJS",
+    "moduleResolution": "node",
 
     "rootDir": "./src",
     "outDir": "./dist",
 
     "strict": true,
-
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-
-    "jsx": "react-jsx"
+    "forceConsistentCasingInFileNames": true
   },
 
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
+    "src/**/*.ts"
   ],
 
   "exclude": [
     "node_modules",
-    "dist",
-
-    "src/graphics/**",
-    "src/core/**",
-    "src/lib/**",
-
-    "src/**/*.draft.ts",
-    "src/**/*.draft.tsx",
-
-    "src/**/__tests__/**"
+    "dist"
   ]
 }
