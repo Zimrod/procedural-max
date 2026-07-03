@@ -30,9 +30,8 @@
     "dist",
 
     "src/graphics/**",
-
-    "src/core/widgetRegistry.ts",
-    "src/core/widgetComponentRegistry.ts",
+    "src/core/**",
+    "src/services/**",
 
     "src/**/*.draft.ts",
     "src/**/*.draft.tsx",
