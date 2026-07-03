@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2022",
 
-    "module": "CommonJS",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
 
     "rootDir": "./src",
     "outDir": "./dist",
@@ -22,6 +22,7 @@
   },
 
   "include": [
+    "src/server.ts",
     "src/routes/**/*.ts",
     "src/services/**/*.ts",
     "src/lib/**/*.ts",

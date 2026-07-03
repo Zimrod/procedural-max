@@ -1,0 +1,106 @@
+"use strict";
+// src/core/planning/selectWidgetsRobust.ts
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.selectWidgetsRobust = selectWidgetsRobust;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
+const widgetRegistry_1 = require("../widgetRegistry");
+const supabaseClient_1 = require("../../lib/supabaseClient");
+async function selectWidgetsRobust(beats) {
+    const usedWidgetsGlobal = new Set();
+    const batchPassTallies = {};
+    // Read from the provided narrative analysis first, then fall back to disk.
+    let sourceBeats = beats;
+    if (!sourceBeats) {
+        const analysisPath = path_1.default.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
+        if (!fs_1.default.existsSync(analysisPath)) {
+            throw new Error(`Execution failed: ${analysisPath} does not exist on disk.`);
+        }
+        sourceBeats = JSON.parse(fs_1.default.readFileSync(analysisPath, 'utf-8'));
+    }
+    const resolvedBeats = sourceBeats ?? [];
+    console.log(`\n==== SELECTING WIDGETS FROM DISK: 04_NARRATIVE_ANALYSIS.JSON (${resolvedBeats.length} Beats) ====`);
+    const selectedWidgets = resolvedBeats.map((beat) => {
+        const text = beat.sentenceText.toLowerCase();
+        const intent = beat.intent || 'concept';
+        const role = beat.narrativeRole || 'middle';
+        // Extract the semantic idea selected by the narrative analyzer
+        const primaryIdea = beat.selectedIdeas?.[0];
+        const primaryIdeaText = primaryIdea?.phrase || beat.sentenceText;
+        const ideaType = primaryIdea?.type || intent;
+        let selectedWidgetType = null;
+        let highestScore = -Infinity;
+        let validCandidates = [];
+        // Loop through ALL widgets declared in the widget registry dynamically
+        for (const [widgetType, meta] of Object.entries(widgetRegistry_1.widgetRegistry)) {
+            const shouldAvoid = (meta.avoidFor ?? []).some((keyword) => text.includes(keyword.toLowerCase()));
+            if (shouldAvoid)
+                continue;
+            let score = 0;
+            // Base weight for matching general typography options
+            if (meta.category === 'TEXT_TYPOGRAPHY') {
+                score += 10;
+            }
+            // Match the analyzer's exact selected intent or idea type to the widget's bestFor criteria
+            const matchesIntent = (meta.bestFor ?? []).some((keyword) => keyword.toLowerCase() === intent.toLowerCase() || keyword.toLowerCase() === ideaType.toLowerCase());
+            if (matchesIntent) {
+                score += 30;
+            }
+            // Dynamic position weight modifiers
+            if (role === 'intro' && widgetType.includes('TITLE'))
+                score += 10;
+            if (role === 'outro' && (widgetType.includes('TYPEWRITER') || widgetType.includes('CARD')))
+                score += 5;
+            // Global pacing de-duplication penalty
+            if (usedWidgetsGlobal.has(widgetType)) {
+                score -= 15;
+            }
+            if (score > highestScore) {
+                highestScore = score;
+                validCandidates = [widgetType];
+            }
+            else if (score === highestScore) {
+                validCandidates.push(widgetType);
+            }
+        }
+        // Assign best scoring candidate, or default to the first registry key available
+        if (validCandidates.length > 0 && highestScore > -100) {
+            selectedWidgetType = validCandidates[Math.floor(Math.random() * validCandidates.length)];
+        }
+        else {
+            selectedWidgetType = Object.keys(widgetRegistry_1.widgetRegistry)[0];
+        }
+        usedWidgetsGlobal.add(selectedWidgetType);
+        if (!batchPassTallies[selectedWidgetType]) {
+            batchPassTallies[selectedWidgetType] = { count: 0 };
+        }
+        batchPassTallies[selectedWidgetType].count += 1;
+        return {
+            beatId: beat.beatId,
+            widgetType: selectedWidgetType,
+            metadata: {
+                intent,
+                role,
+                primaryIdeaText,
+                ideaType
+            }
+        };
+    });
+    // Log telemetry metrics safely using standard promise catches
+    if (Object.keys(batchPassTallies).length > 0) {
+        const upsertPayload = Object.entries(batchPassTallies).map(([widgetType, data]) => ({
+            widget_type: widgetType,
+            intent_category: 'DISK_BOUND_SELECTION',
+            global_render_count: data.count,
+            updated_at: new Date().toISOString(),
+        }));
+        Promise.resolve(supabaseClient_1.supabase.rpc('increment_widget_tallies', { payload: upsertPayload })).catch((err) => {
+            console.warn('Telemetry tally logging skipped:', err);
+        });
+    }
+    return selectedWidgets;
+}
+//# sourceMappingURL=selectWidgetsRobust.js.map
