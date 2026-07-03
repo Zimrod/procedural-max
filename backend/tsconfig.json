@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2022",
 
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "Bundler",
+    "moduleResolution": "Bundler",
 
     "rootDir": "./src",
     "outDir": "./dist",
@@ -31,7 +31,6 @@
 
     "src/graphics/**",
     "src/core/**",
-    "src/services/**",
     "src/lib/**",
 
     "src/**/*.draft.ts",
