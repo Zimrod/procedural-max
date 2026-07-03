@@ -29,6 +29,8 @@
     "node_modules",
     "dist",
 
+    "src/graphics/**",
+
     "src/core/widgetRegistry.ts",
     "src/core/widgetComponentRegistry.ts",
 
