@@ -9,15 +9,28 @@
     "outDir": "./dist",
 
     "strict": true,
+
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+
+    "declaration": false,
+    "sourceMap": true
   },
 
   "include": [
-    "src/**/*.ts"
+    "src/routes/**/*.ts",
+    "src/services/**/*.ts",
+    "src/lib/**/*.ts",
+
+    "src/core/planning/**/*.ts",
+    "src/core/segmentation/**/*.ts",
+    "src/core/narrative/**/*.ts",
+    "src/core/taxonomy/**/*.ts",
+    "src/core/inference/**/*.ts"
   ],
 
   "exclude": [
