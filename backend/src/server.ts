@@ -20,6 +20,13 @@ app.register(sceneRoute, {
   prefix: "/captions",
 });
 
+app.get("/health", async () => {
+  return {
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+  };
+});
+
 const PORT = Number(process.env.PORT) || 3001;
 
 app.listen({
