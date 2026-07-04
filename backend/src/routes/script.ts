@@ -1,3 +1,4 @@
+// backend/src/routes/scipt.ts
 import { FastifyInstance } from "fastify";
 import { generateScript } from "../services/scriptGenerator.js";
 

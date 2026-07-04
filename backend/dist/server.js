@@ -1,22 +1,23 @@
+// backend/src/server.ts
 import Fastify from "fastify";
-import scriptRoute from "./routes/script.js";
-import voiceoverRoute from "./routes/voiceover.js";
-import sceneRoute from "./routes/scene.js";
-const app = Fastify({
-    logger: true,
-});
-app.register(scriptRoute, {
-    prefix: "/generate-script",
-});
-app.register(voiceoverRoute, {
-    prefix: "/generate-voiceover",
-});
-app.register(sceneRoute, {
-    prefix: "/captions",
-});
-const PORT = Number(process.env.PORT) || 3001;
-app.listen({
+import scriptRoutes from "./routes/script.js";
+import voiceoverRoutes from "./routes/voiceover.js";
+import sceneRoutes from "./routes/scene.js";
+const app = Fastify();
+await app.register(scriptRoutes);
+await app.register(voiceoverRoutes);
+await app.register(sceneRoutes);
+app.get("/", async () => ({
+    service: "Procedural Max Routes",
+    status: "online",
+}));
+app.get("/health", async () => ({
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+}));
+console.log(app.printRoutes());
+await app.listen({
+    port: Number(process.env.PORT) || 3001,
     host: "0.0.0.0",
-    port: PORT,
 });
 //# sourceMappingURL=server.js.map

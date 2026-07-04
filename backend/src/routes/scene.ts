@@ -1,5 +1,5 @@
+// backend/src/routes/scene.ts
 import { FastifyInstance } from "fastify";
-
 import { buildScene } from "../services/scenePlanner.js";
 
 export default async function sceneRoutes(
