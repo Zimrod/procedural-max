@@ -21,9 +21,22 @@ app.get("/health", async () => ({
   timestamp: new Date().toISOString(),
 }));
 
+console.log("=================================");
+console.log("Procedural Max Backend Starting...");
+console.log("PORT =", process.env.PORT);
+console.log("NODE_ENV =", process.env.NODE_ENV);
+console.log("=================================");
+
 console.log(app.printRoutes());
 
-await app.listen({
-  port: Number(process.env.PORT) || 3001,
-  host: "0.0.0.0",
-});
+try {
+  await app.listen({
+    port: Number(process.env.PORT) || 3001,
+    host: "0.0.0.0",
+  });
+
+  console.log("Backend listening");
+} catch (err) {
+  console.error(err);
+  process.exit(1);
+}
