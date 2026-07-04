@@ -1,3 +1,4 @@
+// backend/src/server.ts
 import Fastify from "fastify";
 
 import scriptRoute from "./routes/script.js";
@@ -20,6 +21,13 @@ app.register(sceneRoute, {
   prefix: "/captions",
 });
 
+app.get("/", async () => {
+  return {
+    service: "Procedural Max Routes",
+    status: "online",
+  };
+});
+
 app.get("/health", async () => {
   return {
     status: "healthy",
@@ -29,7 +37,7 @@ app.get("/health", async () => {
 
 const PORT = Number(process.env.PORT) || 3001;
 
-app.listen({
+await app.listen({
   host: "0.0.0.0",
-  port: PORT,
+  port: Number(process.env.PORT) || 3001,
 });
