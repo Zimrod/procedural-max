@@ -40,10 +40,3 @@ try {
   console.error(err);
   process.exit(1);
 }
-
-// docker run \
-//   -e OPENAI_API_KEY="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" \
-//   -e SUPABASE_URL="https://svmgfmftwiblwfztnqws.supabase.co" \
-//   -e SUPABASE_SERVICE_ROLE_KEY="sb_publishable_p07E0yfzmkf1Y0yoce15qA_mek34vUe" \
-//   -p 3001:3001 \
-//   procedural-max-backend
