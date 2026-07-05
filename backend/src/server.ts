@@ -40,10 +40,3 @@ try {
   console.error(err);
   process.exit(1);
 }
-
-const address = await app.listen({
-  host: "0.0.0.0",
-  port: Number(process.env.PORT) || 3001,
-});
-
-console.log("Listening at: ", address);
