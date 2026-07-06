@@ -11,13 +11,7 @@ const app = Fastify();
 
 // Register CORS middleware
 await fastify.register(cors, {
-  // Allow your specific Vercel deployment URL, or use a wildcard for development
-  origin: [
-    'https://studio-1ls96v0bs-kokes-projects-aea519f6.vercel.app',
-    'http://localhost:3000' // keeps local frontend development working smoothly
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: true // Dynamically mirrors the request origin, allowing access from anywhere
 });
 
 await app.register(scriptRoutes);
