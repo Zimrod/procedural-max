@@ -40,24 +40,3 @@ try {
   console.error(err);
   process.exit(1);
 }
-
-async function shutdown(signal: string) {
-  console.log(`Received ${signal}, closing Fastify server...`);
-
-  try {
-    await app.close();
-    console.log("Server closed cleanly");
-    process.exit(0);
-  } catch (err) {
-    console.error("Error during shutdown", err);
-    process.exit(1);
-  }
-}
-
-process.on("SIGTERM", () => {
-  void shutdown("SIGTERM");
-});
-
-process.on("SIGINT", () => {
-  void shutdown("SIGINT");
-});
