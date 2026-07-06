@@ -1,11 +1,24 @@
 // backend/src/server.ts
 import Fastify from "fastify";
+import cors from '@fastify/cors';
 
 import scriptRoutes from "./routes/script.js";
 import voiceoverRoutes from "./routes/voiceover.js";
 import sceneRoutes from "./routes/scene.js";
 
+const fastify = Fastify({ logger: true });
 const app = Fastify();
+
+// Register CORS middleware
+await fastify.register(cors, {
+  // Allow your specific Vercel deployment URL, or use a wildcard for development
+  origin: [
+    'https://studio-1ls96v0bs-kokes-projects-aea519f6.vercel.app',
+    'http://localhost:3000' // keeps local frontend development working smoothly
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+});
 
 await app.register(scriptRoutes);
 await app.register(voiceoverRoutes);
