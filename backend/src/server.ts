@@ -1,17 +1,17 @@
 // backend/src/server.ts
 import Fastify from "fastify";
-import cors from '@fastify/cors';
+import cors from "@fastify/cors";
 
 import scriptRoutes from "./routes/script.js";
 import voiceoverRoutes from "./routes/voiceover.js";
 import sceneRoutes from "./routes/scene.js";
 
-const fastify = Fastify({ logger: true });
-const app = Fastify();
+const app = Fastify({
+  logger: true,
+});
 
-// Register CORS middleware
-await fastify.register(cors, {
-  origin: true // Dynamically mirrors the request origin, allowing access from anywhere
+await app.register(cors, {
+  origin: true,
 });
 
 await app.register(scriptRoutes);
@@ -28,14 +28,6 @@ app.get("/health", async () => ({
   timestamp: new Date().toISOString(),
 }));
 
-console.log("=================================");
-console.log("Procedural Max Backend Starting...");
-console.log("PORT =", process.env.PORT);
-console.log("NODE_ENV =", process.env.NODE_ENV);
-console.log("=================================");
-
-console.log(app.printRoutes());
-
 try {
   await app.listen({
    port: Number(process.env.PORT) || 3001,
@@ -46,17 +38,4 @@ try {
 } catch (err) {
   console.error(err);
   process.exit(1);
-}
-
-async function shutdown(signal: string) {
-  console.log(`Received ${signal}, closing Fastify server...`);
-
-  try {
-    await app.close();
-    console.log("Server closed cleanly");
-    process.exit(0);
-  } catch (err) {
-    console.error("Error during shutdown", err);
-    process.exit(1);
-  }
 }
