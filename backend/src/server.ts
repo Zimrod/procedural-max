@@ -29,13 +29,15 @@ console.log("=================================");
 
 console.log(app.printRoutes());
 
+const port = Number(process.env.PORT) || 3001;
+
 try {
   await app.listen({
-    port: Number(process.env.PORT) || 3001,
+    port: port,
     host: "0.0.0.0",
   });
 
-  console.log("Backend listening");
+  console.log(`Backend listening on 0.0.0.0:${port}`);
 } catch (err) {
   console.error(err);
   process.exit(1);
