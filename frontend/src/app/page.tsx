@@ -99,7 +99,8 @@ export default function LandingPage() {
     }
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion]);
 
-  const API = process.env.NEXT_PUBLIC_API_URL!;
+  // Strips off any trailing slash to avoid double-slashes in the fetch request
+  const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
 
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
