@@ -1,44 +1,22 @@
 // backend/src/server.ts
 import Fastify from "fastify";
 
-import scriptRoutes from "./routes/script.js";
-import voiceoverRoutes from "./routes/voiceover.js";
-import sceneRoutes from "./routes/scene.js";
-
 const app = Fastify();
 
-await app.register(scriptRoutes);
-await app.register(voiceoverRoutes);
-await app.register(sceneRoutes);
+// Minimal health check endpoint
+app.get("/health", async () => {
+  return { status: "healthy" };
+});
 
-app.get("/", async () => ({
-  service: "Procedural Max Routes",
-  status: "online",
-}));
-
-app.get("/health", async () => ({
-  status: "healthy",
-  timestamp: new Date().toISOString(),
-}));
-
-console.log("=================================");
-console.log("Procedural Max Backend Starting...");
-console.log("PORT =", process.env.PORT);
-console.log("NODE_ENV =", process.env.NODE_ENV);
-console.log("=================================");
-
-console.log(app.printRoutes());
-
-const port = Number(process.env.PORT) || 3001;
+const port = Number(process.env.PORT) || 8080;
 
 try {
   await app.listen({
     port: port,
     host: "0.0.0.0",
   });
-
-  console.log(`Backend listening on 0.0.0.0:${port}`);
+  console.log(`PING_TEST: Server listening on 0.0.0.0:${port}`);
 } catch (err) {
-  console.error(err);
+  console.error("PING_TEST_ERROR:", err);
   process.exit(1);
 }
