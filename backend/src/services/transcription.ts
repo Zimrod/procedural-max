@@ -12,18 +12,18 @@ export async function generateScript(
             messages: [
 
                 {
-                    role: "system",
-                    content: `
-Generate concise 30–40 second finance explainer scripts.
+                  role: "system",
+                  content: `
+                    Generate concise 30–40 second finance explainer scripts.
 
-Tone:
-- professional
-- cinematic
-- investor-focused
-- concise
+                    Tone:
+                    - professional
+                    - cinematic
+                    - investor-focused
+                    - concise
 
-Avoid markdown.
-`,
+                    Avoid markdown.
+                  `,
                 },
 
                 {
