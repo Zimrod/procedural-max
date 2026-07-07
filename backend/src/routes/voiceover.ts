@@ -1,6 +1,7 @@
 // backend/src/routes/voiceover.ts
 import { FastifyInstance } from "fastify";
 import { generateVoiceover } from "../services/voiceoverGenerator.js";
+import { generateTranscription } from "../services/transcription.js";
 
 export default async function voiceoverRoutes(
     fastify: FastifyInstance
@@ -14,14 +15,17 @@ export default async function voiceoverRoutes(
                 script: string;
             };
 
-            const audioUrl =
-                await generateVoiceover(script);
+            // 1. Generate the voiceover MP3 and save it locally to tmp/
+            const audioLocalPath = await generateVoiceover(script);
 
+            // 2. Automatically feed that exact local file path into Whisper
+            const transcript = await generateTranscription(audioLocalPath);
+
+            // 3. Return a clean, combined payload to your frontend app
             return reply.send({
-
                 success: true,
-                audioUrl,
-
+                audioUrl: audioLocalPath, // This matches your existing front-end state expectations
+                transcript: transcript    // Contains the synchronized text and word arrays
             });
 
         } catch (err: any) {
