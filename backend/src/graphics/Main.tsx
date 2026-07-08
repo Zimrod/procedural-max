@@ -9,7 +9,6 @@ import {
   // useVideoConfig, // 💡 Pull native configurations straight from Root mount
 } from 'remotion';
 import { loadFont } from '@remotion/fonts';
-// import { CaptioningDemo } from './CaptioningDemo-primitives.js';
 import { VoiceoverScene } from './VoiceoverScene.js';
 
 type Props = {
