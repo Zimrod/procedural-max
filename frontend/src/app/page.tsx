@@ -191,20 +191,26 @@ export default function LandingPage() {
   const handleGenerateVoiceover = async () => {
     try {
       setActiveLoading("voiceover");
-      const res = await fetch("/api/voiceover", {
+      
+      // 🛠️ FIX: Prepend the custom server ${API} routing path variable
+      const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script })
+        body: JSON.stringify({ script: currentActiveScript }) // Use active track reference
       });
       const data = await res.json();
 
       if (data.success) {
-        // 1. Mount and play the voiceover instantly in the UI
-        setCurrentActiveAudio(data.audioUrl);
+        if (leftTab === "generate") {
+          setAiAudioUrl(data.audioUrl);
+          setAiAudioVersion((prev) => prev + 1);
+        } else {
+          setCustomAudioUrl(data.audioUrl);
+          setCustomAudioVersion((prev) => prev + 1);
+        }
+        
         setCurrentJobId(data.jobId);
-        setActiveLoading(null); // Release voiceover loader early!
-
-        // 2. Start polling for the layout data quietly behind the scenes
+        setActiveLoading(null); 
         startBackgroundSync(data.jobId);
       }
     } catch (err) {
@@ -216,12 +222,13 @@ export default function LandingPage() {
   const startBackgroundSync = async (jobId: string) => {
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/voiceover/status/${jobId}`);
+        // 🛠️ FIX: Added ${API} gateway route resolution 
+        const res = await fetch(`${API}/voiceover/status/${jobId}`);
         const statusData = await res.json();
 
         if (statusData.status === "done") {
           clearInterval(interval);
-          setPipelineResult(statusData.result); // Cache data quietly when ready
+          setPipelineResult(statusData.result); 
         } else if (statusData.status === "failed") {
           clearInterval(interval);
           console.error("Background extraction pipeline failed:", statusData.error);
@@ -229,27 +236,23 @@ export default function LandingPage() {
       } catch (err) {
         clearInterval(interval);
       }
-    }, 1500); // Check every 1.5 seconds
+    }, 1500);
   };
 
   // BUTTON 3: Handle Render Animation (Now with built-in guard await condition)
   const handleRenderAnimation = async () => {
     setActiveLoading("animation");
 
-    // Helper block to sleep/wait if clicked before the background sync completes
     const pollForCompletion = async (): Promise<any> => {
       if (pipelineResult) return pipelineResult;
-      
-      // Delay execution block by 1 second and recheck recursively
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return pollForCompletion();
     };
 
     try {
-      // This will either return instantly if complete, or wait elegantly until ready
       const completeData = await pollForCompletion();
-      
       const { transcript, sceneConfig } = completeData;
+      
       setTranscription({ text: transcript.text, words: transcript.words });
 
       const sanitized = sceneConfig.map((s: any) => ({
@@ -258,7 +261,14 @@ export default function LandingPage() {
       }));
 
       const themed = applyThemeToScenes(sanitized, themeConfig);
+      
+      // Pushes configuration onto state
       setSceneConfig(themed);
+
+      // 🛠️ FIX: Force-flush the layout player timeline bounds straight to zero frame marker
+      if (playerRef.current) {
+        playerRef.current.seekTo(0);
+      }
     } catch (err) {
       console.error(err);
     } finally {
