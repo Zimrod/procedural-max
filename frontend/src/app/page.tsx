@@ -41,6 +41,9 @@ export default function LandingPage() {
 
   // Granular tracking of exactly which button is working
   const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
+  // const [activeLoading, setActiveLoading] = useState<string | null>(null);
+  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+  const [pipelineResult, setPipelineResult] = useState<any>(null);
 
   // Tab state for separating AI text prompting vs Professional Custom Scripts
   const [leftTab, setLeftTab] = useState<"generate" | "custom-script">("generate");
@@ -132,52 +135,130 @@ export default function LandingPage() {
     }
   };
 
-  const handleGenerateVoiceover = async () => {
-    if (!currentActiveScript.trim()) {
-      alert("Please ensure there is a script ready before generating voiceovers.");
-      return;
-    }
+  // const handleGenerateVoiceover = async () => {
+  //   if (!currentActiveScript.trim()) {
+  //     alert("Please ensure there is a script ready before generating voiceovers.");
+  //     return;
+  //   }
     
+  //   try {
+  //     setActiveLoading("voiceover");
+  //     const res = await fetch("/api/generate-voiceover", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ script: currentActiveScript }),
+  //     });
+  //     const data = await res.json();
+  //     if (data.success) {
+  //       if (leftTab === "generate") {
+  //         setAiAudioUrl(data.audioUrl);
+  //         setAiAudioVersion((prev) => prev + 1);
+  //       } else {
+  //         setCustomAudioUrl(data.audioUrl);
+  //         setCustomAudioVersion((prev) => prev + 1);
+  //       }
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setActiveLoading(null);
+  //   }
+  // };
+
+  // const handleRenderAnimation = async () => {
+  //   try {
+  //     setActiveLoading("animation");
+  //     const res = await fetch("/api/captions", { method: "POST" });
+  //     const data = await res.json();
+      
+  //     if (data.success && data.sceneConfig) {
+  //       setTranscription({ text: data.text, words: data.words });
+  //       // Ensure the API-returned configs use uniform uppercase structure mappings
+  //       const sanitized = data.sceneConfig.map((s: any) => ({
+  //         ...s,
+  //         widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
+  //       }));
+  //       const themed = applyThemeToScenes(sanitized, themeConfig);
+  //       setSceneConfig(themed);
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //   } finally {
+  //     setActiveLoading(null);
+  //   }
+  // };
+
+  const handleGenerateVoiceover = async () => {
     try {
       setActiveLoading("voiceover");
-      const res = await fetch("/api/generate-voiceover", {
+      const res = await fetch("/api/voiceover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript }),
+        body: JSON.stringify({ script })
       });
       const data = await res.json();
+
       if (data.success) {
-        if (leftTab === "generate") {
-          setAiAudioUrl(data.audioUrl);
-          setAiAudioVersion((prev) => prev + 1);
-        } else {
-          setCustomAudioUrl(data.audioUrl);
-          setCustomAudioVersion((prev) => prev + 1);
-        }
+        // 1. Mount and play the voiceover instantly in the UI
+        setCurrentActiveAudio(data.audioUrl);
+        setCurrentJobId(data.jobId);
+        setActiveLoading(null); // Release voiceover loader early!
+
+        // 2. Start polling for the layout data quietly behind the scenes
+        startBackgroundSync(data.jobId);
       }
     } catch (err) {
       console.error(err);
-    } finally {
       setActiveLoading(null);
     }
   };
 
-  const handleRenderAnimation = async () => {
-    try {
-      setActiveLoading("animation");
-      const res = await fetch("/api/captions", { method: "POST" });
-      const data = await res.json();
-      
-      if (data.success && data.sceneConfig) {
-        setTranscription({ text: data.text, words: data.words });
-        // Ensure the API-returned configs use uniform uppercase structure mappings
-        const sanitized = data.sceneConfig.map((s: any) => ({
-          ...s,
-          widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
-        }));
-        const themed = applyThemeToScenes(sanitized, themeConfig);
-        setSceneConfig(themed);
+  const startBackgroundSync = async (jobId: string) => {
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/voiceover/status/${jobId}`);
+        const statusData = await res.json();
+
+        if (statusData.status === "done") {
+          clearInterval(interval);
+          setPipelineResult(statusData.result); // Cache data quietly when ready
+        } else if (statusData.status === "failed") {
+          clearInterval(interval);
+          console.error("Background extraction pipeline failed:", statusData.error);
+        }
+      } catch (err) {
+        clearInterval(interval);
       }
+    }, 1500); // Check every 1.5 seconds
+  };
+
+  // BUTTON 3: Handle Render Animation (Now with built-in guard await condition)
+  const handleRenderAnimation = async () => {
+    setActiveLoading("animation");
+
+    // Helper block to sleep/wait if clicked before the background sync completes
+    const pollForCompletion = async (): Promise<any> => {
+      if (pipelineResult) return pipelineResult;
+      
+      // Delay execution block by 1 second and recheck recursively
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return pollForCompletion();
+    };
+
+    try {
+      // This will either return instantly if complete, or wait elegantly until ready
+      const completeData = await pollForCompletion();
+      
+      const { transcript, sceneConfig } = completeData;
+      setTranscription({ text: transcript.text, words: transcript.words });
+
+      const sanitized = sceneConfig.map((s: any) => ({
+        ...s,
+        widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
+      }));
+
+      const themed = applyThemeToScenes(sanitized, themeConfig);
+      setSceneConfig(themed);
     } catch (err) {
       console.error(err);
     } finally {
@@ -509,6 +590,12 @@ export default function LandingPage() {
                   ? "Assembling Visual Timelines..."
                   : "Step 3: Analyze & Sync Motion Rig"}
               </button>
+
+              {/* <button onClick={handleGenerateVoiceover}>Step 2: Generate Audio</button> */}
+      
+              {/* <button onClick={handleRenderAnimation} disabled={!currentJobId}>
+                {activeLoading === "animation" ? "Synchronizing Rig Timelines..." : "Step 3: Analyze & Sync Motion Rig"}
+              </button>  */}
             </div>
 
           </div>
