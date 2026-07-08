@@ -591,7 +591,7 @@ export default function LandingPage() {
                   : "Step 2: Synthesize Voiceover File"}
               </button>
 
-              <button
+              {/* <button
                 onClick={handleRenderAnimation}
                 disabled={activeLoading !== null || !currentActiveAudio}
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
@@ -599,13 +599,13 @@ export default function LandingPage() {
                 {activeLoading === "animation"
                   ? "Assembling Visual Timelines..."
                   : "Step 3: Analyze & Sync Motion Rig"}
-              </button>
+              </button>  */}
 
               {/* <button onClick={handleGenerateVoiceover}>Step 2: Generate Audio</button> */}
       
-              {/* <button onClick={handleRenderAnimation} disabled={!currentJobId}>
+              <button onClick={handleRenderAnimation} disabled={!currentJobId}>
                 {activeLoading === "animation" ? "Synchronizing Rig Timelines..." : "Step 3: Analyze & Sync Motion Rig"}
-              </button>  */}
+              </button>
             </div>
 
           </div>
