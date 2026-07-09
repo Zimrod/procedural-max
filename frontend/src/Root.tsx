@@ -1,11 +1,11 @@
-// src/remotion/Root.tsx
+// src/Root.tsx
 import { Composition } from "remotion";
-import { Main } from "./Main";
-import { VIDEO_FPS, VIDEO_WIDTH, VIDEO_HEIGHT } from "../types/constants";
+import { Main } from "./graphics/Main";
+import { VIDEO_FPS, VIDEO_WIDTH, VIDEO_HEIGHT } from "./types/constants";
 
 // Import your raw pipeline data payloads safely
-import captionsData from "../../public/02_transcription.json";
-import sceneConfigData from "../../public/08_scene_config.json";
+import captionsData from "../public/02_transcription.json";
+import sceneConfigData from "../public/08_scene_config.json";
 
 export const Root: React.FC = () => {
   // 💡 CALCULATE THE TRUE PARAMETRIC TIMELINE AT MOUNT
