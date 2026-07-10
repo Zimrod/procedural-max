@@ -42,7 +42,7 @@ export default function LandingPage() {
   // Granular tracking of exactly which button is working
   const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
   // const [activeLoading, setActiveLoading] = useState<string | null>(null);
-  const [currentJobId, setCurrentJobId] = useState<string | null>(null);
+  // const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
   // Tab state for separating AI text prompting vs Professional Custom Scripts
@@ -614,7 +614,8 @@ export default function LandingPage() {
       
               <button
                 onClick={handleRenderAnimation}
-                disabled={activeLoading !== null || !currentJobId}
+                // disabled={activeLoading !== null || !currentJobId}
+                disabled={activeLoading !== null}
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
               >
                 {activeLoading === "animation"
