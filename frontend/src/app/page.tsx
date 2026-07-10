@@ -209,17 +209,17 @@ export default function LandingPage() {
       if (data.success) {
         console.log("🎯 Audio successfully hosted at:", data.audioUrl);
         
-        if (leftTab === "generate") {[cite: 5]
+        if (leftTab === "generate") {
           setAiAudioUrl(data.audioUrl); 
-          setAiAudioVersion((prev) => prev + 1);[cite: 5]
-        } else {[cite: 5]
+          setAiAudioVersion((prev) => prev + 1);
+        } else {
           setCustomAudioUrl(data.audioUrl); 
-          setCustomAudioVersion((prev) => prev + 1);[cite: 5]
+          setCustomAudioVersion((prev) => prev + 1);
         }
         
-        setCurrentJobId(data.jobId);[cite: 5]
-        setActiveLoading(null); [cite: 5]
-        startBackgroundSync(data.jobId);[cite: 5]
+        setCurrentJobId(data.jobId);
+        setActiveLoading(null); 
+        startBackgroundSync(data.jobId);
       }
     } catch (err) {
       console.error("💥 [Voiceover Engine Exception] Generation failed:", err);
