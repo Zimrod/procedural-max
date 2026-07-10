@@ -40,8 +40,8 @@ export default function LandingPage() {
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
   // Granular tracking of exactly which button is working
-  const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
-  // const [activeLoading, setActiveLoading] = useState<string | null>(null);
+  // const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
+  const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
@@ -192,11 +192,11 @@ export default function LandingPage() {
     try {
       setActiveLoading("voiceover");
       
-      // const res = await fetch(`${API}/voiceover`, {
-      const res = await fetch("/api/generate-voiceover", {
+      // 🛠️ FIX: Prepend the custom server ${API} routing path variable
+      const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript })
+        body: JSON.stringify({ script: currentActiveScript }) // Use active track reference
       });
       const data = await res.json();
 
@@ -210,10 +210,8 @@ export default function LandingPage() {
         }
         
         setCurrentJobId(data.jobId);
-        // 🛠️ REMOVED: setActiveLoading(null) moved to startBackgroundSync interval loop
+        setActiveLoading(null); 
         startBackgroundSync(data.jobId);
-      } else {
-        setActiveLoading(null); // Clear loading state if request failed
       }
     } catch (err) {
       console.error(err);
@@ -224,21 +222,19 @@ export default function LandingPage() {
   const startBackgroundSync = async (jobId: string) => {
     const interval = setInterval(async () => {
       try {
+        // 🛠️ FIX: Added ${API} gateway route resolution 
         const res = await fetch(`${API}/voiceover/status/${jobId}`);
         const statusData = await res.json();
 
         if (statusData.status === "done") {
           clearInterval(interval);
           setPipelineResult(statusData.result); 
-          setActiveLoading(null); // 🛠️ FIX: Safely release layout lock when data arrives
         } else if (statusData.status === "failed") {
           clearInterval(interval);
           console.error("Background extraction pipeline failed:", statusData.error);
-          setActiveLoading(null); // 🛠️ FIX: Release lock on failure
         }
       } catch (err) {
         clearInterval(interval);
-        setActiveLoading(null);
       }
     }, 1500);
   };
