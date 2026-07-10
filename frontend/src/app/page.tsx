@@ -207,30 +207,19 @@ export default function LandingPage() {
       const data = await res.json();
 
       if (data.success) {
-        // Expose to window for quick debugging access
-        if (typeof window !== "undefined") {
-          (window as any).lastGeneratedAudio = data.audioDataUri;
-        }
-        // 👇 TRACK DATA URI VERIFICATION
-        console.log("📥 [Voiceover Engine] Received audio payload. Type:", typeof data.audioDataUri);
-        if (data.audioDataUri) {
-          console.log("📝 [Voiceover Engine] Character Length:", data.audioDataUri.length);
-          console.log("🔍 [Voiceover Engine] Header Snippet:", data.audioDataUri.substring(0, 50));
-        } else {
-          console.error("⚠️ [Voiceover Engine] Danger! 'audioDataUri' property is missing from backend response!");
-        }
-
-        if (leftTab === "generate") {
-          setAiAudioUrl(data.audioDataUri); 
-          setAiAudioVersion((prev) => prev + 1);
-        } else {
-          setCustomAudioUrl(data.audioDataUri); 
-          setCustomAudioVersion((prev) => prev + 1);
+        console.log("🎯 Audio successfully hosted at:", data.audioUrl);
+        
+        if (leftTab === "generate") {[cite: 5]
+          setAiAudioUrl(data.audioUrl); 
+          setAiAudioVersion((prev) => prev + 1);[cite: 5]
+        } else {[cite: 5]
+          setCustomAudioUrl(data.audioUrl); 
+          setCustomAudioVersion((prev) => prev + 1);[cite: 5]
         }
         
-        setCurrentJobId(data.jobId);
-        setActiveLoading(null);  
-        startBackgroundSync(data.jobId);
+        setCurrentJobId(data.jobId);[cite: 5]
+        setActiveLoading(null); [cite: 5]
+        startBackgroundSync(data.jobId);[cite: 5]
       }
     } catch (err) {
       console.error("💥 [Voiceover Engine Exception] Generation failed:", err);

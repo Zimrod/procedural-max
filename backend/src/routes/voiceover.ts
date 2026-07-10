@@ -12,14 +12,14 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
         try {
             const { script } = request.body as { script: string };
 
-            // 1. Generate audio buffer & get both path and its Base64 string
-            const { audioLocalPath, base64Audio } = await generateVoiceover(script);
+            // 1. Synthesize audio and push it to Supabase cloud storage
+            const { audioLocalPath, publicUrl } = await generateVoiceover(script);
             
-            // Create your unique job key
-            const jobId = Buffer.from(audioLocalPath).toString("base64");
+            // Generate a job ID based on the unique public URL reference
+            const jobId = Buffer.from(publicUrl).toString("base64");
             pipelineCache.set(jobId, { status: "processing" });
 
-            // 2. Fire background calculations using local path
+            // 2. Run your background transcriptions using the local disk asset
             (async () => {
                 try {
                     const rawTranscript = await generateTranscription(audioLocalPath);
@@ -34,10 +34,10 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
                 }
             })();
 
-            // 3. Return the Base64 Data URI straight to the browser instantly!
+            // 3. Hand back the verified public asset link straight to the frontend
             return reply.send({
                 success: true,
-                audioDataUri: `data:audio/mpeg;base64,${base64Audio}`,
+                audioUrl: publicUrl, // 👈 Clean, un-truncated remote link
                 jobId: jobId 
             });
 
@@ -47,13 +47,13 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
         }
     });
 
-    // ENDPOINT C: Polling target remains exactly the same
+    // ENDPOINT C: Polling target remains identical
     fastify.get("/voiceover/status/:jobId", async (request, reply) => {
         const { jobId } = request.params as { jobId: string };
         const job = pipelineCache.get(jobId);
 
         if (!job) {
-            return reply.code(404).send({ success: false, error: "Job pipeline window not found." });
+            return reply.code(404).send({ success: false, error: "Job status trace windows not found." });
         }
 
         return reply.send({
