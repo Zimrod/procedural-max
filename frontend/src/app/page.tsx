@@ -95,7 +95,7 @@ export default function LandingPage() {
 
   // Strips off any trailing slash to avoid double-slashes in the fetch request
   const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
-  
+
   // Derived active audio payload properties based on current tab selection
   const currentActiveAudio = useMemo(() => {
     const rawUrl = leftTab === "generate" ? aiAudioUrl : customAudioUrl;
@@ -193,28 +193,27 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
-      // 🛠️ FIX: Wipe out prior history to prevent Step 3 from tripping over stale data references
+      // Clear out old state to prevent data cross-contamination
       setPipelineResult(null);
       setTranscription(null);
       setSceneConfig([]);
-
+      
       setActiveLoading("voiceover");
       
-      // 🛠️ FIX: Prepend the custom server ${API} routing path variable
       const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript }) // Use active track reference
+        body: JSON.stringify({ script: currentActiveScript })
       });
       const data = await res.json();
-      console.log('Data in handleGenerateVoiceover: ', data);
 
       if (data.success) {
+        // 🛠️ Store the raw browser-safe data URI sequence directly into state
         if (leftTab === "generate") {
-          setAiAudioUrl(data.audioUrl);
+          setAiAudioUrl(data.audioDataUri); 
           setAiAudioVersion((prev) => prev + 1);
         } else {
-          setCustomAudioUrl(data.audioUrl);
+          setCustomAudioUrl(data.audioDataUri); 
           setCustomAudioVersion((prev) => prev + 1);
         }
         
