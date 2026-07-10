@@ -193,13 +193,12 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
-      // Clear out old state to prevent data cross-contamination
       setPipelineResult(null);
       setTranscription(null);
       setSceneConfig([]);
-      
       setActiveLoading("voiceover");
       
+      console.log("🔊 [Voiceover Engine] Requesting synthesis for script...");
       const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -208,7 +207,19 @@ export default function LandingPage() {
       const data = await res.json();
 
       if (data.success) {
-        // 🛠️ Store the raw browser-safe data URI sequence directly into state
+        // Expose to window for quick debugging access
+        if (typeof window !== "undefined") {
+          (window as any).lastGeneratedAudio = data.audioDataUri;
+        }
+        // 👇 TRACK DATA URI VERIFICATION
+        console.log("📥 [Voiceover Engine] Received audio payload. Type:", typeof data.audioDataUri);
+        if (data.audioDataUri) {
+          console.log("📝 [Voiceover Engine] Character Length:", data.audioDataUri.length);
+          console.log("🔍 [Voiceover Engine] Header Snippet:", data.audioDataUri.substring(0, 50));
+        } else {
+          console.error("⚠️ [Voiceover Engine] Danger! 'audioDataUri' property is missing from backend response!");
+        }
+
         if (leftTab === "generate") {
           setAiAudioUrl(data.audioDataUri); 
           setAiAudioVersion((prev) => prev + 1);
@@ -218,11 +229,11 @@ export default function LandingPage() {
         }
         
         setCurrentJobId(data.jobId);
-        setActiveLoading(null); 
+        setActiveLoading(null);  
         startBackgroundSync(data.jobId);
       }
     } catch (err) {
-      console.error(err);
+      console.error("💥 [Voiceover Engine Exception] Generation failed:", err);
       setActiveLoading(null);
     }
   };
