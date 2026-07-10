@@ -94,13 +94,17 @@ export default function LandingPage() {
   }, [leftTab, aiScript, customScript]);
 
   // Derived active audio payload properties based on current tab selection
+  // frontend/src/app/page.tsx (LandingPage component)
   const currentActiveAudio = useMemo(() => {
-    if (leftTab === "generate") {
-      return aiAudioUrl ? `${aiAudioUrl}?v=${aiAudioVersion}` : "";
-    } else {
-      return customAudioUrl ? `${customAudioUrl}?v=${customAudioVersion}` : "";
-    }
-  }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion]);
+    const rawUrl = leftTab === "generate" ? aiAudioUrl : customAudioUrl;
+    const version = leftTab === "generate" ? aiAudioVersion : customAudioVersion;
+    
+    if (!rawUrl) return "";
+
+    // 🛠️ FIX: If it's a relative path returned from the server, append the API gateway base domain
+    const completeUrl = rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`;
+    return `${completeUrl}?v=${version}`;
+  }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, API]);
 
   // Strips off any trailing slash to avoid double-slashes in the fetch request
   const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
@@ -190,6 +194,11 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
+      // 🛠️ FIX: Wipe out prior history to prevent Step 3 from tripping over stale data references
+      setPipelineResult(null);
+      setTranscription(null);
+      setSceneConfig([]);
+
       setActiveLoading("voiceover");
       
       // 🛠️ FIX: Prepend the custom server ${API} routing path variable
