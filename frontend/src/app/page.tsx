@@ -40,8 +40,8 @@ export default function LandingPage() {
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
   // Granular tracking of exactly which button is working
-  // const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
-  const [activeLoading, setActiveLoading] = useState<string | null>(null);
+  const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
+  // const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
@@ -190,15 +190,18 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
+      console.log("🔊 [Voiceover Trigger] Starting generation for script...", { leftTab, currentActiveScript });
       setActiveLoading("voiceover");
       
-      // 🛠️ FIX: Prepend the custom server ${API} routing path variable
       const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript }) // Use active track reference
+        body: JSON.stringify({ script: currentActiveScript }) 
       });
+      
+      console.log("📡 [Voiceover Network] Response status:", res.status);
       const data = await res.json();
+      console.log("📥 [Voiceover Network] Payload received:", data);
 
       if (data.success) {
         if (leftTab === "generate") {
@@ -210,67 +213,94 @@ export default function LandingPage() {
         }
         
         setCurrentJobId(data.jobId);
-        setActiveLoading(null); 
+        // Note: Keeping loading spinning until background tasks complete completely 
+        console.log(`⏱️ [Pipeline Init] Job ID registered: ${data.jobId}. Commencing polling...`);
         startBackgroundSync(data.jobId);
+      } else {
+        console.error("❌ [Voiceover Error] Server returned success: false", data);
+        setActiveLoading(null);
       }
     } catch (err) {
-      console.error(err);
+      console.error("💥 [Voiceover Exception] Fetch failed entirely:", err);
       setActiveLoading(null);
     }
   };
 
   const startBackgroundSync = async (jobId: string) => {
+    console.log(`🔄 [Polling Sync] Loop started for job: ${jobId}`);
     const interval = setInterval(async () => {
       try {
-        // 🛠️ FIX: Added ${API} gateway route resolution 
         const res = await fetch(`${API}/voiceover/status/${jobId}`);
         const statusData = await res.json();
+        
+        console.log(`📡 [Polling Status] Ping result for ${jobId}:`, statusData.status);
 
         if (statusData.status === "done") {
+          console.log("🎉 [Polling Success] Pipeline finished processing! Cache Data:", statusData.result);
           clearInterval(interval);
           setPipelineResult(statusData.result); 
+          setActiveLoading(null); // Safely clear loading spinner now
         } else if (statusData.status === "failed") {
+          console.error("❌ [Polling Failed] Backend reported a pipeline execution error:", statusData.error);
           clearInterval(interval);
-          console.error("Background extraction pipeline failed:", statusData.error);
+          setActiveLoading(null);
         }
       } catch (err) {
+        console.error("💥 [Polling Exception] Network check failed:", err);
         clearInterval(interval);
+        setActiveLoading(null);
       }
     }, 1500);
   };
 
-  // BUTTON 3: Handle Render Animation (Now with built-in guard await condition)
   const handleRenderAnimation = async () => {
+    console.log("🎬 [Render Rig] Step 3 initiated. Awaiting final state configuration map...");
     setActiveLoading("animation");
 
     const pollForCompletion = async (): Promise<any> => {
-      if (pipelineResult) return pipelineResult;
+      if (pipelineResult) {
+        console.log("🧠 [Render Rig] Fresh pipelineResult detected in state:", pipelineResult);
+        return pipelineResult;
+      }
+      console.log("⏳ [Render Rig] pipelineResult is still empty. Waiting 1 second...");
       await new Promise((resolve) => setTimeout(resolve, 1000));
       return pollForCompletion();
     };
 
     try {
       const completeData = await pollForCompletion();
-      const { transcript, sceneConfig } = completeData;
+      console.log("📦 [Render Rig] Unpacking completeData parameters:", completeData);
       
+      // Look here in the console! If transcript or sceneConfig is missing or named differently, it will explode right here.
+      const { transcript, sceneConfig: incomingScenes } = completeData;
+      
+      if (!transcript || !incomingScenes) {
+        console.error("⚠️ [Data Mismatch] Danger! The properties 'transcript' or 'sceneConfig' are undefined in the response object.", { transcript, incomingScenes });
+      }
+
       setTranscription({ text: transcript.text, words: transcript.words });
 
-      const sanitized = sceneConfig.map((s: any) => ({
-        ...s,
-        widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
-      }));
+      const sanitized = incomingScenes.map((s: any, idx: number) => {
+        const widgetType = s.widget || s.type || DEFAULT_WIDGET_TYPE;
+        return {
+          ...s,
+          widget: widgetType
+        };
+      });
+      
+      console.log("🧱 [Render Rig] Sanitized scene elements built:", sanitized);
 
       const themed = applyThemeToScenes(sanitized, themeConfig);
+      console.log("🎨 [Render Rig] Applied active layouts themes:", themed);
       
-      // Pushes configuration onto state
       setSceneConfig(themed);
 
-      // 🛠️ FIX: Force-flush the layout player timeline bounds straight to zero frame marker
       if (playerRef.current) {
+        console.log("🔄 [Player Viewport] Forcing timeline jump to frame 0...");
         playerRef.current.seekTo(0);
       }
     } catch (err) {
-      console.error(err);
+      console.error("💥 [Render Rig Exception] Something threw an error processing the configurations:", err);
     } finally {
       setActiveLoading(null);
     }
@@ -581,7 +611,7 @@ export default function LandingPage() {
             )}
 
             <div className="mt-6 pt-5 border-t border-black/5 space-y-3">
-              {/* <button
+              <button
                 onClick={handleGenerateVoiceover}
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
@@ -589,7 +619,7 @@ export default function LandingPage() {
                 {activeLoading === "voiceover"
                   ? "Generating Audio..."
                   : "Step 2: Synthesize Voiceover File"}
-              </button> */}
+              </button>
 
               {/* <button
                 onClick={handleRenderAnimation}
@@ -600,14 +630,6 @@ export default function LandingPage() {
                   ? "Assembling Visual Timelines..."
                   : "Step 3: Analyze & Sync Motion Rig"}
               </button>  */}
-
-              <button 
-                onClick={handleGenerateVoiceover}
-                disabled={activeLoading !== null || !currentActiveScript.trim()}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
-              >
-                Step 2: Generate Audio
-              </button>
       
               <button
                 onClick={handleRenderAnimation}
