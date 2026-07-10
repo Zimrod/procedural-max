@@ -93,8 +93,10 @@ export default function LandingPage() {
     return leftTab === "generate" ? aiScript : customScript;
   }, [leftTab, aiScript, customScript]);
 
+  // Strips off any trailing slash to avoid double-slashes in the fetch request
+  const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
+  
   // Derived active audio payload properties based on current tab selection
-  // frontend/src/app/page.tsx (LandingPage component)
   const currentActiveAudio = useMemo(() => {
     const rawUrl = leftTab === "generate" ? aiAudioUrl : customAudioUrl;
     const version = leftTab === "generate" ? aiAudioVersion : customAudioVersion;
@@ -105,9 +107,6 @@ export default function LandingPage() {
     const completeUrl = rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`;
     return `${completeUrl}?v=${version}`;
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, API]);
-
-  // Strips off any trailing slash to avoid double-slashes in the fetch request
-  const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
 
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
