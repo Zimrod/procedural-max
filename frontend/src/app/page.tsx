@@ -200,11 +200,13 @@ export default function LandingPage() {
       const data = await res.json();
 
       if (data.success) {
+        const audioLocation = `${API}${data.audioUrl}`;
+
         if (leftTab === "generate") {
-          setAiAudioUrl(data.audioUrl);
+          setAiAudioUrl(audioLocation);
           setAiAudioVersion((prev) => prev + 1);
         } else {
-          setCustomAudioUrl(data.audioUrl);
+          setCustomAudioUrl(audioLocation);
           setCustomAudioVersion((prev) => prev + 1);
         }
         
