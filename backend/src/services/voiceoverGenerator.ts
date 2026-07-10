@@ -48,5 +48,5 @@ export async function generateVoiceover(script: string) {
     console.log("🔗 Permanent Supabase Audio URL:", publicUrl);
 
     // Return both the local path (for transcription engine) and the public cloud URL
-    return { audioLocalPath: outputPath, publicUrl };
+    return { audioLocalPath: outputPath, publicUrl, filename };
 }
