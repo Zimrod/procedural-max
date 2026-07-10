@@ -40,8 +40,8 @@ export default function LandingPage() {
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
   // Granular tracking of exactly which button is working
-  const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
-  // const [activeLoading, setActiveLoading] = useState<string | null>(null);
+  // const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
+  const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
@@ -581,7 +581,7 @@ export default function LandingPage() {
             )}
 
             <div className="mt-6 pt-5 border-t border-black/5 space-y-3">
-              <button
+              {/* <button
                 onClick={handleGenerateVoiceover}
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
@@ -589,7 +589,7 @@ export default function LandingPage() {
                 {activeLoading === "voiceover"
                   ? "Generating Audio..."
                   : "Step 2: Synthesize Voiceover File"}
-              </button>
+              </button> */}
 
               {/* <button
                 onClick={handleRenderAnimation}
@@ -600,6 +600,14 @@ export default function LandingPage() {
                   ? "Assembling Visual Timelines..."
                   : "Step 3: Analyze & Sync Motion Rig"}
               </button>  */}
+
+              <button 
+                onClick={handleGenerateVoiceover}
+                disabled={activeLoading !== null || !currentActiveScript.trim()}
+                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
+              >
+                Step 2: Generate Audio
+              </button>
       
               <button
                 onClick={handleRenderAnimation}
