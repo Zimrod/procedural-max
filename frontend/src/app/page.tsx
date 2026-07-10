@@ -193,13 +193,13 @@ export default function LandingPage() {
       setActiveLoading("voiceover");
       
       // 🛠️ FIX: Prepend the custom server ${API} routing path variable
-      // const res = await fetch(`${API}/voiceover`, {
-      const res = await fetch("/api/generate-voiceover", {
+      const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ script: currentActiveScript }) // Use active track reference
       });
       const data = await res.json();
+      console.log('Data in handleGenerateVoiceover: ', data);
 
       if (data.success) {
         if (leftTab === "generate") {

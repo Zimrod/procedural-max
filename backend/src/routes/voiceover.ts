@@ -14,6 +14,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
     fastify.post("/voiceover", async (request, reply) => {
         try {
             const { script } = request.body as { script: string };
+            console.log('Script in voiceover.tsx: ', script);   
 
             // 1. Synthesize audio output file to disk as fast as possible
             const audioLocalPath = await generateVoiceover(script);
@@ -27,6 +28,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
             (async () => {
                 try {
                     const rawTranscript = await generateTranscription(audioLocalPath);
+                    console.log('Raw transcript: ', rawTranscript);
                     const pipelineData = await runTranscriptionToScenePipeline(rawTranscript, 30);
                     
                     pipelineCache.set(jobId, {
