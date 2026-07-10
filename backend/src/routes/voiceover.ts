@@ -1,11 +1,12 @@
 // backend/src/routes/voiceover.ts
 import { FastifyInstance } from "fastify";
+import fs from "fs";
 import { generateVoiceover } from "../services/voiceoverGenerator.js";
 import { generateTranscription } from "../services/transcription.js";
 import { runTranscriptionToScenePipeline } from "../services/pipelineOrchestrator.js";
 
 // Ephemeral in-memory job state cache
-const pipelineCache = new Map<string, { status: "processing" | "done" | "failed"; data?: any; error?: string }>();
+const pipelineCache = new Map<string, { status: "processing" | "done" | "failed"; data?: any; error?: string; audioPath?: string }>();
 
 export default async function voiceoverRoutes(fastify: FastifyInstance) {
     
@@ -19,7 +20,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
             
             // Create a deterministic unique key for this specific generation run
             const jobId = Buffer.from(audioLocalPath).toString("base64");
-            pipelineCache.set(jobId, { status: "processing" });
+            pipelineCache.set(jobId, { status: "processing", audioPath: audioLocalPath });
 
             // 2. Fire-and-forget: Trigger heavy transcription and extraction on background thread
             // This prevents the HTTP thread from hanging or timing out
@@ -30,17 +31,18 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
                     
                     pipelineCache.set(jobId, {
                         status: "done",
-                        data: pipelineData
+                        data: pipelineData,
+                        audioPath: audioLocalPath,
                     });
                 } catch (err: any) {
-                    pipelineCache.set(jobId, { status: "failed", error: err.message });
+                    pipelineCache.set(jobId, { status: "failed", error: err.message, audioPath: audioLocalPath });
                 }
             })();
 
-            // 3. Return the audio URL instantly so the frontend audio player can play it immediately
+            // 3. Return the browser-safe audio URL instantly so the frontend audio player can play it immediately
             return reply.send({
                 success: true,
-                audioUrl: audioLocalPath,
+                audioUrl: `/voiceover/audio/${jobId}`,
                 jobId: jobId // Hand this key to frontend so it can check status later
             });
 
@@ -50,7 +52,21 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
         }
     });
 
-    // ENDPOINT B: Lightweight status check/polling target
+    // ENDPOINT B: Stream generated voiceover audio for browser playback
+    fastify.get("/voiceover/audio/:jobId", async (request, reply) => {
+        const { jobId } = request.params as { jobId: string };
+        const job = pipelineCache.get(jobId);
+
+        if (!job?.audioPath || !fs.existsSync(job.audioPath)) {
+            return reply.code(404).send({ success: false, error: "Audio file not found." });
+        }
+
+        const stream = fs.createReadStream(job.audioPath);
+        reply.header("Content-Type", "audio/mpeg");
+        return reply.send(stream);
+    });
+
+    // ENDPOINT C: Lightweight status check/polling target
     fastify.get("/voiceover/status/:jobId", async (request, reply) => {
         const { jobId } = request.params as { jobId: string };
         const job = pipelineCache.get(jobId);
