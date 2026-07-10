@@ -135,35 +135,35 @@ export default function LandingPage() {
     }
   };
 
-  // const handleGenerateVoiceover = async () => {
-  //   if (!currentActiveScript.trim()) {
-  //     alert("Please ensure there is a script ready before generating voiceovers.");
-  //     return;
-  //   }
+  const handleGenerateVoiceover = async () => {
+    if (!currentActiveScript.trim()) {
+      alert("Please ensure there is a script ready before generating voiceovers.");
+      return;
+    }
     
-  //   try {
-  //     setActiveLoading("voiceover");
-  //     const res = await fetch("/api/generate-voiceover", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ script: currentActiveScript }),
-  //     });
-  //     const data = await res.json();
-  //     if (data.success) {
-  //       if (leftTab === "generate") {
-  //         setAiAudioUrl(data.audioUrl);
-  //         setAiAudioVersion((prev) => prev + 1);
-  //       } else {
-  //         setCustomAudioUrl(data.audioUrl);
-  //         setCustomAudioVersion((prev) => prev + 1);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setActiveLoading(null);
-  //   }
-  // };
+    try {
+      setActiveLoading("voiceover");
+      const res = await fetch("/api/generate-voiceover", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ script: currentActiveScript }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (leftTab === "generate") {
+          setAiAudioUrl(data.audioUrl);
+          setAiAudioVersion((prev) => prev + 1);
+        } else {
+          setCustomAudioUrl(data.audioUrl);
+          setCustomAudioVersion((prev) => prev + 1);
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setActiveLoading(null);
+    }
+  };
 
   // const handleRenderAnimation = async () => {
   //   try {
@@ -188,59 +188,59 @@ export default function LandingPage() {
   //   }
   // };
 
-  const handleGenerateVoiceover = async () => {
-    try {
-      setActiveLoading("voiceover");
+  // const handleGenerateVoiceover = async () => {
+  //   try {
+  //     setActiveLoading("voiceover");
       
-      const res = await fetch(`${API}/voiceover`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript })
-      });
-      const data = await res.json();
+  //     const res = await fetch(`${API}/voiceover`, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ script: currentActiveScript })
+  //     });
+  //     const data = await res.json();
 
-      if (data.success) {
-        if (leftTab === "generate") {
-          setAiAudioUrl(data.audioUrl);
-          setAiAudioVersion((prev) => prev + 1);
-        } else {
-          setCustomAudioUrl(data.audioUrl);
-          setCustomAudioVersion((prev) => prev + 1);
-        }
+  //     if (data.success) {
+  //       if (leftTab === "generate") {
+  //         setAiAudioUrl(data.audioUrl);
+  //         setAiAudioVersion((prev) => prev + 1);
+  //       } else {
+  //         setCustomAudioUrl(data.audioUrl);
+  //         setCustomAudioVersion((prev) => prev + 1);
+  //       }
         
-        setCurrentJobId(data.jobId);
-        // 🛠️ REMOVED: setActiveLoading(null) moved to startBackgroundSync interval loop
-        startBackgroundSync(data.jobId);
-      } else {
-        setActiveLoading(null); // Clear loading state if request failed
-      }
-    } catch (err) {
-      console.error(err);
-      setActiveLoading(null);
-    }
-  };
+  //       setCurrentJobId(data.jobId);
+  //       // 🛠️ REMOVED: setActiveLoading(null) moved to startBackgroundSync interval loop
+  //       startBackgroundSync(data.jobId);
+  //     } else {
+  //       setActiveLoading(null); // Clear loading state if request failed
+  //     }
+  //   } catch (err) {
+  //     console.error(err);
+  //     setActiveLoading(null);
+  //   }
+  // };
 
-  const startBackgroundSync = async (jobId: string) => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`${API}/voiceover/status/${jobId}`);
-        const statusData = await res.json();
+  // const startBackgroundSync = async (jobId: string) => {
+  //   const interval = setInterval(async () => {
+  //     try {
+  //       const res = await fetch(`${API}/voiceover/status/${jobId}`);
+  //       const statusData = await res.json();
 
-        if (statusData.status === "done") {
-          clearInterval(interval);
-          setPipelineResult(statusData.result); 
-          setActiveLoading(null); // 🛠️ FIX: Safely release layout lock when data arrives
-        } else if (statusData.status === "failed") {
-          clearInterval(interval);
-          console.error("Background extraction pipeline failed:", statusData.error);
-          setActiveLoading(null); // 🛠️ FIX: Release lock on failure
-        }
-      } catch (err) {
-        clearInterval(interval);
-        setActiveLoading(null);
-      }
-    }, 1500);
-  };
+  //       if (statusData.status === "done") {
+  //         clearInterval(interval);
+  //         setPipelineResult(statusData.result); 
+  //         setActiveLoading(null); // 🛠️ FIX: Safely release layout lock when data arrives
+  //       } else if (statusData.status === "failed") {
+  //         clearInterval(interval);
+  //         console.error("Background extraction pipeline failed:", statusData.error);
+  //         setActiveLoading(null); // 🛠️ FIX: Release lock on failure
+  //       }
+  //     } catch (err) {
+  //       clearInterval(interval);
+  //       setActiveLoading(null);
+  //     }
+  //   }, 1500);
+  // };
 
   // BUTTON 3: Handle Render Animation (Now with built-in guard await condition)
   const handleRenderAnimation = async () => {
