@@ -4,8 +4,8 @@ import { generateVoiceover } from "../services/voiceoverGenerator.js";
 import { generateTranscription } from "../services/transcription.js";
 import { runTranscriptionToScenePipeline } from "../services/pipelineOrchestrator.js";
 import { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 
-// Initialize Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL || "";
 const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -16,67 +16,87 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
         try {
             const { script } = request.body as { script: string };
 
-            // 1. Synthesize audio, get public URL and short filename
-            const { audioLocalPath, publicUrl, filename } = await generateVoiceover(script);
+            // 1. Generate Voiceover and upload to storage bucket
+            const { audioLocalPath, publicUrl } = await generateVoiceover(script);
             
-            // Generate a secure UUID-like job ID string to act as the primary key for this project
+            // Create a unique UUID primary key identifier for the row
             const projectId = crypto.randomUUID(); 
 
-            // 2. Insert initial project row into Supabase so it exists while processing
-            await supabase
+            console.log(`📝 [Database Init] Creating project record ${projectId}...`);
+            
+            // 2. Insert initial processing marker row mapping to snake_case column names
+            const { error: initError } = await supabase
                 .from("parametric_projects")
                 .insert({
                     id: projectId,
                     script: script,
-                    voiceover_url: publicUrl,
+                    voiceover_url: publicUrl, // ✅ Correctly mapping storage URL to voiceover_url
                     status: "processing",
                     created_at: new Date().toISOString()
                 });
 
-            // 3. Fire-and-forget background pipeline
+            if (initError) {
+                console.error("❌ [Database Init Error] Insertion failed:", initError);
+                return reply.code(500).send({ success: false, error: initError.message });
+            }
+
+            // 3. Hand off background analytical computations
             (async () => {
                 try {
-                    console.log(`[Pipeline] Generating transcription for project ${projectId}...`);
+                    console.log(`🎙️ [Pipeline Process] Extracting OpenAI whisper arrays for ${projectId}...`);
                     const rawTranscript = await generateTranscription(audioLocalPath);
                     
-                    console.log(`[Pipeline] Running orchestrator for project ${projectId}...`);
-                    const { transcript, sceneConfig, semanticPose, narrativeScenes, selectedWidgets } = await runTranscriptionToScenePipeline(rawTranscript, 30);
+                    console.log(`⚙️ [Pipeline Process] Running pipeline orchestrator calculations...`);
+                    const pipelineData = await runTranscriptionToScenePipeline(rawTranscript, 30);[cite: 6]
                     
-                    // 4. Update the project row in Supabase with all pipeline outputs!
-                    console.log(`[Pipeline] Pipeline finished. Saving artifacts to Supabase...`);
-                    const { error } = await supabase
+                    // Unpack in-memory properties returned from your pipelineOrchestrator
+                    const { 
+                        transcript, 
+                        sceneConfig, 
+                        semanticPose, 
+                        narrativeScenes, 
+                        selectedWidgets 
+                    } = pipelineData;
+
+                    console.log(`💾 [Database Update] Saving orchestration layers into Supabase row...`);
+                    
+                    // 4. Update the project row mapping JavaScript properties cleanly to snake_case columns
+                    const { error: updateError } = await supabase
                         .from("parametric_projects")
                         .update({
                             transcript: transcript,
-                            scene_config: sceneConfig,
-                            semantic_pose: semanticPose, // Requires you to return this from orchestrator
-                            narrative_analysis: narrativeScenes, // Requires you to return this from orchestrator
-                            selected_widgets: selectedWidgets, // Requires you to return this from orchestrator
+                            scene_config: sceneConfig,          // camelCase -> snake_case
+                            semantic_pose: semanticPose,        // camelCase -> snake_case
+                            narrative_analysis: narrativeScenes, // camelCase -> snake_case
+                            selected_widgets: selectedWidgets,   // camelCase -> snake_case
                             status: "done",
                             updated_at: new Date().toISOString()
                         })
                         .eq("id", projectId);
 
-                    if (error) {
-                        console.error("[Pipeline] Supabase Update Error:", error);
+                    if (updateError) {
+                        console.error(`❌ [Database Update Error] Failed to write artifacts for ${projectId}:`, updateError);
                     } else {
-                        console.log(`[Pipeline] Project ${projectId} saved successfully.`);
+                        console.log(`🎉 [Pipeline Success] Project row ${projectId} successfully saved.`);
                     }
 
                 } catch (err: any) {
-                    console.error("[Pipeline] Exception:", err);
+                    console.error(`💥 [Pipeline Runtime Exception] Process broke for project ${projectId}:`, err);
                     await supabase
                         .from("parametric_projects")
-                        .update({ status: "failed" })
+                        .update({ 
+                            status: "failed",
+                            updated_at: new Date().toISOString()
+                        })
                         .eq("id", projectId);
                 }
             })();
 
-            // 5. Return the Supabase Public URL and the DB Primary Key (projectId)
+            // 5. Instantly return target pointers to frontend
             return reply.send({
                 success: true,
                 audioUrl: publicUrl, 
-                jobId: projectId // 👈 This is now the Supabase Row ID!
+                jobId: projectId 
             });
 
         } catch (err: any) {
@@ -85,7 +105,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
         }
     });
 
-    // ENDPOINT C: Switch polling target to query Supabase directly
+    // 6. Polling endpoint verification check
     fastify.get("/voiceover/status/:jobId", async (request, reply) => {
         const { jobId } = request.params as { jobId: string };
 
@@ -96,7 +116,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
             .single();
 
         if (error || !data) {
-            return reply.code(404).send({ success: false, error: "Project not found in database." });
+            return reply.code(404).send({ success: false, error: "Project key traces not found in database." });
         }
 
         return reply.send({
@@ -104,8 +124,8 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
             status: data.status,
             result: data.status === "done" ? {
                 transcript: data.transcript,
-                sceneConfig: data.scene_config
-            } : null,
+                sceneConfig: data.scene_config // Expose camelCase back out safely to frontend UI
+            } : null
         });
     });
 }
