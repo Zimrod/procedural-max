@@ -227,22 +227,37 @@ export default function LandingPage() {
     }
   };
 
+  // Add this inside page_3.tsx
   const startBackgroundSync = async (jobId: string) => {
+    let attempts = 0;
     const interval = setInterval(async () => {
       try {
-        // 🛠️ FIX: Added ${API} gateway route resolution 
+        attempts++;
+        if (attempts > 120) { // Timeout after 3 minutes (120 * 1500ms)
+            clearInterval(interval);
+            console.error("Background extraction pipeline timed out.");
+            setActiveLoading(null);
+            return;
+        }
+
         const res = await fetch(`${API}/voiceover/status/${jobId}`);
         const statusData = await res.json();
 
         if (statusData.status === "done") {
           clearInterval(interval);
+          console.log("✅ [Sync] Backend confirmed pipeline completion in database!");
+          
+          // Force the state update which unlocks pollForCompletion in handleRenderAnimation
           setPipelineResult(statusData.result); 
         } else if (statusData.status === "failed") {
           clearInterval(interval);
-          console.error("Background extraction pipeline failed:", statusData.error);
+          console.error("❌ Background extraction pipeline failed on server.");
+          setActiveLoading(null);
+        } else {
+            console.log(`[Sync] Database status: ${statusData.status}... waiting.`);
         }
       } catch (err) {
-        clearInterval(interval);
+        console.error("Network error during status check", err);
       }
     }, 1500);
   };

@@ -118,9 +118,5 @@ export function narrativeAnalyzer(extractions: SemanticExtraction[]): NarrativeB
     });
   }
 
-  // Write out the pristine un-duplicated sequence file mapping perfectly to your transcription
-  const outputPath = path.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
-  fs.writeFileSync(outputPath, JSON.stringify(beats, null, 2));
-
   return beats;
 }

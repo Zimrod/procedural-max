@@ -1,7 +1,5 @@
 // src/core/planning/selectWidgetsRobust.ts
 
-import fs from 'fs';
-import path from 'path';
 import { NarrativeBeat } from '../narrative/narrativeAnalyzer.js';
 import { widgetRegistry } from '../widgetRegistry.js';
 import { WidgetType } from '../taxonomy/widgetTaxonomy.js';
@@ -18,26 +16,22 @@ export type SelectedWidget = {
   };
 };
 
-export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<SelectedWidget[]> {
+/**
+ * Robustly selects the best matching graphical layout widgets for each individual narrative beat.
+ * This execution layer runs purely in-memory to safely handle serverless deployments.
+ */
+export async function selectWidgetsRobust(beats: NarrativeBeat[]): Promise<SelectedWidget[]> {
+  // 🛠️ Guard check against empty arrays or undefined pipelines
+  if (!beats || beats.length === 0) {
+    throw new Error("Execution failed: Narrative beats matrix is empty or undefined. Pipeline halted.");
+  }
+
   const usedWidgetsGlobal = new Set<string>();
   const batchPassTallies: Record<string, { count: number }> = {};
 
-  // Read from the provided narrative analysis first, then fall back to disk.
-  let sourceBeats = beats;
-  if (!sourceBeats) {
-    const analysisPath = path.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
-    if (!fs.existsSync(analysisPath)) {
-      throw new Error(`Execution failed: ${analysisPath} does not exist on disk.`);
-    }
+  console.log(`\n==== SELECTING WIDGETS: PROCESSING PIPELINE MEMORY MATRICES (${beats.length} Beats) ====`);
 
-    sourceBeats = JSON.parse(fs.readFileSync(analysisPath, 'utf-8')) as NarrativeBeat[];
-  }
-
-  const resolvedBeats = sourceBeats ?? [];
-
-  console.log(`\n==== SELECTING WIDGETS FROM DISK: 04_NARRATIVE_ANALYSIS.JSON (${resolvedBeats.length} Beats) ====`);
-
-  const selectedWidgets = resolvedBeats.map((beat) => {
+  const selectedWidgets = beats.map((beat) => {
     const text = beat.sentenceText.toLowerCase();
     const intent = beat.intent || 'concept';
     const role = beat.narrativeRole || 'middle';
@@ -114,11 +108,11 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
     };
   });
 
-  // Log telemetry metrics safely using standard promise catches
+  // Log telemetry metrics safely using database RPC hooks
   if (Object.keys(batchPassTallies).length > 0) {
     const upsertPayload = Object.entries(batchPassTallies).map(([widgetType, data]) => ({
       widget_type: widgetType,
-      intent_category: 'DISK_BOUND_SELECTION',
+      intent_category: 'PIPELINE_IN_MEMORY_SELECTION',
       global_render_count: data.count,
       updated_at: new Date().toISOString(),
     }));
@@ -132,4 +126,3 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
 
   return selectedWidgets;
 }
-

@@ -23,17 +23,17 @@ export async function runTranscriptionToScenePipeline(rawTranscription: RawTrans
   const sentenceSegments = segmentTranscriptionIntoSentences(enrichedTranscript.words, fps);
 
   // 3. Extract core visual concepts and taxonomy data via LLM Prompting
-  const semanticExtractions = await semanticExtractionPipeline(sentenceSegments);
+  const semanticPose = await semanticExtractionPipeline(sentenceSegments);
 
   // 4. Transform semantic Extractions into explicit production Narrative Beats
-  const narrativeBeats = narrativeAnalyzer(semanticExtractions);
+  const narrativeScenes = narrativeAnalyzer(semanticPose);
 
   // 5. Select the ideal graphical widgets from the registry based on Intent scores
-  const selectedWidgets = await selectWidgetsRobust(narrativeBeats);
+  const selectedWidgets = await selectWidgetsRobust(narrativeScenes);
 
   // 6. Build final frame-accurate scene timeline configuration settings
   const finalSceneConfig = buildSceneConfigFromWidgets(
-    narrativeBeats, 
+    narrativeScenes, 
     selectedWidgets, 
     fps, 
     enrichedTranscript
@@ -41,8 +41,12 @@ export async function runTranscriptionToScenePipeline(rawTranscription: RawTrans
 
   console.log("✅ Scene Composition complete!");
   
+  // 🛠️ Modified return object to expose pipeline intermediaries for Supabase ingestion
   return {
     transcript: enrichedTranscript,
-    sceneConfig: finalSceneConfig
+    sceneConfig: finalSceneConfig,
+    semanticPose,
+    narrativeScenes,
+    selectedWidgets
   };
 }
