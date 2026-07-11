@@ -1,7 +1,4 @@
 // src/core/segmentation/semanticExtraction.ts
-
-import fs from 'fs';
-import path from 'path';
 import OpenAI from 'openai';
 
 const apiKey = process.env.OPENAI_API_KEY;
@@ -653,21 +650,7 @@ export async function semanticExtractionPipeline(
   // SAVE OUTPUT
   //
 
-  const outputPath = path.resolve(
-    process.cwd(),
-    'public',
-    '03_semantic_extraction.json'
-  );
-
-  fs.writeFileSync(
-    outputPath,
-    JSON.stringify(results, null, 2)
-  );
-
-  console.log(
-    'Semantic extraction saved:',
-    outputPath
-  );
+  console.log(`✅ Semantic extraction complete for all ${segments.length} segments.`);
 
   return results;
 }
