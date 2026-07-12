@@ -15,7 +15,7 @@
     "@fastify/cors": "^11.2.0",
     "@fastify/multipart": "^10.0.0",
     "@remotion/player": "4.0.340",
-    "@remotion/lambda": "4.0.340",
+    "@remotion/lambda-client": "4.0.340",
     "@supabase/supabase-js": "^2.108.2",
     "dotenv": "^17.4.2",
     "fastify": "^5.9.0",
