@@ -584,7 +584,7 @@ export default function LandingPage() {
                 >
                   {activeLoading === "script"
                     ? "Processing Narrative..."
-                    : "Draft AI Core Script"}
+                    : "Step 1: Generate Script"}
                 </button>
 
                 {aiAudioUrl && (
@@ -666,7 +666,10 @@ export default function LandingPage() {
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
               >
-                Step 2: Generate Audio
+                {activeLoading === "voiceover"
+                  ? "Generating Audio..."
+                  : "Step 2: Generate Voiceover"
+                }
               </button>
       
               <button
@@ -675,8 +678,8 @@ export default function LandingPage() {
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
               >
                 {activeLoading === "animation"
-                  ? "Assembling Visual Timelines..."
-                  : "Step 3: Analyze & Sync Motion Rig"}
+                  ? "Assembling Scenes..."
+                  : "Step 3: Generate Animation"}
               </button>
             </div>
 
@@ -1105,8 +1108,9 @@ export default function LandingPage() {
               </button>
 
               <RenderAndSaveButtons 
-                rawText={transcription?.text || ""}
-                sceneConfig={localConfig || []}
+                rawText={transcription?.text || currentActiveScript} // 📝 Fallback to the active script if transcript isn't analyzed yet
+                sceneConfig={sceneConfig}                            // 🎬 Pass down the active master composition layout structure
+                projectId={currentJobId || undefined}                // 🎯 Pass your active UUID tracking token (mapped from currentJobId)
               />
             </div>
 

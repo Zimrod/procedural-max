@@ -4,19 +4,54 @@ import React, { useState } from "react";
 type RenderAndSaveButtonsProps = {
   readonly rawText: string;
   readonly sceneConfig: any[];
+  readonly projectId?: string; // 👈 Add the active project UUID pointer from your state
 };
 
-export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawText, sceneConfig }) => {
+export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ 
+  rawText, 
+  sceneConfig,
+  projectId 
+}) => {
   const [isSaving, setIsSaving] = useState(false);
+  const [isRendering, setIsRendering] = useState(false); // 👈 Track render state
   const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+  const [renderStatus, setRenderStatus] = useState<"idle" | "rendering" | "success" | "error">("idle");
 
-  // const isProductionMode = process.env.NODE_ENV === "production";
   const isProductionMode = true;
-  
-  // 🚀 VALIDATION RULE: The panel is populated if sceneConfig exists and has active scenes
   const isPopulated = sceneConfig && sceneConfig.length > 0;
-  console.log('Is sceneConfig populated: ', sceneConfig);
-  
+
+  // 🎬 Trigger AWS Lambda Serverless Render
+  const handleLambdaRender = async () => {
+    if (!isPopulated || !projectId) {
+      console.warn("⚠️ Cannot initiate render: Missing populated scenes or a valid project ID.");
+      return;
+    }
+
+    setIsRendering(true);
+    setRenderStatus("rendering");
+
+    try {
+      // 🌐 Dynamically resolve target server address to eliminate local mapping bugs
+      const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
+      
+      const response = await fetch(`${API}/render/lambda`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ projectId }),
+      });
+
+      if (!response.ok) throw new Error("AWS Lambda orchestration hook rejected dispatch request.");
+      
+      const data = await response.json();
+      console.log("🚀 Serverless render kicked off successfully:", data);
+      setRenderStatus("success");
+    } catch (err) {
+      console.error("Serverless render initialization failed:", err);
+      setRenderStatus("error");
+    } finally {
+      setIsRendering(false);
+    }
+  };
 
   const handleSaveToSupabase = async () => {
     if (isProductionMode || !isPopulated) return;
@@ -48,11 +83,11 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
     <div style={{ marginTop: "12px", width: "100%" }}>
       {/* 🎬 Render Animation Action Trigger */}
       <button
-        disabled={!isPopulated}
+        disabled={!isPopulated || isRendering}
         style={{
           width: "100%",
           padding: "14px",
-          background: isPopulated ? "#0f172a" : "#f1f5f9",
+          background: !isPopulated ? "#f1f5f9" : isRendering ? "#64748b" : "#0f172a",
           color: isPopulated ? "#ffffff" : "#94a3b8",
           border: isPopulated ? "none" : "1px solid #e2e8f0",
           borderRadius: "12px",
@@ -60,14 +95,14 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
           fontWeight: "bold",
           textTransform: "uppercase",
           letterSpacing: "0.05em",
-          cursor: isPopulated ? "pointer" : "not-allowed",
+          cursor: (isPopulated && !isRendering) ? "pointer" : "not-allowed",
           marginBottom: "10px",
           transition: "all 0.2s ease",
-          boxShadow: isPopulated ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
+          boxShadow: isPopulated && !isRendering ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
         }}
-        onClick={() => console.log("Invoking Remotion Render Core with active items:", sceneConfig)}
+        onClick={handleLambdaRender}
       >
-        🎬 Render Animation
+        {isRendering ? "⚡ Dispatching to the Cloud..." : "🎬 Render Animation"}
       </button>
 
       {/* ☁️ Save to Supabase Cloud Storage Action Trigger */}
@@ -95,7 +130,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
         </button>
       )}
 
-      {/* Dynamic Operational Success/Error Feedback Alerts */}
+      {/* RAG Save Alerts */}
       {saveStatus === "success" && (
         <p style={{ color: "#16a34a", fontSize: "11px", marginTop: "8px", textAlign: "center", fontWeight: "500" }}>
           ✓ Track configuration layout and vector metrics synced to cloud storage.
@@ -104,6 +139,18 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ rawT
       {saveStatus === "error" && (
         <p style={{ color: "#dc2626", fontSize: "11px", marginTop: "8px", textAlign: "center", fontWeight: "500" }}>
           ✕ Persistent transfer execution failed. Reference backend terminal reports.
+        </p>
+      )}
+
+      {/* ⚙️ Lambda Render Telemetry Alerts */}
+      {renderStatus === "success" && (
+        <p style={{ color: "#22c55e", fontSize: "11px", marginTop: "4px", textAlign: "center", fontWeight: "500" }}>
+          🚀 Render instance running on AWS Lambda. Stitched file processing initiated.
+        </p>
+      )}
+      {renderStatus === "error" && (
+        <p style={{ color: "#dc2626", fontSize: "11px", marginTop: "4px", textAlign: "center", fontWeight: "500" }}>
+          ✕ Serverless invocation failed. Verify backend logs and S3 cluster sync states.
         </p>
       )}
     </div>
