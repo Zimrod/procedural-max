@@ -1,6 +1,6 @@
 // backend/src/routes/render.ts
 import { FastifyInstance } from "fastify";
-import { renderMediaOnLambda } from "@remotion/lambda";
+import { renderMediaOnLambda } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(process.env.SUPABASE_URL || "", process.env.SUPABASE_ANON_KEY || "");
