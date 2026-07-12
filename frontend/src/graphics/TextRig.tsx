@@ -60,7 +60,7 @@ export const TextRig: React.FC<Props> = ({
     const handle = delayRender();
     Promise.all(
       uniqueLetters.map(async (letter) => {
-        const path = staticFile(`alphabet-stencil/${letter}.svg`);
+        const path = staticFile(`/alphabet-stencil/${letter}.svg`);
         const res = await fetch(path);
         const svgText = await res.text();
         return [letter, svgText];
