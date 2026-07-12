@@ -1,6 +1,6 @@
 // backend/src/routes/render.ts
 import { FastifyInstance } from "fastify";
-import { renderMediaOnLambda, getRenderProgress } from "@remotion/lambda-client"; // 👈 Added getRenderProgress
+import { renderMediaOnLambda, getRenderProgress } from "@remotion/lambda-client";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(process.env.SUPABASE_URL || "", process.env.SUPABASE_ANON_KEY || "");
@@ -54,7 +54,6 @@ export default async function renderRoutes(fastify: FastifyInstance) {
                 .eq("id", projectId);
 
             // 🚀 FIRE-AND-FORGET: Spin up the progress monitor loop asynchronously in the background.
-            // This allows the route handler to immediately reply back to the UI frontend.
             monitorRenderProgress(lambdaResult.renderId, lambdaResult.bucketName, targetFunctionName, projectId);
 
             return reply.send({
@@ -76,13 +75,15 @@ async function monitorRenderProgress(renderId: string, bucketName: string, funct
     
     while (true) {
         try {
+            // 🔐 Explicitly load variables into execution context block right before calling getRenderProgress
+            process.env.AWS_ACCESS_KEY_ID = process.env.REMOTION_AWS_ACCESS_KEY_ID || "";
+            process.env.AWS_SECRET_ACCESS_KEY = process.env.REMOTION_AWS_SECRET_ACCESS_KEY || "";
+
             const progress = await getRenderProgress({
                 bucketName: bucketName,
                 functionName: functionName,
                 renderId: renderId,
                 region: (process.env.AWS_REGION as any) || "us-east-1",
-                secretAccessKey: process.env.REMOTION_AWS_SECRET_ACCESS_KEY || "",
-                accessKeyId: process.env.REMOTION_AWS_ACCESS_KEY_ID || "",
             });
 
             if (progress.done) {
@@ -100,7 +101,8 @@ async function monitorRenderProgress(renderId: string, bucketName: string, funct
                 console.error(`\n❌ [Monitor] CRITICAL: Render crashed for Project ID: ${projectId} ❌\n`);
                 
                 if (progress.errors && progress.errors.length > 0) {
-                    progress.errors.forEach((err, idx) => {
+                    // 💡 Added strict TypeScript type definitions for the internal parameter bindings
+                    progress.errors.forEach((err: { message: string; stack?: string }, idx: number) => {
                         console.error(`--- Cloud Engine Error Matrix #${idx + 1} ---`);
                         console.error(`Message: ${err.message}`);
                         if (err.stack) console.error(`Stack Trace:\n${err.stack}`);
