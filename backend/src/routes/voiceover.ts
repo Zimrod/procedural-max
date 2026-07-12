@@ -47,7 +47,7 @@ export default async function voiceoverRoutes(fastify: FastifyInstance) {
                     const rawTranscript = await generateTranscription(audioLocalPath);
                     
                     console.log(`⚙️ [Pipeline Process] Running pipeline orchestrator calculations...`);
-                    const pipelineData = await runTranscriptionToScenePipeline(rawTranscript, 30);[cite: 6]
+                    const pipelineData = await runTranscriptionToScenePipeline(rawTranscript, 30);
                     
                     // Unpack in-memory properties returned from your pipelineOrchestrator
                     const { 
