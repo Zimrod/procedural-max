@@ -27,14 +27,20 @@ export default async function renderRoutes(fastify: FastifyInstance) {
             const lambdaResult = await renderMediaOnLambda({
                 region: (process.env.AWS_REGION as any) || "us-east-1",
                 functionName: process.env.REMOTION_LAMBDA_FUNCTION_NAME || "",
-                composition: "MainVideoComposition", // Must match your Remotion Root config
-                serveUrl: process.env.REMOTION_SERVE_URL || "",     // Your deployed bundle URL
+                composition: "MainVideoComposition", 
+                serveUrl: process.env.REMOTION_SERVE_URL || "",     
+                
+                // 🔐 FORCE EXPLICIT REMOTION AWS CREDENTIALS TO AVOID CONTAINER CLASHES
+                secretAccessKey: process.env.REMOTION_AWS_SECRET_ACCESS_KEY || "",
+                accessKeyId: process.env.REMOTION_AWS_ACCESS_KEY_ID || "",
+
                 inputProps: {
                     sceneConfig: project.scene_config,
                     voiceoverUrl: project.voiceover_url
                 },
                 codec: "h264",
                 privacy: "public",
+                logLevel: "verbose",
             });
 
             // 3. Keep track of the render IDs inside your metadata column
