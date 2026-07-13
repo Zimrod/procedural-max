@@ -1,5 +1,7 @@
 // src/types/schema.ts
 import { z } from "zod";
+
+// Use an explicit type import to bypass implicit 'any' resolutions
 import { CompositionProps } from "./constants.js";
 
 export const RenderRequest = z.object({
