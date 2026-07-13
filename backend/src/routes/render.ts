@@ -1,23 +1,22 @@
 // src/routes/render.ts
-import { AwsRegion, RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
+import { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
 } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
 
-// 1. Fixed: Explicit .js file extensions for NodeNext module resolution compliance[cite: 5]
+// 1. Fixed: Explicit .js file extensions for NodeNext module resolution compliance
 import { executeApi } from "../helpers/api-response.js";
 import { RenderRequest } from "../types/schema.js";
 
 // @ts-ignore
-// 2. Fixed: Ignored the implicit 'any' declaration warning for the native config ES Module[cite: 5]
+// 2. Fixed: Ignored the implicit 'any' declaration warning for the native config ES Module
 import {
   DISK,
   RAM,
-  REGION,
   TIMEOUT,
-} from "../../config.mjs";
+} from "../../config.js";
 
 // Initialize the Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL || "";
@@ -31,7 +30,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  // 3. Fixed: Typed 'req' as Request and 'body' using the inferred type of RenderRequest schema[cite: 5]
+  // 3. Fixed: Typed 'req' as Request and 'body' using the inferred type of RenderRequest schema
   async (req: Request, body: typeof RenderRequest["_output"]) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
@@ -101,7 +100,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       const result = await renderMediaOnLambda({
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
-        region: (process.env.AWS_REGION || "us-east-1") as AwsRegion,
+        region: "us-east-1",
         serveUrl: process.env.SITE_NAME || "",
         composition: body.id,
         inputProps: finalInputProps,

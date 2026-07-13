@@ -24,30 +24,3 @@ export const calculateTotalDuration = (words: { end: number }[]) => {
   // Final duration = (Last word timestamp + buffer) * FPS
   return Math.ceil((lastWordEnd + LINGER_SECONDS) * VIDEO_FPS);
 };
-
-// For Lambda Rendering
-
-export const RenderRequest = z.object({
-  id: z.string(),
-  inputProps: CompositionProps,
-});
-
-export const ProgressRequest = z.object({
-  bucketName: z.string(),
-  id: z.string(),
-});
-
-export type ProgressResponse =
-  | {
-      type: "error";
-      message: string;
-    }
-  | {
-      type: "progress";
-      progress: number;
-    }
-  | {
-      type: "done";
-      url: string;
-      size: number;
-    };
