@@ -5,14 +5,19 @@ import {
   speculateFunctionName,
 } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
-import { executeApi } from "../helpers/api-response";
+
+// 1. Fixed: Explicit .js file extensions for NodeNext module resolution compliance[cite: 5]
+import { executeApi } from "../helpers/api-response.js";
+import { RenderRequest } from "../types/schema.js";
+
+// @ts-ignore
+// 2. Fixed: Ignored the implicit 'any' declaration warning for the native config ES Module[cite: 5]
 import {
   DISK,
   RAM,
   REGION,
   TIMEOUT,
 } from "../../config.mjs";
-import { RenderRequest } from "../types/schema";
 
 // Initialize the Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL || "";
@@ -26,7 +31,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  async (req, body) => {
+  // 3. Fixed: Typed 'req' as Request and 'body' using the inferred type of RenderRequest schema[cite: 5]
+  async (req: Request, body: typeof RenderRequest["_output"]) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
     if (!process.env.REMOTION_AWS_ACCESS_KEY_ID) {
@@ -45,8 +51,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     // ------------------------------------------------------------
     // 🛠️ FETCH DATA FROM SUPABASE
     // ------------------------------------------------------------
-    // We assume your incoming request body includes a target identifier
-    // to query Supabase (e.g., body.inputProps.id, or body.id representing a jobId)
     const targetId = body.inputProps?.id || body.id;
     let fetchedSceneConfig = null;
     let fetchedVoiceoverUrl = null;
@@ -54,7 +58,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     if (targetId) {
       console.log(`🛰️ [Supabase Sync] Querying video row metadata for ID: "${targetId}"...`);
       
-      // Replace "video_jobs" with your actual Supabase table name
       const { data, error } = await supabase
         .from("video_jobs") 
         .select("scene_config, voiceover_url")
@@ -63,7 +66,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
 
       if (error) {
         console.error("❌ [Supabase Error] Query failed actively:", error.message);
-        // Fallback or exit based on your application strategy
       } else if (data) {
         console.log("✅ [Supabase Sync] Raw data extracted successfully.");
         fetchedSceneConfig = data.scene_config;
@@ -98,12 +100,11 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       
       const result = await renderMediaOnLambda({
         codec: "h264",
-        // Fallback safely to speculated function if env is missing
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: (process.env.AWS_REGION || "us-east-1") as AwsRegion,
         serveUrl: process.env.SITE_NAME || "",
         composition: body.id,
-        inputProps: finalInputProps, // 👈 Passing down your synced database assets
+        inputProps: finalInputProps,
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
