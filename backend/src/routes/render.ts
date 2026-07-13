@@ -1,135 +1,126 @@
-// backend/src/routes/render.ts
-import { FastifyInstance } from "fastify";
-import { renderMediaOnLambda, getRenderProgress } from "@remotion/lambda-client";
+// src/routes/render.ts
+import { AwsRegion, RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
+import {
+  renderMediaOnLambda,
+  speculateFunctionName,
+} from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
+import { executeApi } from "../helpers/api-response";
+import {
+  DISK,
+  RAM,
+  REGION,
+  TIMEOUT,
+} from "../../config.mjs";
+import { RenderRequest } from "../types/schema";
 
-const supabase = createClient(process.env.SUPABASE_URL || "", process.env.SUPABASE_ANON_KEY || "");
+// Initialize the Supabase Client
+const supabaseUrl = process.env.SUPABASE_URL || "";
+const supabaseServiceKey = process.env.SUPABASE_ANON_KEY || "";
 
-export default async function renderRoutes(fastify: FastifyInstance) {
-    fastify.post("/render/lambda", async (request, reply) => {
-        try {
-            const { projectId } = request.body as { projectId: string };
-
-            // 1. Grab your freshly processed data matrix from your project row
-            const { data: project, error: dbError } = await supabase
-                .from("parametric_projects")
-                .select("scene_config, voiceover_url")
-                .eq("id", projectId)
-                .single();
-
-            if (dbError || !project) {
-                return reply.code(404).send({ success: false, error: "Project data targets not found." });
-            }
-
-            console.log(`🎬 [Lambda Setup] Dispatching render job for ${projectId}...`);
-
-            const targetFunctionName = process.env.REMOTION_LAMBDA_FUNCTION_NAME || "";
-            console.log("Lambda Function Name: ", targetFunctionName);
-
-            // 2. Invoke the serverless renderer using Remotion's SDK
-            const lambdaResult = await renderMediaOnLambda({
-                region: (process.env.AWS_REGION as any) || "us-east-1",
-                functionName: targetFunctionName,
-                composition: "MainVideoComposition",
-                serveUrl: process.env.REMOTION_SERVE_URL || "",
-                
-                secretAccessKey: process.env.REMOTION_AWS_SECRET_ACCESS_KEY || "",
-                accessKeyId: process.env.REMOTION_AWS_ACCESS_KEY_ID || "",
-
-                inputProps: {
-                    sceneConfig: project.scene_config,
-                    voiceoverUrl: project.voiceover_url
-                },
-                codec: "h264",
-                privacy: "public",
-                logLevel: "verbose",
-            });
-
-            // 3. Keep track of the render IDs inside your metadata column
-            await supabase
-                .from("parametric_projects")
-                .update({
-                    status: "rendering",
-                    render_metadata: { renderId: lambdaResult.renderId, bucketName: lambdaResult.bucketName }
-                })
-                .eq("id", projectId);
-
-            // 🚀 FIRE-AND-FORGET: Spin up the progress monitor loop asynchronously in the background.
-            monitorRenderProgress(lambdaResult.renderId, lambdaResult.bucketName, targetFunctionName, projectId);
-
-            return reply.send({
-                success: true,
-                renderId: lambdaResult.renderId,
-                bucketName: lambdaResult.bucketName
-            });
-
-        } catch (err: any) {
-            request.log.error(err);
-            return reply.code(500).send({ success: false, error: err.message });
-        }
-    });
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.warn("⚠️ [Supabase Warning] Missing credentials. Database queries will fail.");
 }
 
-// 🛠️ Background Polling Worker Strategy
-async function monitorRenderProgress(renderId: string, bucketName: string, functionName: string, projectId: string) {
-    console.log(`\n🕵️‍♂️ [Monitor] Background polling started for Render ID: ${renderId}`);
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
+  RenderRequest,
+  async (req, body) => {
+    console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
-    while (true) {
-        try {
-            // 🔐 Explicitly load variables into execution context block right before calling getRenderProgress
-            process.env.AWS_ACCESS_KEY_ID = process.env.REMOTION_AWS_ACCESS_KEY_ID || "";
-            process.env.AWS_SECRET_ACCESS_KEY = process.env.REMOTION_AWS_SECRET_ACCESS_KEY || "";
-
-            const progress = await getRenderProgress({
-                bucketName: bucketName,
-                functionName: functionName,
-                renderId: renderId,
-                region: (process.env.AWS_REGION as any) || "us-east-1",
-            });
-
-            if (progress.done) {
-                console.log(`\n✅ [Monitor] Render Success! Output URL: ${progress.outputFile}`);
-                
-                // Keep database synchronized with final asset tracking
-                await supabase
-                    .from("parametric_projects")
-                    .update({ status: "done", video_url: progress.outputFile })
-                    .eq("id", projectId);
-                break;
-            }
-
-            if (progress.fatalErrorEncountered) {
-                console.error(`\n❌ [Monitor] CRITICAL: Render crashed for Project ID: ${projectId} ❌\n`);
-                
-                if (progress.errors && progress.errors.length > 0) {
-                    // 💡 Added strict TypeScript type definitions for the internal parameter bindings
-                    progress.errors.forEach((err: { message: string; stack?: string }, idx: number) => {
-                        console.error(`--- Cloud Engine Error Matrix #${idx + 1} ---`);
-                        console.error(`Message: ${err.message}`);
-                        if (err.stack) console.error(`Stack Trace:\n${err.stack}`);
-                    });
-                } else {
-                    console.error("⚠️ No explicit errors arrays reported from S3 orchestration JSON context.");
-                }
-
-                // Push failure update state status flags to Supabase
-                await supabase
-                    .from("parametric_projects")
-                    .update({ status: "failed" })
-                    .eq("id", projectId);
-                break;
-            }
-
-            // Continuous status tracing
-            console.log(`⏳ [Monitor Pipeline] Progress: ${(progress.overallProgress * 100).toFixed(1)}%`);
-            
-            // Wait 2 seconds before checking again (prevents aggressive S3 spamming)
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        } catch (pollError) {
-            console.error("💥 [Monitor Pipeline Exception] Failed fetching step metrics:", pollError);
-            // Don't break immediately on random network hiccups; wait and try again
-            await new Promise((resolve) => setTimeout(resolve, 5000));
-        }
+    if (!process.env.REMOTION_AWS_ACCESS_KEY_ID) {
+      console.error("❌ [Stage 1 Error] Missing AWS Access Key Identification.");
+      throw new TypeError(
+        "Set up Remotion Lambda to render videos. See the README.md for how to do so.",
+      );
     }
-}
+    if (!process.env.REMOTION_AWS_SECRET_ACCESS_KEY) {
+      console.error("❌ [Stage 1 Error] Missing AWS Secret Access Key Definition.");
+      throw new TypeError(
+        "The environment variable REMOTION_AWS_SECRET_ACCESS_KEY is missing. Add it to your .env file.",
+      );
+    }
+
+    // ------------------------------------------------------------
+    // 🛠️ FETCH DATA FROM SUPABASE
+    // ------------------------------------------------------------
+    // We assume your incoming request body includes a target identifier
+    // to query Supabase (e.g., body.inputProps.id, or body.id representing a jobId)
+    const targetId = body.inputProps?.id || body.id;
+    let fetchedSceneConfig = null;
+    let fetchedVoiceoverUrl = null;
+
+    if (targetId) {
+      console.log(`🛰️ [Supabase Sync] Querying video row metadata for ID: "${targetId}"...`);
+      
+      // Replace "video_jobs" with your actual Supabase table name
+      const { data, error } = await supabase
+        .from("video_jobs") 
+        .select("scene_config, voiceover_url")
+        .eq("id", targetId)
+        .single();
+
+      if (error) {
+        console.error("❌ [Supabase Error] Query failed actively:", error.message);
+        // Fallback or exit based on your application strategy
+      } else if (data) {
+        console.log("✅ [Supabase Sync] Raw data extracted successfully.");
+        fetchedSceneConfig = data.scene_config;
+        fetchedVoiceoverUrl = data.voiceover_url;
+      }
+    } else {
+      console.log("⚠️ [Supabase Skip] No lookup ID found in payload. Proceeding with default inputs.");
+    }
+
+    // Combine any base inputProps passed by the client with the fresh Supabase assets
+    const finalInputProps = {
+      ...body.inputProps,
+      scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
+      voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
+    };
+
+    // 🕵️‍♂️ Speculating what function name pattern your Remotion configuration matches
+    const predictedFunction = speculateFunctionName({
+      diskSizeInMb: DISK,
+      memorySizeInMb: RAM,
+      timeoutInSeconds: TIMEOUT,
+    });
+
+    console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
+    console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
+    console.log(`  -> Target Region Deployment: "${REGION}"`);
+    console.log(`  -> Target Composition ID: "${body.id}"`);
+    console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
+
+    try {
+      console.log("📡 [Stage 3] Initiating renderMediaOnLambda dispatch request wire call...");
+      
+      const result = await renderMediaOnLambda({
+        codec: "h264",
+        // Fallback safely to speculated function if env is missing
+        functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
+        region: (process.env.AWS_REGION || "us-east-1") as AwsRegion,
+        serveUrl: process.env.SITE_NAME || "",
+        composition: body.id,
+        inputProps: finalInputProps, // 👈 Passing down your synced database assets
+        framesPerLambda: 10,
+        downloadBehavior: {
+          type: "download",
+          fileName: "video.mp4",
+        },
+      });
+
+      console.log("✅ [Stage 4] AWS Orchestration Hook Accepted Request!");
+      console.log(`  -> Generated Render ID token: ${result.renderId}`);
+      console.log(`  -> Targeted Output Bucket: ${result.bucketName}`);
+      
+      return result;
+    } catch (lambdaError: any) {
+      console.error("💥 [Stage 3 Crash] AWS Lambda Dispatch Hook Actively Rejected Call!");
+      console.error(`  -> Error Message: ${lambdaError.message}`);
+      console.error(`  -> Stack Trace Summary:\n`, lambdaError.stack);
+      throw lambdaError;
+    }
+  },
+);
