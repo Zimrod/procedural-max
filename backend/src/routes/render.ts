@@ -24,6 +24,7 @@ export default async function renderRoutes(fastify: FastifyInstance) {
             console.log(`🎬 [Lambda Setup] Dispatching render job for ${projectId}...`);
 
             const targetFunctionName = process.env.REMOTION_LAMBDA_FUNCTION_NAME || "";
+            console.log("Lambda Function Name: ", targetFunctionName);
 
             // 2. Invoke the serverless renderer using Remotion's SDK
             const lambdaResult = await renderMediaOnLambda({
