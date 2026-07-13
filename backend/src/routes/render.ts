@@ -90,7 +90,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
 
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
     console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
-    console.log(`  -> Target Region Deployment: "${REGION}"`);
+    // console.log(`  -> Target Region Deployment: "${REGION}"`);
     console.log(`  -> Target Composition ID: "${body.id}"`);
     console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
 
