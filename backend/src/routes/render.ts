@@ -1,15 +1,16 @@
 // src/routes/render.ts
-import { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
+import { AwsRegion, RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
+  getRenderProgress, // 👈 Added progress fetching utility
 } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
-
-// 1. Explicit .js file extensions for NodeNext module resolution compliance
-import { executeApi } from "../helpers/api-response.js";
-import { RenderRequest } from "../types/schema.js";
 import { FastifyInstance } from "fastify";
+
+// Explicit .js file extensions for NodeNext/Bundler module resolution compliance
+import { executeApi } from "../helpers/api-response.js";
+import { RenderRequest, ProgressRequest } from "../types/schema.js";
 
 // @ts-ignore
 import {
@@ -28,9 +29,11 @@ if (!supabaseUrl || !supabaseServiceKey) {
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// ============================================================
+// 🎬 1. DISPATCH RENDER ROUTE (POST /render/lambda)
+// ============================================================
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  // 2. Fixed: Removed explicit type annotations (req, body) to let Fastify / executeApi infer them correctly
   async (req, body) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
@@ -74,14 +77,12 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       console.log("⚠️ [Supabase Skip] No lookup ID found in payload. Proceeding with default inputs.");
     }
 
-    // Combine any base inputProps passed by the client with the fresh Supabase assets
     const finalInputProps = {
       ...body.inputProps,
       scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
       voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
     };
 
-    // 🕵️‍♂️ Speculating what function name pattern your Remotion configuration matches
     const predictedFunction = speculateFunctionName({
       diskSizeInMb: DISK,
       memorySizeInMb: RAM,
@@ -124,6 +125,65 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   },
 );
 
+// ============================================================
+// 📊 2. TRACK PROGRESS ROUTE (POST /render/progress)
+// ============================================================
+export const POST_PROGRESS = executeApi<any, typeof ProgressRequest>(
+  ProgressRequest,
+  async (req, body) => {
+    const { id: renderId, bucketName } = body;
+    console.log(`📡 [Progress Hook] Polling status for Render ID: "${renderId}"...`);
+
+    const predictedFunction = speculateFunctionName({
+      diskSizeInMb: DISK,
+      memorySizeInMb: RAM,
+      timeoutInSeconds: TIMEOUT,
+    });
+
+    try {
+      const progress = await getRenderProgress({
+        renderId,
+        bucketName,
+        functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
+        region: "us-east-1",
+      });
+
+      if (progress.fatalErrorEncountered) {
+        console.error(`💥 [Progress Error] Render Job "${renderId}" failed catastrophically:`, progress.errors);
+        return {
+          type: "error",
+          message: progress.errors[0]?.message || "An unknown rendering error occurred on AWS Lambda.",
+        };
+      }
+
+      if (progress.done) {
+        console.log(`🎉 [Progress Hook] Render Job "${renderId}" successfully completed!`);
+        return {
+          type: "done",
+          url: progress.outToS3Url,
+          size: progress.outputSizeInBytes,
+        };
+      }
+
+      console.log(`⏳ [Progress Hook] Render Job "${renderId}" in progress: ${(progress.overallProgress * 100).toFixed(1)}%`);
+      return {
+        type: "progress",
+        progress: progress.overallProgress,
+      };
+    } catch (error: any) {
+      console.error(`❌ [Progress Hook System Crash] Failed to poll AWS progress API for "${renderId}":`, error.message);
+      return {
+        type: "error",
+        message: error.message,
+      };
+    }
+  }
+);
+
+// ============================================================
+// 🔌 3. FASTIFY REGISTRATION
+// ============================================================
 export default async function renderRoutes(fastify: FastifyInstance) {
   fastify.post("/render/lambda", POST);
+  fastify.post("/render/progress", POST_PROGRESS); // 👈 Registers the progress route
 }
