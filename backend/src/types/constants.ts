@@ -6,6 +6,9 @@ export const COMP_NAME = "vidWithCaptions";
 
 export const CompositionProps = z.object({
   title: z.string(),
+  id: z.string().optional(),
+  scene_config: z.unknown().optional(),
+  voiceover_url: z.string().optional(),
 });
 
 export type CompositionPropsType =
