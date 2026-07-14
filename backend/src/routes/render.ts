@@ -100,7 +100,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
-        serveUrl: !process.env.SITE_NAME || "",
+        serveUrl: process.env.SITE_NAME,
         composition: body.id,
         inputProps: finalInputProps,
         framesPerLambda: 10,
