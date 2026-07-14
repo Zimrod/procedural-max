@@ -6,7 +6,7 @@
 import { Config } from "@remotion/cli/config";
 
 // 🚀 Explicitly tell Remotion where your root orchestration bundle lives
-Config.setEntryPoint("./src/graphics/index.ts");
+Config.setEntryPoint("./src/index.ts");
 
 Config.setVideoImageFormat("jpeg");
 
