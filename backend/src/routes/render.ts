@@ -9,6 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 // 1. Explicit .js file extensions for NodeNext module resolution compliance
 import { executeApi } from "../helpers/api-response.js";
 import { RenderRequest } from "../types/schema.js";
+import { FastifyInstance } from "fastify";
 
 // @ts-ignore
 import {
@@ -122,3 +123,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     }
   },
 );
+
+export default async function renderRoutes(fastify: FastifyInstance) {
+  fastify.post("/render/lambda", POST);
+}
