@@ -100,9 +100,9 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
-        serveUrl: process.env.SITE_NAME,
-        composition: body.id,
-        inputProps: finalInputProps,
+        serveUrl: process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/parametric-video/index.html",
+        composition: body.id || "id",
+        inputProps: finalInputProps || "placeholder",
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
@@ -124,6 +124,65 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   },
 );
 
+// ============================================================
+// 📊 2. TRACK PROGRESS ROUTE (POST /render/progress)
+// ============================================================
+export const POST_PROGRESS = executeApi<any, typeof ProgressRequest>(
+  ProgressRequest,
+  async (req, body) => {
+    const { id: renderId, bucketName } = body;
+    console.log(`📡 [Progress Hook] Polling status for Render ID: "${renderId}"...`);
+
+    const predictedFunction = speculateFunctionName({
+      diskSizeInMb: DISK,
+      memorySizeInMb: RAM,
+      timeoutInSeconds: TIMEOUT,
+    });
+
+    try {
+      const progress = await getRenderProgress({
+        renderId,
+        bucketName,
+        functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
+        region: "us-east-1",
+      });
+
+      if (progress.fatalErrorEncountered) {
+        console.error(`💥 [Progress Error] Render Job "${renderId}" failed catastrophically:`, progress.errors);
+        return {
+          type: "error",
+          message: progress.errors[0]?.message || "An unknown rendering error occurred on AWS Lambda.",
+        };
+      }
+
+      if (progress.done) {
+        console.log(`🎉 [Progress Hook] Render Job "${renderId}" successfully completed!`);
+        return {
+          type: "done",
+          url: progress.outputFile, // ✨ Fixed: changed outToS3Url to outputFile
+          size: progress.outputSizeInBytes,
+        };
+      }
+
+      console.log(`⏳ [Progress Hook] Render Job "${renderId}" in progress: ${(progress.overallProgress * 100).toFixed(1)}%`);
+      return {
+        type: "progress",
+        progress: progress.overallProgress,
+      };
+    } catch (error: any) {
+      console.error(`❌ [Progress Hook System Crash] Failed to poll AWS progress API for "${renderId}":`, error.message);
+      return {
+        type: "error",
+        message: error.message,
+      };
+    }
+  }
+);
+
+// ============================================================
+// 🔌 3. FASTIFY REGISTRATION
+// ============================================================
 export default async function renderRoutes(fastify: FastifyInstance) {
   fastify.post("/render/lambda", POST);
+  fastify.post("/render/progress", POST_PROGRESS); // 👈 Registers the progress route
 }
