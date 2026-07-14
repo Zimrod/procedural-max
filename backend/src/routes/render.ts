@@ -15,7 +15,7 @@ import {
   DISK,
   RAM,
   TIMEOUT,
-} from "../../config.mjs";
+} from "../../config.js";
 
 // Initialize the Supabase Client
 const supabaseUrl = process.env.SUPABASE_URL || "";
