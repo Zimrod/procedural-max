@@ -30,7 +30,6 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  // 2. Fixed: Removed explicit type annotations (req, body) to let Fastify / executeApi infer them correctly
   async (req, body) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
@@ -47,17 +46,42 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       );
     }
 
-    // ------------------------------------------------------------
-    // 🛠️ FETCH DATA FROM SUPABASE
-    // ------------------------------------------------------------
-    // Use the explicit projectId if provided, otherwise check inside inputProps
     const targetId = body.projectId || body.inputProps?.id;
-    let fetchedSceneConfig = null;
+    
+    // Extract incoming workspace configurations sent directly from RenderAndSaveButtons.tsx
+    // (Ensure your 'RenderRequest' schema validation allows these optional fields)
+    const incomingSceneConfig = (body as any).sceneConfig; 
+    const incomingRawText = (body as any).rawText;
+
+    let fetchedSceneConfig = incomingSceneConfig || null;
     let fetchedVoiceoverUrl = null;
 
+    // ------------------------------------------------------------
+    // 🛠️ SAVE TO & SYNC WITH SUPABASE
+    // ------------------------------------------------------------
     if (targetId) {
-      console.log(`🛰️ [Supabase Sync] Querying video row metadata for ID: "${targetId}"...`);
-      
+      // 1. If the client sent updated workspace configurations, save them to the database first!
+      if (incomingSceneConfig) {
+        console.log(`💾 [Supabase Write] Auto-persisting latest scene_config for ID: "${targetId}" before render...`);
+        
+        const { error: saveError } = await supabase
+          .from("parametric_projects")
+          .update({
+            scene_config: incomingSceneConfig,
+            ...(incomingRawText ? { raw_text: incomingRawText } : {})
+          })
+          .eq("id", targetId);
+
+        if (saveError) {
+          console.error("❌ [Supabase Save Error] Failed to auto-persist layout:", saveError.message);
+          // We continue anyway so the user doesn't experience a broken render if the DB save fails but we still have the layout in-memory.
+        } else {
+          console.log("✅ [Supabase Write] Workspace configurations auto-saved successfully.");
+        }
+      }
+
+      // 2. Query remaining metadata (like voiceover_url) to finalize input parameters
+      console.log(`🛰️ [Supabase Sync] Querying remaining metadata for ID: "${targetId}"...`);
       const { data, error } = await supabase
         .from("parametric_projects") 
         .select("scene_config, voiceover_url")
@@ -65,10 +89,11 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         .single();
 
       if (error) {
-        console.error("❌ [Supabase Error] Query failed actively:", error.message);
+        console.error("❌ [Supabase Read Error] Query failed actively:", error.message);
       } else if (data) {
-        console.log("✅ [Supabase Sync] Raw data extracted successfully.");
-        fetchedSceneConfig = data.scene_config;
+        console.log("✅ [Supabase Sync] Project metadata synced successfully.");
+        // Fall back to DB state if nothing was passed in memory
+        fetchedSceneConfig = fetchedSceneConfig || data.scene_config;
         fetchedVoiceoverUrl = data.voiceover_url;
       }
     } else {
@@ -88,7 +113,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       timeoutInSeconds: TIMEOUT,
     });
 
-    // Ensure we fall back to "MainScene" if the client passed something invalid
     const finalCompositionId = body.id || "MainScene";
 
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
@@ -104,7 +128,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
         serveUrl: process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/parametric-video/index.html",
-        composition: finalCompositionId, // 👈 Uses sanitized "MainScene"
+        composition: finalCompositionId, 
         inputProps: finalInputProps,
         framesPerLambda: 10,
         downloadBehavior: {
