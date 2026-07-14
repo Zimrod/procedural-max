@@ -4,32 +4,38 @@ import { Main } from "./graphics/Main";
 import { VIDEO_FPS, VIDEO_WIDTH, VIDEO_HEIGHT } from "./types/constants";
 
 export const Root: React.FC = () => {
-  // 1. Unpack properties passed down dynamically from AWS Lambda inputProps
+  // 1. Unpack properties using the exact snake_case keys sent by your backend
   const inputProps = getInputProps() as {
-    sceneConfig?: any;
-    voiceoverUrl?: string;
+    scene_config?: any[];
+    voiceover_url?: string;
   };
 
-  // Fallbacks for local editing/compilation stability
-  const scenes = inputProps.sceneConfig || [];
-  const audioUrl = inputProps.voiceoverUrl || "01_voiceover.mp3";
+  // Map to your local React variables
+  const scenes = inputProps.scene_config || [];
+  
+  // Use the dynamic voiceover URL, or a robust public placeholder if completely empty
+  const audioUrl = inputProps.voiceover_url || ""; 
 
   // 2. Safely derive total length from scene durations calculated by your backend pipeline
-  // This bypasses requiring captions data directly on the root mounting node
   let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
 
   if (scenes && scenes.length > 0) {
     const lastScene = scenes[scenes.length - 1];
-    if (lastScene && typeof lastScene.endFrame === "number") {
+    // Adjusting this check to use whichever frame naming convention you have (e.g., durationFrames or endFrame)
+    const endingFrame = typeof lastScene.endFrame === "number" 
+      ? lastScene.endFrame 
+      : (lastScene.startFrame + lastScene.durationFrames);
+
+    if (typeof endingFrame === "number") {
       // Append a 3-second (90 frames at 30fps) post-roll buffer onto the final scene frame index
-      totalVideoFramesWithBuffer = lastScene.endFrame + (VIDEO_FPS * 3);
+      totalVideoFramesWithBuffer = endingFrame + (VIDEO_FPS * 3);
     }
   }
 
   return (
     <>
       <Composition
-        id="MainScene" // 👈 Matches your server trigger configuration string exactly
+        id="MainScene"
         component={Main}
         durationInFrames={totalVideoFramesWithBuffer}
         fps={VIDEO_FPS}
