@@ -101,7 +101,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
-        serveUrl: process.env.SITE_NAME ?? "",
+        serveUrl: "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/parametric-video/index.html",
         composition: body.id,
         inputProps: finalInputProps,
         framesPerLambda: 10,
