@@ -1,37 +1,21 @@
 // src/routes/render.ts
-import { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
+import { AwsRegion, RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
 } from "@remotion/lambda/client";
-import { createClient } from "@supabase/supabase-js";
-
-// 1. Fixed: Explicit .js file extensions for NodeNext module resolution compliance
-import { executeApi } from "../helpers/api-response.js";
-import { RenderRequest } from "../types/schema.js";
-
-// @ts-ignore
-// 2. Fixed: Ignored the implicit 'any' declaration warning for the native config ES Module
+import { executeApi } from "../helpers/api-response";
 import {
   DISK,
   RAM,
+  REGION,
   TIMEOUT,
 } from "../../config.mjs";
-
-// Initialize the Supabase Client
-const supabaseUrl = process.env.SUPABASE_URL || "";
-const supabaseServiceKey = process.env.SUPABASE_ANON_KEY || "";
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.warn("⚠️ [Supabase Warning] Missing credentials. Database queries will fail.");
-}
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+import { RenderRequest } from "../types/schema";
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  // 3. Fixed: Typed 'req' as Request and 'body' using the inferred type of RenderRequest schema
-  async (req: Request, body: typeof RenderRequest["_output"]) => {
+  async (req, body) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
     if (!process.env.REMOTION_AWS_ACCESS_KEY_ID) {
@@ -47,40 +31,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       );
     }
 
-    // ------------------------------------------------------------
-    // 🛠️ FETCH DATA FROM SUPABASE
-    // ------------------------------------------------------------
-    const targetId = body.inputProps?.id || body.id;
-    let fetchedSceneConfig = null;
-    let fetchedVoiceoverUrl = null;
-
-    if (targetId) {
-      console.log(`🛰️ [Supabase Sync] Querying video row metadata for ID: "${targetId}"...`);
-      
-      const { data, error } = await supabase
-        .from("video_jobs") 
-        .select("scene_config, voiceover_url")
-        .eq("id", targetId)
-        .single();
-
-      if (error) {
-        console.error("❌ [Supabase Error] Query failed actively:", error.message);
-      } else if (data) {
-        console.log("✅ [Supabase Sync] Raw data extracted successfully.");
-        fetchedSceneConfig = data.scene_config;
-        fetchedVoiceoverUrl = data.voiceover_url;
-      }
-    } else {
-      console.log("⚠️ [Supabase Skip] No lookup ID found in payload. Proceeding with default inputs.");
-    }
-
-    // Combine any base inputProps passed by the client with the fresh Supabase assets
-    const finalInputProps = {
-      ...body.inputProps,
-      scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
-      voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
-    };
-
     // 🕵️‍♂️ Speculating what function name pattern your Remotion configuration matches
     const predictedFunction = speculateFunctionName({
       diskSizeInMb: DISK,
@@ -90,20 +40,20 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
 
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
     console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
-    // console.log(`  -> Target Region Deployment: "${REGION}"`);
+    console.log(`  -> Target Region Deployment: "${REGION}"`);
     console.log(`  -> Target Composition ID: "${body.id}"`);
-    console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
+    console.log(`  -> Input Props Matrix Payload:`, JSON.stringify(body.inputProps, null, 2));
 
     try {
       console.log("📡 [Stage 3] Initiating renderMediaOnLambda dispatch request wire call...");
       
       const result = await renderMediaOnLambda({
         codec: "h264",
-        functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
+        functionName: !process.env.LAMBDA_FUNCTION_NAME,
         region: "us-east-1",
-        serveUrl: process.env.SITE_NAME || "",
+        serveUrl: !process.env.SITE_NAME,
         composition: body.id,
-        inputProps: finalInputProps,
+        inputProps: body.inputProps,
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
