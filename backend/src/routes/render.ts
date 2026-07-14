@@ -6,12 +6,11 @@ import {
 } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
 
-// 1. Fixed: Explicit .js file extensions for NodeNext module resolution compliance
+// 1. Explicit .js file extensions for NodeNext module resolution compliance
 import { executeApi } from "../helpers/api-response.js";
 import { RenderRequest } from "../types/schema.js";
 
 // @ts-ignore
-// 2. Fixed: Ignored the implicit 'any' declaration warning for the native config ES Module
 import {
   DISK,
   RAM,
@@ -30,8 +29,8 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
-  // 3. Fixed: Typed 'req' as Request and 'body' using the inferred type of RenderRequest schema
-  async (req: Request, body: typeof RenderRequest["_output"]) => {
+  // 2. Fixed: Removed explicit type annotations (req, body) to let Fastify / executeApi infer them correctly
+  async (req, body) => {
     console.log("🚀 [Stage 1] Render request incoming. Parsing identity keys...");
     
     if (!process.env.REMOTION_AWS_ACCESS_KEY_ID) {
@@ -90,7 +89,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
 
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
     console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
-    // console.log(`  -> Target Region Deployment: "${REGION}"`);
     console.log(`  -> Target Composition ID: "${body.id}"`);
     console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
 
