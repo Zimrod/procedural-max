@@ -9,7 +9,6 @@
     "outDir": "./dist",
 
     "strict": true,
-    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
