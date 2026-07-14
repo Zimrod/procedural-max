@@ -5,8 +5,8 @@ import { z } from "zod";
 import { CompositionProps } from "./constants.js";
 
 export const RenderRequest = z.object({
-  id: z.string().optional(),
-  inputProps: CompositionProps.optional(),
+  id: z.string(),
+  inputProps: CompositionProps,
 });
 
 export const ProgressRequest = z.object({
