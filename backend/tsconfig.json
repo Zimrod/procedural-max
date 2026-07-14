@@ -26,6 +26,7 @@
     "src/routes/**/*.ts",
     "src/services/**/*.ts",
     "src/lib/**/*.ts",
+    "src/types/**/*.ts",
 
     "src/core/planning/**/*.ts",
     "src/core/segmentation/**/*.ts",
