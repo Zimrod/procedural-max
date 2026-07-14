@@ -50,7 +50,8 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     // ------------------------------------------------------------
     // 🛠️ FETCH DATA FROM SUPABASE
     // ------------------------------------------------------------
-    const targetId = body.inputProps?.id || body.id;
+    // Use the explicit projectId if provided, otherwise check inside inputProps
+    const targetId = body.projectId || body.inputProps?.id;
     let fetchedSceneConfig = null;
     let fetchedVoiceoverUrl = null;
 
@@ -74,23 +75,25 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       console.log("⚠️ [Supabase Skip] No lookup ID found in payload. Proceeding with default inputs.");
     }
 
-    // Combine any base inputProps passed by the client with the fresh Supabase assets
+    // Prepare inputProps for Remotion
     const finalInputProps = {
       ...body.inputProps,
       scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
       voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
     };
 
-    // 🕵️‍♂️ Speculating what function name pattern your Remotion configuration matches
     const predictedFunction = speculateFunctionName({
       diskSizeInMb: DISK,
       memorySizeInMb: RAM,
       timeoutInSeconds: TIMEOUT,
     });
 
+    // Ensure we fall back to "MainScene" if the client passed something invalid
+    const finalCompositionId = body.id || "MainScene";
+
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
     console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
-    console.log(`  -> Target Composition ID: "${body.id}"`);
+    console.log(`  -> Target Composition ID: "${finalCompositionId}"`);
     console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
 
     try {
@@ -101,8 +104,8 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
         serveUrl: process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/parametric-video/index.html",
-        composition: body.id || "id",
-        inputProps: finalInputProps || "placeholder",
+        composition: finalCompositionId, // 👈 Uses sanitized "MainScene"
+        inputProps: finalInputProps,
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
@@ -118,7 +121,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     } catch (lambdaError: any) {
       console.error("💥 [Stage 3 Crash] AWS Lambda Dispatch Hook Actively Rejected Call!");
       console.error(`  -> Error Message: ${lambdaError.message}`);
-      console.error(`  -> Stack Trace Summary:\n`, lambdaError.stack);
       throw lambdaError;
     }
   },
