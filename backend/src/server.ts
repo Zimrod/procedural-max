@@ -1,9 +1,9 @@
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 
-import scriptRoutes from "./routes/script";
-import voiceoverRoutes from "./routes/voiceover";
-import sceneRoutes from "./routes/scene";
+import scriptRoutes from "./routes/script.js";
+import voiceoverRoutes from "./routes/voiceover.js";
+import sceneRoutes from "./routes/scene.js";
 
 async function start() {
   const app = Fastify({
