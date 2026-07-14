@@ -29,7 +29,7 @@ export const Root: React.FC = () => {
   return (
     <>
       <Composition
-        id="MainVideoComposition" // 👈 Matches your server trigger configuration string exactly
+        id="MainScene" // 👈 Matches your server trigger configuration string exactly
         component={Main}
         durationInFrames={totalVideoFramesWithBuffer}
         fps={VIDEO_FPS}
