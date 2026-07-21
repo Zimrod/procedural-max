@@ -250,13 +250,11 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      items: [
-        text || shortSummary,
-        'Fully calibrated cross-platform configurations',
-        'Deterministic layout calculations wrapper'
-      ],
-    }),
+    buildFallbackProps: ({ text, shortSummary }) => {
+      const content = text || shortSummary;
+      const items = content.split('\n').filter(line => line.trim());
+      return { items };
+    },
   },
   // GEOMETRIC_QUOTE: {
   //   category: 'TEXT_TYPOGRAPHY',
