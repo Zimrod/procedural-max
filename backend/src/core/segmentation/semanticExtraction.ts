@@ -435,7 +435,7 @@ export async function extractSemanticMeaning(
 
   const response =
     await openai.chat.completions.create({
-      model: 'gpt-4.1',
+      model: 'gpt-5.6',
 
       response_format: {
         type: 'json_object',
