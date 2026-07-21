@@ -24,6 +24,32 @@ import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
 const WIDGET_OPTIONS = Object.keys(widgetRegistry);
 const DEFAULT_WIDGET_TYPE = WIDGET_OPTIONS[0];
 
+// Helper component for the colored spinner
+function Spinner({ colorClass = "text-white" }: { colorClass?: string }) {
+  return (
+    <svg
+      className={`animate-spin h-4 w-4 ${colorClass}`}
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+      />
+    </svg>
+  );
+}
+
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
   
@@ -406,11 +432,11 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
               <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
-                Procedural Engine v2
+                Procedural Animation Engine v2
               </span>
             </div>
             <h1 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
-              AI Animation Workspace
+              Automated Motion Graphics
             </h1>
             <p className="text-sm text-black/50">
               Paste deep professional domain scripts or brainstorm using structural templates.
@@ -452,11 +478,14 @@ export default function LandingPage() {
                 <button
                   onClick={handleGenerateScript}
                   disabled={activeLoading !== null || !prompt.trim()}
-                  className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm"
+                  className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2"
                 >
-                  {activeLoading === "script"
-                    ? "Processing Narrative..."
-                    : "Step 1: Generate Script"}
+                  <span>
+                    {activeLoading === "script"
+                      ? "Processing Narrative..."
+                      : "Step 1: Generate Script"}
+                  </span>
+                  {activeLoading === "script" && <Spinner colorClass="text-sky-400" />}
                 </button>
 
                 {aiAudioUrl && (
@@ -516,24 +545,32 @@ export default function LandingPage() {
               <button 
                 onClick={handleGenerateVoiceover}
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
+                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2"
               >
-                {activeLoading === "generating_audio"
-                  ? "Generating Audio..."
-                  : activeLoading === "assembling_scenes"
-                  ? "Assembling Scenes..."
-                  : "Step 2: Generate Voiceover"
-                }
+                <span>
+                  {activeLoading === "generating_audio"
+                    ? "Generating Audio..."
+                    : activeLoading === "assembling_scenes"
+                    ? "Assembling Scenes..."
+                    : "Step 2: Generate Voiceover"
+                  }
+                </span>
+                {(activeLoading === "generating_audio" || activeLoading === "assembling_scenes") && (
+                  <Spinner colorClass="text-amber-300" />
+                )}
               </button>
       
               <button
                 onClick={handleRenderAnimation}
                 disabled={activeLoading !== null || !pipelineResult}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
+                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10 flex items-center justify-center gap-2"
               >
-                {activeLoading === "animation"
-                  ? "Rendering Animation..."
-                  : "Step 3: Generate Animation"}
+                <span>
+                  {activeLoading === "animation"
+                    ? "Rendering Animation..."
+                    : "Step 3: Generate Animation"}
+                </span>
+                {activeLoading === "animation" && <Spinner colorClass="text-emerald-200" />}
               </button>
             </div>
 
@@ -939,9 +976,9 @@ export default function LandingPage() {
               <button
                 onClick={handleApplyConfigRefresh}
                 disabled={!isDirty}
-                className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-slate-900/10 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 disabled:shadow-none"
+                className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-slate-900/10 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 disabled:shadow-none flex items-center justify-center gap-2"
               >
-                Refresh Animation
+                <span>Refresh Animation</span>
               </button>
 
               <RenderAndSaveButtons 
