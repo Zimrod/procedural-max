@@ -21,8 +21,7 @@ import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 
 import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
 
-const WIDGET_OPTIONS =
-  Object.keys(widgetRegistry);
+const WIDGET_OPTIONS = Object.keys(widgetRegistry);
 const DEFAULT_WIDGET_TYPE = WIDGET_OPTIONS[0];
 
 export default function LandingPage() {
@@ -40,7 +39,6 @@ export default function LandingPage() {
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
   // Granular tracking of exactly which button is working
-  // const [activeLoading, setActiveLoading] = useState<"script" | "voiceover" | "animation" | null>(null);
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
@@ -67,9 +65,7 @@ export default function LandingPage() {
   const [themePresetId, setThemePresetId] = useState<string>("light-stroke");
 
   const [collapsedScenes, setCollapsedScenes] = useState<Record<number, boolean>>({});
-  const toggleSceneCollapse = (
-    sceneIndex: number
-  ) => {
+  const toggleSceneCollapse = (sceneIndex: number) => {
     setCollapsedScenes(prev => ({
       ...prev,
       [sceneIndex]: !prev[sceneIndex],
@@ -103,7 +99,6 @@ export default function LandingPage() {
     
     if (!rawUrl) return "";
 
-    // 🛠️ FIX: If it's a relative path returned from the server, append the API gateway base domain
     const completeUrl = rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`;
     return `${completeUrl}?v=${version}`;
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, API]);
@@ -129,7 +124,6 @@ export default function LandingPage() {
       }
 
       const data = await res.json();
-
       setAiScript(data.script);
     } catch (err) {
       console.error(err);
@@ -138,65 +132,12 @@ export default function LandingPage() {
     }
   };
 
-  // const handleGenerateVoiceover = async () => {
-  //   if (!currentActiveScript.trim()) {
-  //     alert("Please ensure there is a script ready before generating voiceovers.");
-  //     return;
-  //   }
-    
-  //   try {
-  //     setActiveLoading("voiceover");
-  //     const res = await fetch("/api/generate-voiceover", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ script: currentActiveScript }),
-  //     });
-  //     const data = await res.json();
-  //     if (data.success) {
-  //       if (leftTab === "generate") {
-  //         setAiAudioUrl(data.audioUrl);
-  //         setAiAudioVersion((prev) => prev + 1);
-  //       } else {
-  //         setCustomAudioUrl(data.audioUrl);
-  //         setCustomAudioVersion((prev) => prev + 1);
-  //       }
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setActiveLoading(null);
-  //   }
-  // };
-
-  // const handleRenderAnimation = async () => {
-  //   try {
-  //     setActiveLoading("animation");
-  //     const res = await fetch("/api/captions", { method: "POST" });
-  //     const data = await res.json();
-      
-  //     if (data.success && data.sceneConfig) {
-  //       setTranscription({ text: data.text, words: data.words });
-  //       // Ensure the API-returned configs use uniform uppercase structure mappings
-  //       const sanitized = data.sceneConfig.map((s: any) => ({
-  //         ...s,
-  //         widget: s.widget || s.type || DEFAULT_WIDGET_TYPE
-  //       }));
-  //       const themed = applyThemeToScenes(sanitized, themeConfig);
-  //       setSceneConfig(themed);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   } finally {
-  //     setActiveLoading(null);
-  //   }
-  // };
-
   const handleGenerateVoiceover = async () => {
     try {
       setPipelineResult(null);
       setTranscription(null);
       setSceneConfig([]);
-      setActiveLoading("voiceover");
+      setActiveLoading("generating_audio"); // Step 2 Phase 1: Generating raw audio file
       
       console.log("🔊 [Voiceover Engine] Requesting synthesis for script...");
       const res = await fetch(`${API}/voiceover`, {
@@ -209,6 +150,7 @@ export default function LandingPage() {
       if (data.success) {
         console.log("🎯 Audio successfully hosted at:", data.audioUrl);
         
+        // Render audio immediately on frontend
         if (leftTab === "generate") {
           setAiAudioUrl(data.audioUrl); 
           setAiAudioVersion((prev) => prev + 1);
@@ -218,8 +160,12 @@ export default function LandingPage() {
         }
         
         setCurrentJobId(data.jobId);
-        setActiveLoading(null); 
+        
+        // Transition Step 2 label to "Assembling Scenes..." while pipelineOrchestrator works in background
+        setActiveLoading("assembling_scenes"); 
         startBackgroundSync(data.jobId);
+      } else {
+        setActiveLoading(null);
       }
     } catch (err) {
       console.error("💥 [Voiceover Engine Exception] Generation failed:", err);
@@ -227,7 +173,6 @@ export default function LandingPage() {
     }
   };
 
-  // Add this inside page_3.tsx
   const startBackgroundSync = async (jobId: string) => {
     let attempts = 0;
     const interval = setInterval(async () => {
@@ -247,8 +192,9 @@ export default function LandingPage() {
           clearInterval(interval);
           console.log("✅ [Sync] Backend confirmed pipeline completion in database!");
           
-          // Force the state update which unlocks pollForCompletion in handleRenderAnimation
+          // Unlocks Step 3 Button & frees up controls
           setPipelineResult(statusData.result); 
+          setActiveLoading(null);
         } else if (statusData.status === "failed") {
           clearInterval(interval);
           console.error("❌ Background extraction pipeline failed on server.");
@@ -262,28 +208,15 @@ export default function LandingPage() {
     }, 1500);
   };
 
-  // BUTTON 3: Handle Render Animation (Now with built-in guard await condition)
+  // BUTTON 3: Handle Render Animation
   const handleRenderAnimation = async () => {
+    if (!pipelineResult) return;
+
     console.log("🎬 [Render Rig] --- Starting Step 3 Process ---");
     setActiveLoading("animation");
 
-    const pollForCompletion = async (): Promise<any> => {
-      console.log("⏳ [Render Rig Polling] Checking state cache memory for pipelineResult...");
-      if (pipelineResult) {
-        console.log("🧠 [Render Rig Polling] Found valid result data object:", pipelineResult);
-        return pipelineResult;
-      }
-      console.log("💤 [Render Rig Polling] pipelineResult is null. Engine is still analyzing transcript data. Retrying in 1.5 seconds...");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      return pollForCompletion();
-    };
-
     try {
-      console.log("⚙️ [Render Rig] Awaiting background polling confirmation target...");
-      const completeData = await pollForCompletion();
-      
-      console.log("📦 [Render Rig Data Check] Unpacking properties from payload:", completeData);
-      const { transcript, sceneConfig: incomingScenes } = completeData;
+      const { transcript, sceneConfig: incomingScenes } = pipelineResult;
       
       if (!transcript) {
         console.error("❌ [Render Rig Error] 'transcript' property is completely missing or broken inside payload object!");
@@ -297,33 +230,21 @@ export default function LandingPage() {
         console.log(`📊 [Render Rig Log] Found ${incomingScenes.length} total raw scenes generated by pipeline orchestrator.`);
       }
 
-      // Apply states safely if data boundary conditions pass checks
       setTranscription({ text: transcript.text, words: transcript.words });
 
-      console.log("🧱 [Render Rig] Processing fallback structural mappings...");
-      const sanitized = incomingScenes.map((s: any, idx: number) => {
+      const sanitized = incomingScenes.map((s: any) => {
         const widgetType = s.widget || s.type || DEFAULT_WIDGET_TYPE;
         return {
           ...s,
           widget: widgetType
         };
       });
-      console.log("🧩 [Render Rig Sanitizer] Standardized widget mappings completed:", sanitized);
 
-      console.log("🎨 [Render Rig Theme Engine] Binding active layout themes onto configurations...");
       const themed = applyThemeToScenes(sanitized, themeConfig);
-      console.log("✨ [Render Rig Theme Engine] Theme application results built:", themed);
-      
-      // Pushes configuration onto state
-      console.log("💾 [Render Rig State Cache] Committing final scene config matrix into React lifecycle engine...");
       setSceneConfig(themed);
 
-      // Force-flush the layout player timeline bounds straight to zero frame marker
       if (playerRef.current) {
-        console.log("🔄 [Player Viewport] Target composition frame reset initiated safely.");
         playerRef.current.seekTo(0);
-      } else {
-        console.warn("⚠️ [Player Viewport] Remotion player component reference is currently detached or unmounted from DOM tree.");
       }
 
       console.log("🎉 [Render Rig] Pipeline execution completed successfully! Scene layout is fully mounted.");
@@ -336,7 +257,6 @@ export default function LandingPage() {
     }
   };
 
-  // 🛠️ FIX: Recalculates start frame offsets chronologically when durations shift, and pushes a clean object instantiation to force Remotion to reload props.
   const handleApplyConfigRefresh = () => {
     let trackingFrame = 0;
     const computedConfig = localConfig.map((scene) => {
@@ -349,7 +269,6 @@ export default function LandingPage() {
       };
     });
 
-    // Pushing a deep cloned clean reference array layout forces React state comparison hooks to fire
     setSceneConfig(JSON.parse(JSON.stringify(computedConfig)));
     
     if (playerRef.current) {
@@ -364,38 +283,19 @@ export default function LandingPage() {
     setLocalConfig(updated);
   };
 
-  const updateWidgetType = (
-    sceneIndex: number,
-    newType: string
-  ) => {
-
+  const updateWidgetType = (sceneIndex: number, newType: string) => {
     const updated = [...localConfig];
+    const definition = getWidgetDefinition(newType);
+    const currentScene = updated[sceneIndex];
 
-    const definition =
-      getWidgetDefinition(newType);
-
-    const currentScene =
-      updated[sceneIndex];
-
-    const generatedProps =
-      definition?.buildFallbackProps
-        ? definition.buildFallbackProps({
-            text:
-              currentScene.props?.text ??
-              currentScene.props?.title ??
-              "",
-
-            shortSummary:
-              currentScene.props?.text ??
-              "",
-
-            extractedData:
-              currentScene.props?.extractedData,
-
-            durationFrames:
-              currentScene.durationFrames ?? 90,
-          })
-        : definition?.defaultProps ?? {};
+    const generatedProps = definition?.buildFallbackProps
+      ? definition.buildFallbackProps({
+          text: currentScene.props?.text ?? currentScene.props?.title ?? "",
+          shortSummary: currentScene.props?.text ?? "",
+          extractedData: currentScene.props?.extractedData,
+          durationFrames: currentScene.durationFrames ?? 90,
+        })
+      : definition?.defaultProps ?? {};
 
     updated[sceneIndex] = {
       ...currentScene,
@@ -452,7 +352,6 @@ export default function LandingPage() {
   const inputProps = useMemo(() => {
     return {
       audioUrl: currentActiveAudio,
-      // transcription,
       scenes: sceneConfig,
       captions: transcription?.words ?? [],
       theme: themeConfig,
@@ -461,66 +360,39 @@ export default function LandingPage() {
 
   const deleteScene = (sceneIndex: number) => {
     const updated = [...localConfig];
-
     updated.splice(sceneIndex, 1);
-
     setLocalConfig(updated);
   };
 
-  const addSceneAfter = (
-    sceneIndex: number
-  ) => {
-
-    const definition =
-      getWidgetDefinition(DEFAULT_WIDGET_TYPE);
-
+  const addSceneAfter = (sceneIndex: number) => {
+    const definition = getWidgetDefinition(DEFAULT_WIDGET_TYPE);
     const newScene = {
       widget: DEFAULT_WIDGET_TYPE,
       startFrame: 0,
       durationFrames: 90,
-
-      props:
-        applyThemeToWidgetProps(DEFAULT_WIDGET_TYPE, definition?.buildFallbackProps({
-          text: "New Scene",
-          shortSummary: "New scene",
-          durationFrames: 90,
-        }) ?? definition?.defaultProps ?? {}, themeConfig),
+      props: applyThemeToWidgetProps(DEFAULT_WIDGET_TYPE, definition?.buildFallbackProps({
+        text: "New Scene",
+        shortSummary: "New scene",
+        durationFrames: 90,
+      }) ?? definition?.defaultProps ?? {}, themeConfig),
     };
 
     const updated = [...localConfig];
-
-    updated.splice(
-      sceneIndex + 1,
-      0,
-      newScene
-    );
-
+    updated.splice(sceneIndex + 1, 0, newScene);
     setLocalConfig(updated);
   };
 
   const moveSceneUp = (index: number) => {
     if (index === 0) return;
-
     const updated = [...localConfig];
-
-    [updated[index - 1], updated[index]] = [
-      updated[index],
-      updated[index - 1],
-    ];
-
+    [updated[index - 1], updated[index]] = [updated[index], updated[index - 1]];
     setLocalConfig(updated);
   };
 
   const moveSceneDown = (index: number) => {
     if (index === localConfig.length - 1) return;
-
     const updated = [...localConfig];
-
-    [updated[index + 1], updated[index]] = [
-      updated[index],
-      updated[index + 1],
-    ];
-
+    [updated[index + 1], updated[index]] = [updated[index], updated[index + 1]];
     setLocalConfig(updated);
   };
 
@@ -641,44 +513,26 @@ export default function LandingPage() {
             )}
 
             <div className="mt-6 pt-5 border-t border-black/5 space-y-3">
-              {/* <button
-                onClick={handleGenerateVoiceover}
-                disabled={activeLoading !== null || !currentActiveScript.trim()}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
-              >
-                {activeLoading === "voiceover"
-                  ? "Generating Audio..."
-                  : "Step 2: Synthesize Voiceover File"}
-              </button> */}
-
-              {/* <button
-                onClick={handleRenderAnimation}
-                disabled={activeLoading !== null || !currentActiveAudio}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
-              >
-                {activeLoading === "animation"
-                  ? "Assembling Visual Timelines..."
-                  : "Step 3: Analyze & Sync Motion Rig"}
-              </button>  */}
-
               <button 
                 onClick={handleGenerateVoiceover}
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
                 className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10"
               >
-                {activeLoading === "voiceover"
+                {activeLoading === "generating_audio"
                   ? "Generating Audio..."
+                  : activeLoading === "assembling_scenes"
+                  ? "Assembling Scenes..."
                   : "Step 2: Generate Voiceover"
                 }
               </button>
       
               <button
                 onClick={handleRenderAnimation}
-                disabled={activeLoading !== null || !currentJobId}
+                disabled={activeLoading !== null || !pipelineResult}
                 className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10"
               >
                 {activeLoading === "animation"
-                  ? "Assembling Scenes..."
+                  ? "Rendering Animation..."
                   : "Step 3: Generate Animation"}
               </button>
             </div>
@@ -864,26 +718,14 @@ export default function LandingPage() {
 
                           <button
                             onClick={() => toggleSceneCollapse(sceneIdx)}
-                            className="
-                              flex items-center justify-center
-                              w-5 h-5
-                              text-slate-500
-                              hover:text-slate-800
-                              transition-all
-                              duration-200
-                            "
+                            className="flex items-center justify-center w-5 h-5 text-slate-500 hover:text-slate-800 transition-all duration-200"
                           >
                             <span
-                              className={`
-                                inline-block
-                                transition-transform
-                                duration-200
-                                ${
-                                  collapsedScenes[sceneIdx]
-                                    ? "-rotate-90"
-                                    : "rotate-0"
-                                }
-                              `}
+                              className={`inline-block transition-transform duration-200 ${
+                                collapsedScenes[sceneIdx]
+                                  ? "-rotate-90"
+                                  : "rotate-0"
+                              }`}
                             >
                               ⌄
                             </span>
@@ -938,16 +780,11 @@ export default function LandingPage() {
                       </div>
 
                       <div
-                        className={`
-                          overflow-hidden
-                          transition-all
-                          duration-300
-                          ${
-                            collapsedScenes[sceneIdx]
-                              ? "max-h-0 opacity-0"
-                              : "max-h-[1500px] opacity-100"
-                          }
-                        `}
+                        className={`overflow-hidden transition-all duration-300 ${
+                          collapsedScenes[sceneIdx]
+                            ? "max-h-0 opacity-0"
+                            : "max-h-[1500px] opacity-100"
+                        }`}
                       >
                         <>
                           <div className="grid grid-cols-2 gap-2">
@@ -1108,9 +945,9 @@ export default function LandingPage() {
               </button>
 
               <RenderAndSaveButtons 
-                rawText={transcription?.text || currentActiveScript} // 📝 Fallback to the active script if transcript isn't analyzed yet
-                sceneConfig={sceneConfig}                            // 🎬 Pass down the active master composition layout structure
-                projectId={currentJobId || undefined}                // 🎯 Pass your active UUID tracking token (mapped from currentJobId)
+                rawText={transcription?.text || currentActiveScript}
+                sceneConfig={sceneConfig}
+                projectId={currentJobId || undefined}
               />
             </div>
 
