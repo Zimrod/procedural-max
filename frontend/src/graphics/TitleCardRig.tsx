@@ -98,7 +98,8 @@ export const TitleCardRig: React.FC<Props> = ({
   const accentSpring = spring({
     fps,
     frame: frame - accentStartDelay,
-    config: { damping: 12, stiffness: 120 }, // 💡 Applied your damping and stiffness constraints perfectly
+    durationInFrames: accentDuration, // 👈 Added here to utilize accentDuration
+    config: { damping: 12, stiffness: 120 },
   });
 
   // Subtitle Animation Spring Driver
