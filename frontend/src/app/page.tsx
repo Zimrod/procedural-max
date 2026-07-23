@@ -423,22 +423,22 @@ export default function LandingPage() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-[#f5fff4] text-black antialiased">
+    <main className="min-h-screen w-full bg-[#090d16] text-slate-100 antialiased selection:bg-blue-500 selection:text-white">
       <section className="mx-auto max-w-[1700px] px-4 py-8 sm:px-6 lg:px-8">
         
         {/* HEADER SECTION */}
-        <div className="mb-8 border-b border-black/5 pb-6">
+        <div className="mb-8 border-b border-slate-800/80 pb-6">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
-              <span className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+              <span className="flex h-2 w-2 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]" />
+              <span className="text-xs font-semibold uppercase tracking-wider text-blue-400">
                 Procedural Animation Engine v2
               </span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-black sm:text-4xl">
+            <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Automated Motion Graphics
             </h1>
-            <p className="text-sm text-black/50">
+            <p className="text-sm text-slate-400">
               Paste deep professional domain scripts or brainstorm using structural templates.
             </p>
           </div>
@@ -446,17 +446,17 @@ export default function LandingPage() {
 
         <div className="w-full">
           {/* LEFT SIDEBAR AREA */}
-          <div className="w-full lg:w-[420px] lg:float-left bg-white rounded-2xl border border-black/5 p-5 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]">
-            <div className="flex border-b border-black/5 mb-5 p-1 bg-slate-100 rounded-xl">
+          <div className="w-full lg:w-[420px] lg:float-left bg-[#0f172a] rounded-2xl border border-slate-800 p-5 shadow-2xl shadow-black/40">
+            <div className="flex border border-slate-800 mb-5 p-1 bg-slate-900/80 rounded-xl">
               <button
                 onClick={() => setLeftTab("generate")}
-                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-white text-blue-600 shadow-sm" : "text-black/40 hover:text-black/70"}`}
+                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30" : "text-slate-400 hover:text-slate-200"}`}
               >
                 AI Co-Pilot Script
               </button>
               <button
                 onClick={() => setLeftTab("custom-script")}
-                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-white text-blue-600 shadow-sm" : "text-black/40 hover:text-black/70"}`}
+                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30" : "text-slate-400 hover:text-slate-200"}`}
               >
                 Domain Expert Script
               </button>
@@ -465,38 +465,38 @@ export default function LandingPage() {
             {leftTab === "generate" ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-black/40 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                     Conceptual Prompt Idea
                   </label>
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe market benchmarks or complex comparisons..."
-                    className="w-full min-h-[110px] p-3.5 bg-slate-50 border border-black/5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white resize-none text-black transition-all"
+                    className="w-full min-h-[110px] p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 resize-none text-slate-100 placeholder:text-slate-600 transition-all"
                   />
                 </div>
                 <button
                   onClick={handleGenerateScript}
                   disabled={activeLoading !== null || !prompt.trim()}
-                  className="w-full py-3 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900/50 disabled:text-slate-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 border border-slate-700/50"
                 >
                   <span>
                     {activeLoading === "script"
                       ? "Processing Narrative..."
                       : "Step 1: Generate Script"}
                   </span>
-                  {activeLoading === "script" && <Spinner colorClass="text-sky-400" />}
+                  {activeLoading === "script" && <Spinner colorClass="text-blue-400" />}
                 </button>
 
                 {aiAudioUrl && (
-                  <div className="rounded-xl border border-black/5 bg-slate-50/50 p-4 mt-2">
-                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-black/40">
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 mt-2">
+                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Co-Pilot Voiceover Preview
                     </h3>
                     <audio
                       controls
                       src={`${aiAudioUrl}?v=${aiAudioVersion}`}
-                      className="mt-2 w-full h-8 text-sm"
+                      className="mt-2 w-full h-8 text-sm accent-blue-500"
                     />
                   </div>
                 )}
@@ -504,26 +504,26 @@ export default function LandingPage() {
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-black/40 mb-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                     Custom Industry Script Track
                   </label>
                   <textarea
                     value={customScript}
                     onChange={(e) => setCustomScript(e.target.value)}
                     placeholder="Paste deep technical workflows or financial metrics directly here..."
-                    className="w-full min-h-[185px] p-3.5 bg-slate-50 border border-black/5 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white text-black transition-all"
+                    className="w-full min-h-[185px] p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-slate-100 placeholder:text-slate-600 transition-all"
                   />
                 </div>
 
                 {customAudioUrl && (
-                  <div className="rounded-xl border border-black/5 bg-slate-50/50 p-4 mt-2">
-                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-black/40">
+                  <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 mt-2">
+                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                       Expert Voiceover Preview
                     </h3>
                     <audio
                       controls
                       src={`${customAudioUrl}?v=${customAudioVersion}`}
-                      className="mt-2 w-full h-8 text-sm"
+                      className="mt-2 w-full h-8 text-sm accent-blue-500"
                     />
                   </div>
                 )}
@@ -531,21 +531,21 @@ export default function LandingPage() {
             )}
 
             {currentActiveScript && (
-              <div className="mt-5 p-4 bg-blue-50/50 border border-blue-100 rounded-xl">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-blue-600 mb-1.5">
+              <div className="mt-5 p-4 bg-blue-950/40 border border-blue-900/50 rounded-xl">
+                <div className="text-[11px] font-bold uppercase tracking-wider text-blue-400 mb-1.5">
                   Active Execution Script:
                 </div>
-                <p className="text-xs text-slate-700 leading-relaxed max-h-[140px] overflow-y-auto pr-1">
+                <p className="text-xs text-slate-300 leading-relaxed max-h-[140px] overflow-y-auto pr-1 scrollbar-thin">
                   {currentActiveScript}
                 </p>
               </div>
             )}
 
-            <div className="mt-6 pt-5 border-t border-black/5 space-y-3">
+            <div className="mt-6 pt-5 border-t border-slate-800 space-y-3">
               <button 
                 onClick={handleGenerateVoiceover}
                 disabled={activeLoading !== null || !currentActiveScript.trim()}
-                className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-blue-500/10 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-800/50 disabled:text-slate-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2"
               >
                 <span>
                   {activeLoading === "generating_audio"
@@ -563,14 +563,14 @@ export default function LandingPage() {
               <button
                 onClick={handleRenderAnimation}
                 disabled={activeLoading !== null || !pipelineResult}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-100 disabled:text-black/30 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-emerald-500/10 flex items-center justify-center gap-2"
+                className="w-full py-4 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800/50 disabled:text-slate-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
               >
                 <span>
                   {activeLoading === "animation"
                     ? "Rendering Animation..."
                     : "Step 3: Generate Animation"}
                 </span>
-                {activeLoading === "animation" && <Spinner colorClass="text-emerald-200" />}
+                {activeLoading === "animation" && <Spinner colorClass="text-rose-200" />}
               </button>
             </div>
 
@@ -580,13 +580,14 @@ export default function LandingPage() {
           <div className="w-full lg:w-[calc(100%-445px)] lg:ml-[25px] mt-6 lg:mt-0 lg:float-left flex flex-col xl:flex-row gap-5">
             <div className="flex-1 flex flex-col gap-5">
               {/* VIDEO PLAYER VIEWPORT BOX */}
-              <div className="bg-white rounded-2xl border border-black/5 p-4 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] h-fit">
-                <div className="text-xs font-bold uppercase tracking-wider text-black/40 mb-3 px-1">
-                  Live Interactive Remotion Composition
+              <div className="bg-[#0f172a] rounded-2xl border border-slate-800 p-4 shadow-2xl shadow-black/40 h-fit">
+                <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-1 flex items-center justify-between">
+                  <span>Live Interactive Remotion Composition</span>
+                  <span className="text-[10px] text-blue-400 bg-blue-950/60 border border-blue-800/60 px-2 py-0.5 rounded-full font-mono">1920x1080 @ 30fps</span>
                 </div>
 
-                <div className="w-full bg-[#111] rounded-xl overflow-hidden aspect-video border border-black/10">
-                  <div className="relative flex h-full w-full items-center justify-center bg-[#fafcff]">
+                <div className="w-full bg-black rounded-xl overflow-hidden aspect-video border border-slate-800 shadow-inner">
+                  <div className="relative flex h-full w-full items-center justify-center bg-slate-950">
                     {sceneConfig.length > 0 ? (
                       <Player
                         ref={playerRef}
@@ -605,9 +606,9 @@ export default function LandingPage() {
                         autoPlay
                       />
                     ) : (
-                      <div className="flex flex-col items-center justify-center px-6 text-center text-black/40">
-                        <div className="text-base font-medium">Animated Video Will Appear Here</div>
-                        <p className="mt-2 max-w-xs text-xs leading-relaxed text-black/40">
+                      <div className="flex flex-col items-center justify-center px-6 text-center text-slate-500">
+                        <div className="text-base font-medium text-slate-300">Animated Video Will Appear Here</div>
+                        <p className="mt-2 max-w-xs text-xs leading-relaxed text-slate-500">
                           Select a tab, prepare your script, then trigger voiceover synthesis to unlock timeline synchronization.
                         </p>
                       </div>
@@ -617,18 +618,18 @@ export default function LandingPage() {
               </div>
 
               {/* THEME CONFIG PANEL */}
-              <div className="bg-white rounded-2xl border border-black/5 p-4 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)]">
+              <div className="bg-[#0f172a] rounded-2xl border border-slate-800 p-4 shadow-2xl shadow-black/40">
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wider text-black/40 px-1">
+                    <div className="text-xs font-bold uppercase tracking-wider text-slate-400 px-1">
                       Theme Config Properties
                     </div>
-                    <p className="mt-1 px-1 text-[11px] leading-relaxed text-black/40">
+                    <p className="mt-1 px-1 text-[11px] leading-relaxed text-slate-400">
                       This controls the composition-wide look and updates the player live.
                     </p>
                   </div>
                   <div
-                    className="h-10 w-10 rounded-xl border border-black/5 shadow-sm"
+                    className="h-10 w-10 rounded-xl border border-slate-700 shadow-sm"
                     style={{
                       background: `linear-gradient(135deg, ${themeConfig.backgroundColor}, ${themeConfig.accentSoftColor})`,
                     }}
@@ -640,7 +641,7 @@ export default function LandingPage() {
                     <button
                       key={preset.id}
                       onClick={() => selectThemePreset(preset.id)}
-                      className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all ${themePresetId === preset.id ? "border-black bg-black text-white" : "border-black/10 bg-slate-50 text-black/60 hover:bg-slate-100"}`}
+                      className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all ${themePresetId === preset.id ? "border-blue-500 bg-blue-600 text-white shadow-md shadow-blue-600/20" : "border-slate-800 bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200"}`}
                     >
                       {preset.label}
                     </button>
@@ -656,7 +657,7 @@ export default function LandingPage() {
                       <div key={field.key} className="space-y-1.5">
                         <label
                           htmlFor={fieldId}
-                          className="block text-[10px] font-bold uppercase tracking-wider text-black/40"
+                          className="block text-[10px] font-bold uppercase tracking-wider text-slate-400"
                         >
                           {field.label}
                         </label>
@@ -665,7 +666,7 @@ export default function LandingPage() {
                             id={fieldId}
                             value={String(value)}
                             onChange={(e) => updateThemeProp(field.key, e.target.value as any)}
-                            className="w-full rounded-lg border border-black/5 bg-slate-50 px-3 py-2 text-xs text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                           >
                             {(field.options ?? []).map((option) => (
                               <option key={option} value={option}>
@@ -680,13 +681,13 @@ export default function LandingPage() {
                               type="color"
                               value={String(value)}
                               onChange={(e) => updateThemeProp(field.key, e.target.value as any)}
-                              className="h-10 w-11 rounded-lg border border-black/5 bg-white p-1"
+                              className="h-10 w-11 rounded-lg border border-slate-800 bg-slate-900 p-1 cursor-pointer"
                             />
                             <input
                               type="text"
                               value={String(value)}
                               onChange={(e) => updateThemeProp(field.key, e.target.value as any)}
-                              className="w-full rounded-lg border border-black/5 bg-slate-50 px-3 py-2 text-xs text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                              className="w-full rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
                             />
                           </div>
                         ) : (
@@ -695,7 +696,7 @@ export default function LandingPage() {
                             type={field.kind === "number" ? "number" : "text"}
                             value={String(value)}
                             onChange={(e) => updateThemeProp(field.key, (field.kind === "number" ? Number(e.target.value) : e.target.value) as any)}
-                            className="w-full rounded-lg border border-black/5 bg-slate-50 px-3 py-2 text-xs text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full rounded-lg border border-slate-800 bg-slate-900/90 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         )}
                       </div>
@@ -703,8 +704,8 @@ export default function LandingPage() {
                   })}
                 </div>
 
-                <div className="mt-4 rounded-xl border border-black/5 bg-slate-50 p-3">
-                  <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-black/40">
+                <div className="mt-4 rounded-xl border border-slate-800 bg-slate-900/60 p-3">
+                  <div className="mb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     Chart Palette
                   </div>
                   <input
@@ -719,13 +720,13 @@ export default function LandingPage() {
                           .filter(Boolean) as any
                       )
                     }
-                    className="w-full rounded-lg border border-black/5 bg-white px-3 py-2 text-xs text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className="w-full rounded-lg border border-slate-800 bg-slate-950 px-3 py-2 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
                   />
                   <div className="mt-2 flex flex-wrap gap-2">
                     {themeConfig.chartPalette.map((swatch) => (
                       <span
                         key={swatch}
-                        className="h-5 w-5 rounded-full border border-black/10"
+                        className="h-5 w-5 rounded-full border border-slate-700/80 shadow-sm"
                         style={{ backgroundColor: swatch }}
                       />
                     ))}
@@ -735,27 +736,27 @@ export default function LandingPage() {
             </div>
 
             {/* INTERACTIVE CONFIG PROPERTY SIDEBAR PANEL */}
-            <div className="w-full xl:w-[380px] bg-white rounded-2xl border border-black/5 p-4 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.02)] flex flex-col max-h-[600px]">
-              <div className="text-xs font-bold uppercase tracking-wider text-black/40 mb-3 px-1">
+            <div className="w-full xl:w-[380px] bg-[#0f172a] rounded-2xl border border-slate-800 p-4 shadow-2xl shadow-black/40 flex flex-col max-h-[600px]">
+              <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 px-1">
                 Scene Config Properties
               </div>
 
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 mb-4 scrollbar-thin">
                 {localConfig.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-black/30 border border-dashed border-black/10 rounded-xl bg-slate-50/50">
+                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-slate-500 border border-dashed border-slate-800 rounded-xl bg-slate-900/30">
                     <span className="text-xs">No active procedural tracks analyzed. Run Step 3 to populate.</span>
                   </div>
                 ) : (
                   localConfig.map((scene, sceneIdx) => (
-                    <div key={sceneIdx} className="p-3.5 bg-slate-50 border border-black/5 rounded-xl space-y-3">
+                    <div key={sceneIdx} className="p-3.5 bg-slate-900/80 border border-slate-800 rounded-xl space-y-3">
                       
-                      <div className="flex items-center justify-between border-b border-black/5 pb-2">
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-2">
 
                         <div className="flex items-center gap-2">
 
                           <button
                             onClick={() => toggleSceneCollapse(sceneIdx)}
-                            className="flex items-center justify-center w-5 h-5 text-slate-500 hover:text-slate-800 transition-all duration-200"
+                            className="flex items-center justify-center w-5 h-5 text-slate-400 hover:text-white transition-all duration-200"
                           >
                             <span
                               className={`inline-block transition-transform duration-200 ${
@@ -768,11 +769,11 @@ export default function LandingPage() {
                             </span>
                           </button>
 
-                          <span className="text-xs font-bold text-slate-700">
+                          <span className="text-xs font-bold text-slate-200">
                             Scene #{sceneIdx + 1}
 
                             {collapsedScenes[sceneIdx] && (
-                              <span className="ml-2 text-slate-500 font-medium">
+                              <span className="ml-2 text-slate-400 font-normal">
                                 · {scene.widget}
                               </span>
                             )}
@@ -785,7 +786,7 @@ export default function LandingPage() {
                           <button
                             onClick={() => moveSceneUp(sceneIdx)}
                             disabled={sceneIdx === 0}
-                            className="px-2 py-1 rounded bg-slate-200 text-xs disabled:opacity-30"
+                            className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs disabled:opacity-30 border border-slate-700/50"
                           >
                             ↑
                           </button>
@@ -793,21 +794,21 @@ export default function LandingPage() {
                           <button
                             onClick={() => moveSceneDown(sceneIdx)}
                             disabled={sceneIdx === localConfig.length - 1}
-                            className="px-2 py-1 rounded bg-slate-200 text-xs disabled:opacity-30"
+                            className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs disabled:opacity-30 border border-slate-700/50"
                           >
                             ↓
                           </button>
 
                           <button
                             onClick={() => addSceneAfter(sceneIdx)}
-                            className="px-2 py-1 rounded bg-blue-500 text-white text-xs"
+                            className="px-2 py-1 rounded bg-blue-600 hover:bg-blue-500 text-white text-xs border border-blue-500/50"
                           >
                             +
                           </button>
 
                           <button
                             onClick={() => deleteScene(sceneIdx)}
-                            className="px-2 py-1 rounded bg-red-500 text-white text-xs"
+                            className="px-2 py-1 rounded bg-rose-600 hover:bg-rose-500 text-white text-xs border border-rose-500/50"
                           >
                             ×
                           </button>
@@ -826,20 +827,20 @@ export default function LandingPage() {
                         <>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <label className="block text-[10px] font-bold text-black/40 uppercase mb-1">Duration (Frames)</label>
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Duration (Frames)</label>
                               <input
                                 type="number"
                                 value={scene.durationFrames || ""}
                                 onChange={(e) => updateSceneMeta(sceneIdx, "durationFrames", Number(e.target.value))}
-                                className="w-full p-2 bg-white border border-black/5 rounded-lg text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                               />
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold text-black/40 uppercase mb-1">Widget Class</label>
+                              <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Widget Class</label>
                               <select
                                 value={scene.widget || DEFAULT_WIDGET_TYPE}
                                 onChange={(e) => updateWidgetType(sceneIdx, e.target.value)}
-                                className="w-full p-2 bg-white border border-black/5 rounded-lg text-xs font-medium text-black focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                className="w-full p-2 bg-slate-950 border border-slate-800 rounded-lg text-xs font-medium text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
                               >
                                 {WIDGET_OPTIONS.map((opt) => (
                                   <option key={opt} value={opt}>{opt}</option>
@@ -849,8 +850,8 @@ export default function LandingPage() {
                           </div>
 
                           {scene.props && (
-                            <div className="pt-2 border-t border-black/5 space-y-2 bg-white/60 p-2 rounded-lg">
-                              <span className="block text-[9px] font-bold uppercase tracking-wider text-blue-600/70">
+                            <div className="pt-2 border-t border-slate-800 space-y-2 bg-slate-950/70 p-2.5 rounded-lg mt-3 border">
+                              <span className="block text-[9px] font-bold uppercase tracking-wider text-blue-400">
                                 Widget Props
                               </span>
                               {(() => {
@@ -869,7 +870,7 @@ export default function LandingPage() {
 
                                   return (
                                     <div key={propKey}>
-                                      <label className="block text-[10px] font-medium text-slate-600 mb-0.5">
+                                      <label className="block text-[10px] font-medium text-slate-400 mb-0.5">
                                         {schemaField?.label ?? propKey}
                                       </label>
 
@@ -878,7 +879,7 @@ export default function LandingPage() {
                                           id={fieldId}
                                           value={String(rawValue ?? "")}
                                           onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.value)}
-                                          className="w-full p-1.5 bg-white border border-black/5 rounded text-xs text-black"
+                                          className="w-full p-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                         >
                                           {(schemaField.options ?? []).map((option) => (
                                             <option key={option} value={option}>
@@ -887,12 +888,13 @@ export default function LandingPage() {
                                           ))}
                                         </select>
                                       ) : schemaField?.kind === "boolean" ? (
-                                        <label className="flex items-center gap-2 rounded border border-black/5 bg-white px-2 py-1.5 text-xs text-black">
+                                        <label className="flex items-center gap-2 rounded border border-slate-800 bg-slate-900 px-2 py-1.5 text-xs text-slate-200">
                                           <input
                                             id={fieldId}
                                             type="checkbox"
                                             checked={Boolean(rawValue)}
                                             onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.checked)}
+                                            className="accent-blue-500"
                                           />
                                           <span>{String(Boolean(rawValue))}</span>
                                         </label>
@@ -903,13 +905,13 @@ export default function LandingPage() {
                                             type="color"
                                             value={String(rawValue || "#000000")}
                                             onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.value)}
-                                            className="h-8 w-10 rounded border border-black/5 bg-white p-1"
+                                            className="h-8 w-10 rounded border border-slate-800 bg-slate-900 p-0.5 cursor-pointer"
                                           />
                                           <input
                                             type="text"
                                             value={String(rawValue || "")}
                                             onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.value)}
-                                            className="w-full p-1.5 bg-white border border-black/5 rounded text-xs text-black"
+                                            className="w-full p-1.5 bg-slate-900 border border-slate-800 rounded text-xs font-mono text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                           />
                                         </div>
                                       ) : schemaField?.kind === "number" ? (
@@ -918,7 +920,7 @@ export default function LandingPage() {
                                           type="number"
                                           value={rawValue ?? ""}
                                           onChange={(e) => updateWidgetProp(sceneIdx, propKey, Number(e.target.value))}
-                                          className="w-full p-1.5 bg-white border border-black/5 rounded text-xs font-mono text-black"
+                                          className="w-full p-1.5 bg-slate-900 border border-slate-800 rounded text-xs font-mono text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                         />
                                       ) : schemaField?.kind === "array" || Array.isArray(rawValue) ? (
                                         <input
@@ -936,7 +938,7 @@ export default function LandingPage() {
                                               })
                                             )
                                           }
-                                          className="w-full p-1.5 bg-white border border-black/5 rounded text-xs font-mono text-black"
+                                          className="w-full p-1.5 bg-slate-900 border border-slate-800 rounded text-xs font-mono text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                         />
                                       ) : schemaField?.kind === "json" || (rawValue && typeof rawValue === "object") ? (
                                         <textarea
@@ -948,7 +950,7 @@ export default function LandingPage() {
                                               // Keep the last valid JSON until it parses cleanly.
                                             }
                                           }}
-                                          className="w-full min-h-[90px] p-1.5 bg-white border border-black/5 rounded text-xs font-mono text-black"
+                                          className="w-full min-h-[90px] p-1.5 bg-slate-900 border border-slate-800 rounded text-xs font-mono text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                         />
                                       ) : (
                                         <input
@@ -956,7 +958,7 @@ export default function LandingPage() {
                                           type="text"
                                           value={rawValue ?? ""}
                                           onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.value)}
-                                          className="w-full p-1.5 bg-white border border-black/5 rounded text-xs text-black"
+                                          className="w-full p-1.5 bg-slate-900 border border-slate-800 rounded text-xs text-slate-200 focus:ring-1 focus:ring-blue-500 focus:outline-none"
                                         />
                                       )}
                                     </div>
@@ -976,7 +978,7 @@ export default function LandingPage() {
               <button
                 onClick={handleApplyConfigRefresh}
                 disabled={!isDirty}
-                className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-slate-900/10 bg-slate-900 text-white hover:bg-slate-800 disabled:bg-slate-100 disabled:text-black/30 disabled:shadow-none flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-blue-600/10 bg-blue-600 text-white hover:bg-blue-500 disabled:bg-slate-800 disabled:text-slate-600 disabled:shadow-none flex items-center justify-center gap-2"
               >
                 <span>Refresh Animation</span>
               </button>
