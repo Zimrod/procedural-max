@@ -438,9 +438,9 @@ export default function LandingPage() {
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Automated Motion Graphics
             </h1>
-            <p className="text-sm text-slate-400">
+            {/* <p className="text-sm text-slate-400">
               Paste deep professional domain scripts or brainstorm using structural templates.
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -452,13 +452,13 @@ export default function LandingPage() {
                 onClick={() => setLeftTab("generate")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30" : "text-slate-400 hover:text-slate-200"}`}
               >
-                AI Co-Pilot Script
+                AI Prompt 
               </button>
               <button
                 onClick={() => setLeftTab("custom-script")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-blue-600 text-white shadow-lg shadow-blue-600/30" : "text-slate-400 hover:text-slate-200"}`}
               >
-                Domain Expert Script
+                Self-Generated Script
               </button>
             </div>
 
@@ -471,7 +471,7 @@ export default function LandingPage() {
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe market benchmarks or complex comparisons..."
+                    placeholder="Describe the type of script you want generated..."
                     className="w-full min-h-[110px] p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 resize-none text-slate-100 placeholder:text-slate-600 transition-all"
                   />
                 </div>
@@ -491,7 +491,7 @@ export default function LandingPage() {
                 {aiAudioUrl && (
                   <div className="rounded-xl border border-slate-800 bg-slate-900/50 p-4 mt-2">
                     <h3 className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                      Co-Pilot Voiceover Preview
+                      Voiceover Preview
                     </h3>
                     <audio
                       controls
@@ -510,7 +510,7 @@ export default function LandingPage() {
                   <textarea
                     value={customScript}
                     onChange={(e) => setCustomScript(e.target.value)}
-                    placeholder="Paste deep technical workflows or financial metrics directly here..."
+                    placeholder="Paste your own script directly here..."
                     className="w-full min-h-[185px] p-3.5 bg-slate-900/90 border border-slate-800 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 text-slate-100 placeholder:text-slate-600 transition-all"
                   />
                 </div>
