@@ -54,6 +54,7 @@ export const VoiceoverScene: React.FC<Props> = ({
             <WidgetComponent
               {...item.props}
             />
+            <Watermark />
           </Sequence>
         );
       })}

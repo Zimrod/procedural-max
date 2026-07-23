@@ -54,18 +54,6 @@ export const Main: React.FC<Props> = ({
 
       {/* Background visual engine spans full layout lifetime */}
       <VoiceoverScene scenes={scenes} theme={theme} />
-
-      {/* 💡 Caption sequence spans the new total buffered duration length safely */}
-      {/* {captions.length > 0 && (
-        <Sequence durationInFrames={durationInFrames}>
-          <CaptioningDemo
-            captions={captions}
-            fontSize={70}
-            fontFamily="Rubik"
-            color="#ffffff"
-          />
-        </Sequence>
-      )}  */}
     </AbsoluteFill>
   );
 };
