@@ -11,7 +11,7 @@ import {
 import {
   getWidgetComponent,
 } from '../core/widgetComponentRegistry';
-import { Watermark } from './Watermark';
+// import { Watermark } from './Watermark';
 
 type SceneConfigItem = {
   widget: string;
@@ -55,7 +55,7 @@ export const VoiceoverScene: React.FC<Props> = ({
             <WidgetComponent
               {...item.props}
             />
-            <Watermark />
+            {/* <Watermark /> */}
           </Sequence>
         );
       })}
