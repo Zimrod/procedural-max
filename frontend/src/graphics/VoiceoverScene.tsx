@@ -11,6 +11,7 @@ import {
 import {
   getWidgetComponent,
 } from '../core/widgetComponentRegistry';
+import { Watermark } from './Watermark';
 
 type SceneConfigItem = {
   widget: string;
