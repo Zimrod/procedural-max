@@ -438,9 +438,9 @@ export default function LandingPage() {
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Automated Motion Graphics
             </h1>
-            <p className="text-sm text-neutral-400">
+            {/* <p className="text-sm text-neutral-400">
               Paste deep professional domain scripts or brainstorm using structural templates.
-            </p>
+            </p> */}
           </div>
         </div>
 
@@ -452,13 +452,13 @@ export default function LandingPage() {
                 onClick={() => setLeftTab("generate")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
-                AI Co-Pilot Script
+                AI Prompt
               </button>
               <button
                 onClick={() => setLeftTab("custom-script")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
-                Domain Expert Script
+                Self-Generated Script
               </button>
             </div>
 
@@ -471,7 +471,7 @@ export default function LandingPage() {
                   <textarea
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe market benchmarks or complex comparisons..."
+                    placeholder="Describe the type of script you want created..."
                     className="w-full min-h-[110px] p-3.5 bg-[#141414] border border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 resize-none text-neutral-100 placeholder:text-neutral-600 transition-all"
                   />
                 </div>
@@ -505,12 +505,12 @@ export default function LandingPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
-                    Custom Industry Script Track
+                    Custom Script Track
                   </label>
                   <textarea
                     value={customScript}
                     onChange={(e) => setCustomScript(e.target.value)}
-                    placeholder="Paste deep technical workflows or financial metrics directly here..."
+                    placeholder="Paste your script directly here..."
                     className="w-full min-h-[185px] p-3.5 bg-[#141414] border border-neutral-800 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-neutral-100 placeholder:text-neutral-600 transition-all"
                   />
                 </div>
