@@ -1,7 +1,7 @@
 import "../../styles/global.css";
 import { Metadata, Viewport } from "next";
 import "./global.css";
-import { AuthProvider } from '@/components/AuthContext';
+import { AuthProvider } from '../components/AuthContext';
 
 export const metadata: Metadata = {
   title: "AI Video Generation Studio",
