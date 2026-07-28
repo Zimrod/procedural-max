@@ -7,7 +7,7 @@ import { useAuth } from "./AuthContext";
 
 const MAIN_SITE = process.env.NEXT_PUBLIC_MAIN_SITE_URL || "https://journey18miles.com";
 
-export function StudioNavbar() {
+export function Navbar() {
   const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
