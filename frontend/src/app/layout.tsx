@@ -1,6 +1,7 @@
 import "../../styles/global.css";
 import { Metadata, Viewport } from "next";
 import "./global.css";
+import { AuthProvider } from '@/components/AuthContext';
 
 export const metadata: Metadata = {
   title: "AI Video Generation Studio",
@@ -22,7 +23,15 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+      </body>
     </html>
   );
 }
