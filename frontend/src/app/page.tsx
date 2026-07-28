@@ -20,6 +20,7 @@ import {
 import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 
 import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
+import { Navbar } from "../components/Navbar";
 
 const WIDGET_OPTIONS = Object.keys(widgetRegistry);
 const DEFAULT_WIDGET_TYPE = WIDGET_OPTIONS[0];
@@ -425,6 +426,7 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen w-full bg-[#121212] text-gray-100 antialiased selection:bg-emerald-500 selection:text-white">
       <section className="mx-auto max-w-[1700px] px-4 py-8 sm:px-6 lg:px-8">
+        <Navbar />
         
         {/* HEADER SECTION */}
         <div className="mb-8 border-b border-neutral-800 pb-6">
