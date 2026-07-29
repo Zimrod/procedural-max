@@ -56,11 +56,13 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
   return (
     <div style={{ marginTop: "12px", width: "100%" }}>
       <button
-        disabled={!isPopulated || isRendering}
+        // disabled={!isPopulated || isRendering}
+        disabled={true}
         style={{
           width: "100%",
           padding: "14px",
-          background: !isPopulated ? "#f1f5f9" : isRendering ? "#64748b" : "#0f172a",
+          // background: !isPopulated ? "#f1f5f9" : isRendering ? "#64748b" : "#0f172a",
+          background: "#f1f5f9", // Muted disabled state
           color: isPopulated ? "#ffffff" : "#94a3b8",
           border: isPopulated ? "none" : "1px solid #e2e8f0",
           borderRadius: "12px",

@@ -1,13 +1,14 @@
 // components/AuthContext.tsx
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type User = {
   id: string;
   email: string;
   name?: string;
   credits: number;
+  ai_tokens: number;
 };
 
 type AuthContextType = {
@@ -59,7 +60,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         setUser({
           ...authData.user,
-          credits: creditsData?.credits || 0,
+          credits: creditsData?.credits ?? 0,
+          ai_tokens: creditsData?.ai_tokens ?? creditsData?.tokens ?? authData.user?.ai_tokens ?? 0,
         });
       } catch (error) {
         localStorage.removeItem('authToken');
@@ -81,7 +83,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Login failed');
     localStorage.setItem('authToken', data.token);
-    setUser(data.user);
+
+    setUser({
+      ...data.user,
+      credits: data.user?.credits ?? 0,
+      ai_tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 0,
+    });
   };
 
   const register = async (email: string, password: string, name?: string) => {
@@ -93,7 +100,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Registration failed');
     localStorage.setItem('authToken', data.token);
-    setUser(data.user);
+
+    setUser({
+      ...data.user,
+      credits: data.user?.credits ?? 0,
+      ai_tokens: data.user?.ai_tokens ?? data.user?.tokens ?? 50,
+    });
   };
 
   const logout = () => {

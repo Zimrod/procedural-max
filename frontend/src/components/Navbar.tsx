@@ -95,7 +95,7 @@ export function Navbar() {
                       <Coins size={14} className="text-amber-400" />
                       AI Tokens:
                     </span>
-                    {/* <span className="font-bold text-amber-400">{user?.tokens ?? 0}</span> */}
+                    <span className="font-bold text-amber-400">{user?.ai_tokens ?? 0}</span>
                   </div>
                   <div className="flex justify-between items-center text-xs">
                     <span className="flex items-center gap-1.5 text-zinc-400">
@@ -167,7 +167,7 @@ export function Navbar() {
                     <div className="pt-2 border-t border-zinc-800 space-y-1 text-xs">
                       <div className="flex justify-between items-center">
                         <span className="text-zinc-400">AI Tokens:</span>
-                        {/* <span className="font-bold text-amber-400">{user?.tokens ?? 0}</span> */}
+                        <span className="font-bold text-amber-400">{user?.ai_tokens ?? 0}</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-zinc-400">Render Credits:</span>
