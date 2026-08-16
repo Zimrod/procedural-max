@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content: `
-            You generate concise 30-40 second finance explainer scripts.
+            You generate concise 30-40 second explainer scripts.
 
             Tone:
             - professional
