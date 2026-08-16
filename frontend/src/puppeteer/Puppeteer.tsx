@@ -1,4 +1,4 @@
-// src/remotion/puppeteer/Puppeteer.tsx
+// src/puppeteer/Puppeteer.tsx
 import React, { useEffect, useState } from "react";
 import { AbsoluteFill, useCurrentFrame, staticFile, delayRender, continueRender } from "remotion";
 import { runPreset } from "../core/presets/runPreset";
