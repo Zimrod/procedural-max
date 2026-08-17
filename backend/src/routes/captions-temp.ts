@@ -14,22 +14,30 @@ export default async function captionsRoutesTemp(fastify: FastifyInstance) {
         });
       }
 
-      const pipelineResult = await runTextOnlyPipelinePreview(script);
+      // Set headers for chunked streaming
+      reply.raw.setHeader("Content-Type", "text/plain; charset=utf-8");
+      reply.raw.setHeader("Transfer-Encoding", "chunked");
 
-      return reply.send({
-        success: true,
-        sceneConfig: pipelineResult.sceneConfig,
-        semanticPose: pipelineResult.semanticPose,
-        narrativeScenes: pipelineResult.narrativeScenes,
-        selectedWidgets: pipelineResult.selectedWidgets
-      });
+      const sendLog = (msg: string) => {
+        reply.raw.write(`[LOG] ${msg}\n`);
+      };
+
+      sendLog("🚀 Pipeline request received. Initializing text segmentation...");
+
+      const pipelineResult = await runTextOnlyPipelinePreview(script, 30, sendLog);
+
+      sendLog("✅ Scene composition complete!");
+      reply.raw.write("\n--- RESULT JSON ---\n");
+      reply.raw.write(JSON.stringify(pipelineResult, null, 2));
+      reply.raw.end();
 
     } catch (err: any) {
       request.log.error(err);
-      return reply.code(500).send({
-        success: false,
-        error: err.message,
-      });
+      if (!reply.raw.headersSent) {
+        return reply.code(500).send({ success: false, error: err.message });
+      }
+      reply.raw.write(`\n❌ Error: ${err.message}\n`);
+      reply.raw.end();
     }
   });
 }

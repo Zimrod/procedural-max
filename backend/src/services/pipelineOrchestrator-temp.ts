@@ -43,22 +43,24 @@ export async function runTranscriptionToScenePipelineTemp(rawTranscription: RawT
  * Diagnostic entry point: Accepts a raw text script, builds simulated timestamps,
  * and outputs summaries and scene configs instantly without audio generation.
  */
-export async function runTextOnlyPipelinePreview(scriptText: string, fps = 30) {
-  console.log("⚡ [TEMP PREVIEW] Running Instant Text-to-Scene Pipeline...");
+export async function runTextOnlyPipelinePreview(
+  scriptText: string, 
+  fps = 30, 
+  logger?: (msg: string) => void
+) {
+  const log = logger || console.log;
 
-  const words = scriptText
-    .trim()
-    .split(/\s+/)
-    .map((word, index) => ({
-      word,
-      start: Number((index * 0.35).toFixed(2)),
-      end: Number(((index + 1) * 0.35).toFixed(2))
-    }));
+  log("Segmenting script into simulated timestamps...");
+  const words = scriptText.trim().split(/\s+/).map((word, index) => ({
+    word,
+    start: Number((index * 0.35).toFixed(2)),
+    end: Number(((index + 1) * 0.35).toFixed(2))
+  }));
 
-  const mockRawTranscription: RawTranscriptionInput = {
-    text: scriptText,
-    words
-  };
+  const mockRawTranscription = { text: scriptText, words };
 
-  return runTranscriptionToScenePipelineTemp(mockRawTranscription, fps);
+  log("Extracting semantic pose with LLM...");
+  const result = await runTranscriptionToScenePipelineTemp(mockRawTranscription, fps);
+
+  return result;
 }
