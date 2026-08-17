@@ -1,5 +1,6 @@
 // backend/src/routes/voiceover.ts
 import { FastifyInstance } from "fastify";
+import "@fastify/multipart"; // Loads declaration merging for request.file()
 import { generateVoiceover } from "../services/voiceoverGenerator.js";
 import { generateTranscription } from "../services/transcription.js";
 import { runTranscriptionToScenePipeline } from "../services/pipelineOrchestrator.js";
