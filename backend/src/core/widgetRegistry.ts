@@ -13,7 +13,7 @@ const SUMMARY_STOP_WORDS = new Set([
   'what', 'when', 'where', 'why', 'how', 'also', 'just', 'like', 'more', 'most',
   'over', 'under', 'after', 'before', 'because', 'around', 'across', 'again',
   'there', 'here', 'all', 'some', 'any', 'each', 'every', 'these', 'those',
-  'company', 'business', 'team', 'people', 'story'
+  'company', 'people', 'story'
 ]);
 
 function summarizeSentenceToHeadline(text: string): string {

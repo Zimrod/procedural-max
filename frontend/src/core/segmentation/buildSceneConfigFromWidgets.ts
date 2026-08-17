@@ -168,7 +168,9 @@ export function buildSceneConfigFromWidgets(
     }
 
     const selectedIdea = beat.selectedIdeas?.[0];
-    const semanticCopy = selectedIdea?.meaning || selectedIdea?.phrase || beat.sentenceText;
+    // Keep scene copy grounded in the transcript; meaning is explanatory
+    // metadata and is only a fallback when no phrase was extracted.
+    const semanticCopy = selectedIdea?.phrase || selectedIdea?.meaning || beat.sentenceText;
     accumulatedText += `${accumulatedText ? '. ' : ''}${semanticCopy}`;
     combinedDataHints = {
       ...combinedDataHints,

@@ -53,7 +53,7 @@ const SUMMARY_STOP_WORDS = new Set([
   'what', 'when', 'where', 'why', 'how', 'also', 'just', 'like', 'more', 'most',
   'over', 'under', 'after', 'before', 'because', 'around', 'across', 'again',
   'there', 'here', 'all', 'some', 'any', 'each', 'every', 'these', 'those', 'our',
-  'company', 'business', 'team', 'people', 'story'
+  'company', 'people', 'story'
 ]);
 
 export function summarizeSentenceToHeadline(text: string): string {
@@ -227,7 +227,10 @@ export function buildSceneConfigFromWidgets(
     }
 
     const selectedIdea = beat.selectedIdeas?.[0];
-    const semanticCopy = selectedIdea?.meaning || selectedIdea?.phrase || beat.sentenceText;
+    // The selected phrase is grounded in the transcript. The meaning field is
+    // explanatory metadata and can drift when compressed, so use it only when
+    // an extraction did not provide a phrase.
+    const semanticCopy = selectedIdea?.phrase || selectedIdea?.meaning || beat.sentenceText;
     accumulatedText += `${accumulatedText ? '. ' : ''}${semanticCopy}`;
     combinedDataHints = {
       ...combinedDataHints,
