@@ -1,0 +1,14 @@
+// src/types/schema.ts
+import { z } from "zod";
+// Use an explicit type import to bypass implicit 'any' resolutions
+import { CompositionProps } from "./constants.js";
+export const RenderRequest = z.object({
+    id: z.string().optional(), // Remotion Composition Name (e.g., "MainScene")
+    projectId: z.string().optional(), // 👈 Explicitly for your Supabase row query
+    inputProps: CompositionProps.optional(),
+});
+export const ProgressRequest = z.object({
+    bucketName: z.string(),
+    id: z.string(),
+});
+//# sourceMappingURL=schema.js.map

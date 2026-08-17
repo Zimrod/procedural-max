@@ -190,6 +190,7 @@ export function buildSceneConfigFromWidgets(
 
   let clusterStartFrame: number | null = null;
   let clusterEndFrame = 0;
+  // Semantic copy is used for scene widgets; the transcript remains for timing/captions.
   let accumulatedText = '';
   let primaryWidgetForCluster: string | null = null;
   let combinedDataHints: Record<string, any> = {};
@@ -225,7 +226,9 @@ export function buildSceneConfigFromWidgets(
       primaryWidgetForCluster = sel.widgetType;
     }
 
-    accumulatedText += ` ${beat.sentenceText}`;
+    const selectedIdea = beat.selectedIdeas?.[0];
+    const semanticCopy = selectedIdea?.meaning || selectedIdea?.phrase || beat.sentenceText;
+    accumulatedText += `${accumulatedText ? '. ' : ''}${semanticCopy}`;
     combinedDataHints = {
       ...combinedDataHints,
       ...(sel as SelectedWidget & { dataHints?: Record<string, any> }).dataHints,
@@ -284,4 +287,3 @@ export function buildSceneConfigFromWidgets(
 
   return configurations;
 }
-

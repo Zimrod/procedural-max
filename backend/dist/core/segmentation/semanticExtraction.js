@@ -1,6 +1,4 @@
 // src/core/segmentation/semanticExtraction.ts
-import fs from 'fs';
-import path from 'path';
 import OpenAI from 'openai';
 const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
@@ -206,7 +204,7 @@ export async function extractSemanticMeaning(segment, index, total) {
     const narrativeSection = determineNarrativeSection(index, total);
     const prompt = buildPrompt(segment, narrativeSection);
     const response = await openai.chat.completions.create({
-        model: 'gpt-4.1',
+        model: 'gpt-5.4',
         response_format: {
             type: 'json_object',
         },
@@ -321,9 +319,7 @@ export async function semanticExtractionPipeline(segments) {
     //
     // SAVE OUTPUT
     //
-    const outputPath = path.resolve(process.cwd(), 'public', '03_semantic_extraction.json');
-    fs.writeFileSync(outputPath, JSON.stringify(results, null, 2));
-    console.log('Semantic extraction saved:', outputPath);
+    console.log(`✅ Semantic extraction complete for all ${segments.length} segments.`);
     return results;
 }
 //# sourceMappingURL=semanticExtraction.js.map

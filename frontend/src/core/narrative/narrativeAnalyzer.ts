@@ -32,6 +32,7 @@ export interface NarrativeBeat {
   selectedIdeas: {
     id: string;
     phrase: string;
+    meaning?: string;
     type: string;
     importance: number;
     visualPotential: number;
@@ -108,6 +109,7 @@ export function narrativeAnalyzer(extractions: SemanticExtraction[]): NarrativeB
         {
           id: primaryIdea.id,
           phrase: primaryIdea.phrase,
+          meaning: primaryIdea.meaning,
           type: primaryIdea.type,
           importance: primaryIdea.importance,
           visualPotential: primaryIdea.visualPotential,

@@ -140,8 +140,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('revealDirection', 'Reveal Direction', 'select', ['up', 'down', 'left', 'right']),
       field('cinematic', 'Cinematic', 'boolean'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      title: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      title: shortSummary,
       subtitle: shortSummary || '',
     }),
   },
@@ -162,8 +162,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('cursorColor', 'Cursor Color', 'color'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      text: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      text: shortSummary,
     }),
   },
   TEXT: {
@@ -187,8 +187,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('lineHeight', 'Line Height', 'number'),
       field('textAlign', 'Text Align', 'select', ['left', 'center']),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      text: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      text: shortSummary,
     }),
   },
   TERMINAL_TYPING_TEXT: {
@@ -210,8 +210,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('titleColor', 'Title Color', 'color'),
       field('terminalTitle', 'Terminal Title', 'text'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      textToAnimate: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      textToAnimate: shortSummary,
       terminalTitle: 'bash',
     }),
   },
@@ -231,10 +231,10 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('colorText', 'Text Color', 'color'),
       field('colorHighlight', 'Highlight Color', 'color'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => {
-      const words = (text || shortSummary).split(' ');
+    buildFallbackProps: ({ shortSummary }) => {
+      const words = shortSummary.split(' ');
       return {
-        text: text || shortSummary,
+        text: shortSummary,
         highlightWord: words[0] || '',
       };
     },
@@ -254,8 +254,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      textToAnimate: (text || shortSummary).substring(0, 15), // Kept clean for single-line path processing
+    buildFallbackProps: ({ shortSummary }) => ({
+      textToAnimate: shortSummary.substring(0, 15), // Kept clean for single-line path processing
     }),
   },
   // SLIDING_WORD_MASK: {
@@ -298,8 +298,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      textToAnimate: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      textToAnimate: shortSummary,
     }),
   },
   BULLET_POINTS: {
@@ -320,8 +320,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => {
-      const content = text || shortSummary;
+    buildFallbackProps: ({ shortSummary }) => {
+      const content = shortSummary;
       const items = buildBulletItemsFromText(content);
       return { items: items.length > 0 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
     },

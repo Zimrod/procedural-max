@@ -1,0 +1,25 @@
+// src/types/constants.ts
+import { z } from "zod";
+export const COMP_NAME = "vidWithCaptions";
+export const CompositionProps = z.object({
+    title: z.string(),
+    id: z.string().optional(),
+    scene_config: z.unknown().optional(),
+    voiceover_url: z.string().optional(),
+});
+export const defaultMyCompProps = {
+    title: "Dynamic Captions Demo",
+};
+export const VIDEO_WIDTH = 1920;
+export const VIDEO_HEIGHT = 1080;
+export const VIDEO_FPS = 30;
+export const VOICEOVER_DELAY_SECONDS = 2;
+const LINGER_SECONDS = VOICEOVER_DELAY_SECONDS * 2;
+export const calculateTotalDuration = (words) => {
+    if (!words || words.length === 0) {
+        return 15 * VIDEO_FPS;
+    }
+    const lastWordEnd = words[words.length - 1].end;
+    return Math.ceil((lastWordEnd + LINGER_SECONDS) * VIDEO_FPS);
+};
+//# sourceMappingURL=constants.js.map

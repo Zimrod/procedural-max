@@ -1,6 +1,3 @@
-// src/core/narrative/narrativeAnalyzer.ts
-import fs from 'fs';
-import path from 'path';
 /**
  * Maps semantic tags to programmatic widget taxonomy intents
  */
@@ -73,6 +70,7 @@ export function narrativeAnalyzer(extractions) {
                 {
                     id: primaryIdea.id,
                     phrase: primaryIdea.phrase,
+                    meaning: primaryIdea.meaning,
                     type: primaryIdea.type,
                     importance: primaryIdea.importance,
                     visualPotential: primaryIdea.visualPotential,
@@ -82,9 +80,6 @@ export function narrativeAnalyzer(extractions) {
             reasoning: `Selected primary structural focus "${primaryIdea.phrase}" (${primaryIdea.type}) out of ${sentence.semanticIdeas.length} potential semantic tags.`,
         });
     }
-    // Write out the pristine un-duplicated sequence file mapping perfectly to your transcription
-    const outputPath = path.resolve(process.cwd(), 'public', '04_narrative_analysis.json');
-    fs.writeFileSync(outputPath, JSON.stringify(beats, null, 2));
     return beats;
 }
 //# sourceMappingURL=narrativeAnalyzer.js.map

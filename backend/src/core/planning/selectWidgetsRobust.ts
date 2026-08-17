@@ -12,6 +12,7 @@ export type SelectedWidget = {
     intent: string;
     role: string;
     primaryIdeaText: string;
+    primaryIdeaMeaning?: string;
     ideaType: string;
   };
 };
@@ -103,6 +104,7 @@ export async function selectWidgetsRobust(beats: NarrativeBeat[]): Promise<Selec
         intent,
         role,
         primaryIdeaText,
+        primaryIdeaMeaning: primaryIdea?.meaning,
         ideaType
       }
     };

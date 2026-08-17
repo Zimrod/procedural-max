@@ -1,3 +1,62 @@
+const SUMMARY_STOP_WORDS = new Set([
+    'a', 'an', 'and', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'have',
+    'he', 'her', 'his', 'i', 'in', 'is', 'it', 'its', 'of', 'on', 'or', 'our',
+    'she', 'that', 'the', 'their', 'them', 'they', 'this', 'to', 'we', 'were',
+    'with', 'you', 'your', 'into', 'about', 'through', 'using', 'while', 'which',
+    'what', 'when', 'where', 'why', 'how', 'also', 'just', 'like', 'more', 'most',
+    'over', 'under', 'after', 'before', 'because', 'around', 'across', 'again',
+    'there', 'here', 'all', 'some', 'any', 'each', 'every', 'these', 'those',
+    'company', 'business', 'team', 'people', 'story'
+]);
+function summarizeSentenceToHeadline(text) {
+    const rawText = (text ?? '').replace(/\s+/g, ' ').trim();
+    if (!rawText)
+        return '';
+    const sentence = rawText
+        .replace(/[“”"'`]/g, '')
+        .replace(/\s+(?:by|using|through|with|via|that|which|while|because|as)\s+/i, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    const candidate = sentence.split(/(?<=[.!?])\s+|;\s+|\s+-\s+/).find((part) => part && part.length > 12) ?? sentence;
+    const tokens = candidate
+        .split(/\s+/)
+        .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
+        .filter((token) => token.length > 1 && !SUMMARY_STOP_WORDS.has(token.toLowerCase()))
+        .slice(0, 5);
+    if (tokens.length === 0) {
+        const fallback = sentence
+            .split(/\s+/)
+            .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
+            .filter(Boolean)
+            .slice(0, 4);
+        return fallback.length > 0 ? fallback.join(' ').toUpperCase() : rawText.slice(0, 32).toUpperCase();
+    }
+    return tokens.join(' ').toUpperCase();
+}
+function buildBulletItemsFromText(text) {
+    const rawText = (text ?? '').replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!rawText)
+        return [];
+    const bulletCandidates = rawText
+        .split(/\n|•|▪|\u2022|\s+-\s+|\s*\|\s*|;\s+/)
+        .map((part) => part.replace(/^[-*]\s*/, '').trim())
+        .filter(Boolean);
+    const explicitBullets = bulletCandidates.length > 1
+        ? bulletCandidates
+        : rawText
+            .split(/(?<=[.!?])\s+|\s+(?:and|but|however)\s+/i)
+            .map((part) => part.trim())
+            .filter(Boolean)
+            .filter((part) => part.length > 12);
+    const summarized = explicitBullets
+        .map((item) => summarizeSentenceToHeadline(item))
+        .filter((item) => item && item.length > 0)
+        .filter((item, index, arr) => arr.indexOf(item) === index);
+    if (summarized.length > 0) {
+        return summarized.slice(0, 4);
+    }
+    return [summarizeSentenceToHeadline(rawText)].filter(Boolean);
+}
 const field = (key, label, kind, options, defaultValue) => ({
     key,
     label,
@@ -28,8 +87,8 @@ export const widgetRegistry = {
             field('revealDirection', 'Reveal Direction', 'select', ['up', 'down', 'left', 'right']),
             field('cinematic', 'Cinematic', 'boolean'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            title: text || shortSummary,
+        buildFallbackProps: ({ shortSummary }) => ({
+            title: shortSummary,
             subtitle: shortSummary || '',
         }),
     },
@@ -50,8 +109,8 @@ export const widgetRegistry = {
             field('backgroundColor', 'Background Color', 'color'),
             field('cursorColor', 'Cursor Color', 'color'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            text: text || shortSummary,
+        buildFallbackProps: ({ shortSummary }) => ({
+            text: shortSummary,
         }),
     },
     TEXT: {
@@ -75,8 +134,8 @@ export const widgetRegistry = {
             field('lineHeight', 'Line Height', 'number'),
             field('textAlign', 'Text Align', 'select', ['left', 'center']),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            text: text || shortSummary,
+        buildFallbackProps: ({ shortSummary }) => ({
+            text: shortSummary,
         }),
     },
     TERMINAL_TYPING_TEXT: {
@@ -98,8 +157,8 @@ export const widgetRegistry = {
             field('titleColor', 'Title Color', 'color'),
             field('terminalTitle', 'Terminal Title', 'text'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            textToAnimate: text || shortSummary,
+        buildFallbackProps: ({ shortSummary }) => ({
+            textToAnimate: shortSummary,
             terminalTitle: 'bash',
         }),
     },
@@ -119,10 +178,10 @@ export const widgetRegistry = {
             field('colorText', 'Text Color', 'color'),
             field('colorHighlight', 'Highlight Color', 'color'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => {
-            const words = (text || shortSummary).split(' ');
+        buildFallbackProps: ({ shortSummary }) => {
+            const words = shortSummary.split(' ');
             return {
-                text: text || shortSummary,
+                text: shortSummary,
                 highlightWord: words[0] || '',
             };
         },
@@ -142,8 +201,8 @@ export const widgetRegistry = {
             field('backgroundColor', 'Background Color', 'color'),
             field('startFrameOffset', 'Start Frame Offset', 'number'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            textToAnimate: (text || shortSummary).substring(0, 15), // Kept clean for single-line path processing
+        buildFallbackProps: ({ shortSummary }) => ({
+            textToAnimate: shortSummary.substring(0, 15), // Kept clean for single-line path processing
         }),
     },
     // SLIDING_WORD_MASK: {
@@ -186,8 +245,8 @@ export const widgetRegistry = {
             field('backgroundColor', 'Background Color', 'color'),
             field('startFrameOffset', 'Start Frame Offset', 'number'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            textToAnimate: text || shortSummary,
+        buildFallbackProps: ({ shortSummary }) => ({
+            textToAnimate: shortSummary,
         }),
     },
     BULLET_POINTS: {
@@ -208,13 +267,11 @@ export const widgetRegistry = {
             field('backgroundColor', 'Background Color', 'color'),
             field('startFrameOffset', 'Start Frame Offset', 'number'),
         ],
-        buildFallbackProps: ({ text, shortSummary }) => ({
-            items: [
-                text || shortSummary,
-                'Fully calibrated cross-platform configurations',
-                'Deterministic layout calculations wrapper'
-            ],
-        }),
+        buildFallbackProps: ({ shortSummary }) => {
+            const content = shortSummary;
+            const items = buildBulletItemsFromText(content);
+            return { items: items.length > 0 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
+        },
     },
     // GEOMETRIC_QUOTE: {
     //   category: 'TEXT_TYPOGRAPHY',

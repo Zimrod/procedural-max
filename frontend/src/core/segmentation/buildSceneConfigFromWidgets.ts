@@ -167,7 +167,9 @@ export function buildSceneConfigFromWidgets(
       primaryWidgetForCluster = sel.widgetType;
     }
 
-    accumulatedText += ` ${beat.sentenceText}`;
+    const selectedIdea = beat.selectedIdeas?.[0];
+    const semanticCopy = selectedIdea?.meaning || selectedIdea?.phrase || beat.sentenceText;
+    accumulatedText += `${accumulatedText ? '. ' : ''}${semanticCopy}`;
     combinedDataHints = {
       ...combinedDataHints,
       ...(sel as SelectedWidget & { dataHints?: Record<string, any> }).dataHints,
