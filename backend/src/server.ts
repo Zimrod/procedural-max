@@ -5,6 +5,7 @@ import scriptRoutes from "./routes/script.js";
 import voiceoverRoutes from "./routes/voiceover.js";
 import sceneRoutes from "./routes/scene.js";
 import renderRoutes from "./routes/render.js";
+import captionsRoutesTemp from "./routes/captions-temp.js";
 
 async function start() {
   const app = Fastify({
@@ -19,6 +20,7 @@ async function start() {
   await app.register(voiceoverRoutes);
   await app.register(sceneRoutes);
   await app.register(renderRoutes);
+  await app.register(captionsRoutesTemp);
 
   app.get("/", async () => ({
     service: "Procedural Max Routes",
