@@ -457,7 +457,7 @@ export default function LandingPage() {
                 AI Prompt
               </button>
               <button
-                disabled={true}
+                // disabled={true}
                 onClick={() => setLeftTab("custom-script")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
