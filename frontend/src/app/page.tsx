@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, ChangeEvent } from "react";
 import { Player, PlayerRef } from "@remotion/player";
 import { Main } from "../graphics/Main";
 import {
@@ -22,7 +22,6 @@ import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
 import { Navbar } from "../components/Navbar";
 
-// Dynamically derive widget keys from registry to prevent hardcoded enum bloat
 const DYNAMIC_WIDGET_OPTIONS = Object.keys(widgetRegistry);
 const DEFAULT_WIDGET_TYPE = DYNAMIC_WIDGET_OPTIONS[0] || "";
 
@@ -57,6 +56,7 @@ export default function LandingPage() {
   // Script States
   const [aiScript, setAiScript] = useState("");
   const [customScript, setCustomScript] = useState("");
+  const [uploadedScript, setUploadedScript] = useState("");
 
   // Audio States
   const [aiAudioUrl, setAiAudioUrl] = useState("");
@@ -65,13 +65,16 @@ export default function LandingPage() {
   const [customAudioUrl, setCustomAudioUrl] = useState("");
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
+  const [uploadedAudioUrl, setUploadedAudioUrl] = useState("");
+  const [uploadedAudioVersion, setUploadedAudioVersion] = useState(0);
+
   // Pipeline tracking
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
-  // Tab State
-  const [leftTab, setLeftTab] = useState<"generate" | "custom-script">("generate");
+  // 3-Tab Navigation State
+  const [leftTab, setLeftTab] = useState<"generate" | "custom-script" | "upload-voiceover">("generate");
 
   // Remotion Player Reference & Captions
   const playerRef = useRef<PlayerRef>(null);
@@ -109,24 +112,47 @@ export default function LandingPage() {
     }
   }, [sceneConfig]);
 
-  // Derived active script payload
+  // Derived active script payload across 3 tabs
   const currentActiveScript = useMemo(() => {
-    return leftTab === "generate" ? aiScript : customScript;
-  }, [leftTab, aiScript, customScript]);
+    if (leftTab === "generate") return aiScript;
+    if (leftTab === "custom-script") return customScript;
+    return uploadedScript;
+  }, [leftTab, aiScript, customScript, uploadedScript]);
 
   const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
 
+  // Derived active audio payload across 3 tabs
   const currentActiveAudio = useMemo(() => {
-    const rawUrl = leftTab === "generate" ? aiAudioUrl : customAudioUrl;
-    const version = leftTab === "generate" ? aiAudioVersion : customAudioVersion;
+    let rawUrl = "";
+    let version = 0;
+
+    if (leftTab === "generate") {
+      rawUrl = aiAudioUrl;
+      version = aiAudioVersion;
+    } else if (leftTab === "custom-script") {
+      rawUrl = customAudioUrl;
+      version = customAudioVersion;
+    } else {
+      rawUrl = uploadedAudioUrl;
+      version = uploadedAudioVersion;
+    }
     
     if (!rawUrl) return "";
 
     const completeUrl = rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`;
     return `${completeUrl}?v=${version}`;
-  }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, API]);
+  }, [
+    leftTab,
+    aiAudioUrl,
+    aiAudioVersion,
+    customAudioUrl,
+    customAudioVersion,
+    uploadedAudioUrl,
+    uploadedAudioVersion,
+    API,
+  ]);
 
-  // Step 1: Only returns generated text in local state (No Supabase save)
+  // Tab 1: AI Prompt Script Generation
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
 
@@ -139,9 +165,7 @@ export default function LandingPage() {
         body: JSON.stringify({ prompt }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to generate script.");
-      }
+      if (!res.ok) throw new Error("Failed to generate script.");
 
       const data = await res.json();
       setAiScript(data.script);
@@ -152,7 +176,54 @@ export default function LandingPage() {
     }
   };
 
-  // Step 2: Voiceover generation & Supabase sync (Creates or Updates existing row)
+  // Tab 3: Upload Audio File & Process Automatic Transcription
+  const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setActiveLoading("uploading_audio");
+      setPipelineResult(null);
+      setTranscription(null);
+      setSceneConfig([]);
+
+      const formData = new FormData();
+      formData.append("audio", file);
+      if (currentJobId) {
+        formData.append("jobId", currentJobId);
+      }
+
+      const res = await fetch(`${API}/voiceover/upload`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setUploadedAudioUrl(data.audioUrl);
+        setUploadedAudioVersion((prev) => prev + 1);
+        setUploadedScript(data.transcript?.text || "");
+        
+        if (data.transcript) {
+          setTranscription(data.transcript);
+        }
+
+        setCurrentJobId(data.jobId);
+        
+        // Trigger background scene assembly from transcription
+        setActiveLoading("assembling_scenes");
+        startBackgroundSync(data.jobId);
+      } else {
+        setActiveLoading(null);
+      }
+    } catch (err) {
+      console.error("Audio upload error:", err);
+      setActiveLoading(null);
+    }
+  };
+
+  // Tab 1 & 2: Step 2 Voiceover Synthesis & Pipeline Trigger
   const handleGenerateVoiceover = async () => {
     try {
       setPipelineResult(null);
@@ -165,7 +236,6 @@ export default function LandingPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           script: currentActiveScript,
-          // If currentJobId exists, backend updates the Supabase record instead of creating a duplicate
           jobId: currentJobId || undefined 
         }),
       });
@@ -180,9 +250,7 @@ export default function LandingPage() {
           setCustomAudioVersion((prev) => prev + 1);
         }
         
-        // Track unique DB record ID
         setCurrentJobId(data.jobId);
-        
         setActiveLoading("assembling_scenes"); 
         startBackgroundSync(data.jobId);
       } else {
@@ -200,10 +268,10 @@ export default function LandingPage() {
       try {
         attempts++;
         if (attempts > 120) {
-            clearInterval(interval);
-            console.error("Background extraction pipeline timed out.");
-            setActiveLoading(null);
-            return;
+          clearInterval(interval);
+          console.error("Background extraction pipeline timed out.");
+          setActiveLoading(null);
+          return;
         }
 
         const res = await fetch(`${API}/voiceover/status/${jobId}`);
@@ -233,8 +301,12 @@ export default function LandingPage() {
     try {
       const { transcript, sceneConfig: incomingScenes } = pipelineResult;
 
+      // Prefer user-edited text if edits were made to transcript text
       if (transcript) {
-        setTranscription({ text: transcript.text, words: transcript.words });
+        setTranscription({
+          text: currentActiveScript || transcript.text,
+          words: transcript.words || [],
+        });
       }
 
       const sanitized = (incomingScenes || []).map((s: any) => {
@@ -420,18 +492,25 @@ export default function LandingPage() {
         <div className="w-full">
           {/* LEFT SIDEBAR AREA */}
           <div className="w-full lg:w-[420px] lg:float-left bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-5 shadow-2xl shadow-black/60">
-            <div className="flex border border-neutral-800 mb-5 p-1 bg-[#141414] rounded-xl">
+            {/* 3-TAB NAVIGATION */}
+            <div className="flex border border-neutral-800 mb-5 p-1 bg-[#141414] rounded-xl text-center">
               <button
                 onClick={() => setLeftTab("generate")}
-                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
+                className={`flex-1 py-2 text-[11px] font-semibold tracking-wide rounded-lg transition-all ${leftTab === "generate" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
                 AI Prompt
               </button>
               <button
                 onClick={() => setLeftTab("custom-script")}
-                className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
+                className={`flex-1 py-2 text-[11px] font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
-                Self-Generated Script
+                Custom Script
+              </button>
+              <button
+                onClick={() => setLeftTab("upload-voiceover")}
+                className={`flex-1 py-2 text-[11px] font-semibold tracking-wide rounded-lg transition-all ${leftTab === "upload-voiceover" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
+              >
+                Upload Audio
               </button>
             </div>
 
@@ -461,7 +540,6 @@ export default function LandingPage() {
                   {activeLoading === "script" && <Spinner colorClass="text-emerald-400" />}
                 </button>
 
-                {/* EDITABLE AI GENERATED SCRIPT TEXTAREA */}
                 {aiScript !== "" && (
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
@@ -470,7 +548,7 @@ export default function LandingPage() {
                     <textarea
                       value={aiScript}
                       onChange={(e) => setAiScript(e.target.value)}
-                      placeholder="AI generated script will appear here. Edit as needed..."
+                      placeholder="AI generated script will appear here..."
                       className="w-full min-h-[140px] p-3.5 bg-[#141414] border border-emerald-900/60 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-neutral-100 placeholder:text-neutral-600 transition-all"
                     />
                   </div>
@@ -489,7 +567,7 @@ export default function LandingPage() {
                   </div>
                 )}
               </div>
-            ) : (
+            ) : leftTab === "custom-script" ? (
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
@@ -516,28 +594,78 @@ export default function LandingPage() {
                   </div>
                 )}
               </div>
+            ) : (
+              /* TAB 3: UPLOAD VOICEOVER & AUTOMATIC TRANSCRIPTION */
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-neutral-400 mb-2">
+                    Upload Audio File (.mp3, .wav, .m4a)
+                  </label>
+                  <label className="flex flex-col items-center justify-center border-2 border-dashed border-neutral-800 hover:border-emerald-500/50 rounded-xl p-4 bg-[#141414] cursor-pointer transition-all">
+                    <span className="text-xs text-neutral-400 font-medium">Click to select audio file</span>
+                    <span className="text-[10px] text-neutral-600 mt-1">Automatic STT transcription will execute on upload</span>
+                    <input
+                      type="file"
+                      accept="audio/*"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      disabled={activeLoading !== null}
+                    />
+                  </label>
+                </div>
+
+                {uploadedAudioUrl && (
+                  <div className="rounded-xl border border-neutral-800 bg-[#141414] p-4">
+                    <h3 className="text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+                      Uploaded Voiceover Track
+                    </h3>
+                    <audio
+                      controls
+                      src={`${uploadedAudioUrl}?v=${uploadedAudioVersion}`}
+                      className="mt-2 w-full h-8 text-sm accent-emerald-500"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+                      Editable Auto-Transcript
+                    </label>
+                    <span className="text-[9px] text-neutral-500">Fix typos or misheard terms</span>
+                  </div>
+                  <textarea
+                    value={uploadedScript}
+                    onChange={(e) => setUploadedScript(e.target.value)}
+                    placeholder="Uploaded audio transcription will populate here. Edit typos directly..."
+                    className="w-full min-h-[140px] p-3.5 bg-[#141414] border border-emerald-900/60 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-neutral-100 placeholder:text-neutral-600 transition-all"
+                  />
+                </div>
+              </div>
             )}
 
             <div className="mt-6 pt-5 border-t border-neutral-800 space-y-3">
-              <button 
-                onClick={handleGenerateVoiceover}
-                disabled={activeLoading !== null || !currentActiveScript.trim()}
-                className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
-              >
-                <span>
-                  {activeLoading === "generating_audio"
-                    ? "Generating Audio..."
-                    : activeLoading === "assembling_scenes"
-                    ? "Assembling Scenes..."
-                    : currentJobId
-                    ? "Step 2: Update Voiceover & Script"
-                    : "Step 2: Generate Voiceover"
-                  }
-                </span>
-                {(activeLoading === "generating_audio" || activeLoading === "assembling_scenes") && (
-                  <Spinner colorClass="text-amber-300" />
-                )}
-              </button>
+              {leftTab !== "upload-voiceover" && (
+                <button 
+                  onClick={handleGenerateVoiceover}
+                  disabled={activeLoading !== null || !currentActiveScript.trim()}
+                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                >
+                  <span>
+                    {activeLoading === "generating_audio"
+                      ? "Generating Audio..."
+                      : activeLoading === "assembling_scenes"
+                      ? "Assembling Scenes..."
+                      : currentJobId
+                      ? "Step 2: Update Voiceover & Script"
+                      : "Step 2: Generate Voiceover"
+                    }
+                  </span>
+                  {(activeLoading === "generating_audio" || activeLoading === "assembling_scenes") && (
+                    <Spinner colorClass="text-amber-300" />
+                  )}
+                </button>
+              )}
       
               <button
                 onClick={handleRenderAnimation}
@@ -547,9 +675,15 @@ export default function LandingPage() {
                 <span>
                   {activeLoading === "animation"
                     ? "Rendering Animation..."
+                    : activeLoading === "uploading_audio"
+                    ? "Transcribing Audio File..."
+                    : leftTab === "upload-voiceover"
+                    ? "Step 2: Render Animation from Audio"
                     : "Step 3: Generate Animation"}
                 </span>
-                {activeLoading === "animation" && <Spinner colorClass="text-rose-200" />}
+                {(activeLoading === "animation" || activeLoading === "uploading_audio") && (
+                  <Spinner colorClass="text-rose-200" />
+                )}
               </button>
             </div>
 
@@ -723,7 +857,7 @@ export default function LandingPage() {
               <div className="flex-1 overflow-y-auto space-y-4 pr-1 mb-4 scrollbar-thin">
                 {localConfig.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center text-center p-6 text-neutral-500 border border-dashed border-neutral-800 rounded-xl bg-[#141414]/50">
-                    <span className="text-xs">No active procedural tracks analyzed. Run Step 3 to populate.</span>
+                    <span className="text-xs">No active procedural tracks analyzed. Trigger animation to populate.</span>
                   </div>
                 ) : (
                   localConfig.map((scene, sceneIdx) => (
@@ -919,7 +1053,7 @@ export default function LandingPage() {
                                             try {
                                               updateWidgetProp(sceneIdx, propKey, JSON.parse(e.target.value));
                                             } catch {
-                                              // Retain current JSON text state until parsed
+                                              // Retain text state until parsed
                                             }
                                           }}
                                           className="w-full min-h-[90px] p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs font-mono text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
