@@ -22,10 +22,10 @@ import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "../components/RenderAndSaveButtons";
 import { Navbar } from "../components/Navbar";
 
-const WIDGET_OPTIONS = Object.keys(widgetRegistry);
-const DEFAULT_WIDGET_TYPE = WIDGET_OPTIONS[0];
+// Dynamically derive widget keys from registry to prevent hardcoded enum bloat
+const DYNAMIC_WIDGET_OPTIONS = Object.keys(widgetRegistry);
+const DEFAULT_WIDGET_TYPE = DYNAMIC_WIDGET_OPTIONS[0] || "";
 
-// Helper component for the colored spinner
 function Spinner({ colorClass = "text-white" }: { colorClass?: string }) {
   return (
     <svg
@@ -54,33 +54,33 @@ function Spinner({ colorClass = "text-white" }: { colorClass?: string }) {
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
   
-  // Separation of concerns for script states
+  // Script States
   const [aiScript, setAiScript] = useState("");
   const [customScript, setCustomScript] = useState("");
 
-  // Separation of concerns for audio paths
+  // Audio States
   const [aiAudioUrl, setAiAudioUrl] = useState("");
   const [aiAudioVersion, setAiAudioVersion] = useState(0);
   
   const [customAudioUrl, setCustomAudioUrl] = useState("");
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
 
-  // Granular tracking of exactly which button is working
+  // Pipeline tracking
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
 
-  // Tab state for separating AI text prompting vs Professional Custom Scripts
+  // Tab State
   const [leftTab, setLeftTab] = useState<"generate" | "custom-script">("generate");
 
-  // Remotion State
+  // Remotion Player Reference & Captions
   const playerRef = useRef<PlayerRef>(null);
   const [transcription, setTranscription] = useState<{
     text: string;
     words: { word: string; start: number; end: number }[];
   } | null>(null);
 
-  // Workspace Config Data Arrays
+  // Config States
   const [sceneConfig, setSceneConfig] = useState<any[]>([]);
   const [localConfig, setLocalConfig] = useState<any[]>([]);
   const [themeConfig, setThemeConfig] = useState<CompositionTheme>(
@@ -93,33 +93,29 @@ export default function LandingPage() {
 
   const [collapsedScenes, setCollapsedScenes] = useState<Record<number, boolean>>({});
   const toggleSceneCollapse = (sceneIndex: number) => {
-    setCollapsedScenes(prev => ({
+    setCollapsedScenes((prev) => ({
       ...prev,
       [sceneIndex]: !prev[sceneIndex],
     }));
   };
 
-  // Track modifications between master blueprint and local buffer modifications
   const isDirty = useMemo(() => {
     return JSON.stringify(sceneConfig) !== JSON.stringify(localConfig);
   }, [sceneConfig, localConfig]);
 
-  // Sync internal local staging buffer state whenever server engine generates clean timelines
   useEffect(() => {
     if (sceneConfig && sceneConfig.length > 0) {
       setLocalConfig(JSON.parse(JSON.stringify(sceneConfig)));
     }
   }, [sceneConfig]);
 
-  // Derived active script wrapper based on current tab selection
+  // Derived active script payload
   const currentActiveScript = useMemo(() => {
     return leftTab === "generate" ? aiScript : customScript;
   }, [leftTab, aiScript, customScript]);
 
-  // Strips off any trailing slash to avoid double-slashes in the fetch request
   const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
 
-  // Derived active audio payload properties based on current tab selection
   const currentActiveAudio = useMemo(() => {
     const rawUrl = leftTab === "generate" ? aiAudioUrl : customAudioUrl;
     const version = leftTab === "generate" ? aiAudioVersion : customAudioVersion;
@@ -130,6 +126,7 @@ export default function LandingPage() {
     return `${completeUrl}?v=${version}`;
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, API]);
 
+  // Step 1: Only returns generated text in local state (No Supabase save)
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
 
@@ -138,12 +135,8 @@ export default function LandingPage() {
 
       const res = await fetch(`${API}/script`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          prompt,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt }),
       });
 
       if (!res.ok) {
@@ -153,31 +146,32 @@ export default function LandingPage() {
       const data = await res.json();
       setAiScript(data.script);
     } catch (err) {
-      console.error(err);
+      console.error("Script generation error:", err);
     } finally {
       setActiveLoading(null);
     }
   };
 
+  // Step 2: Voiceover generation & Supabase sync (Creates or Updates existing row)
   const handleGenerateVoiceover = async () => {
     try {
       setPipelineResult(null);
       setTranscription(null);
       setSceneConfig([]);
-      setActiveLoading("generating_audio"); // Step 2 Phase 1: Generating raw audio file
+      setActiveLoading("generating_audio");
       
-      console.log("🔊 [Voiceover Engine] Requesting synthesis for script...");
       const res = await fetch(`${API}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript })
+        body: JSON.stringify({ 
+          script: currentActiveScript,
+          // If currentJobId exists, backend updates the Supabase record instead of creating a duplicate
+          jobId: currentJobId || undefined 
+        }),
       });
       const data = await res.json();
 
       if (data.success) {
-        console.log("🎯 Audio successfully hosted at:", data.audioUrl);
-        
-        // Render audio immediately on frontend
         if (leftTab === "generate") {
           setAiAudioUrl(data.audioUrl); 
           setAiAudioVersion((prev) => prev + 1);
@@ -186,16 +180,16 @@ export default function LandingPage() {
           setCustomAudioVersion((prev) => prev + 1);
         }
         
+        // Track unique DB record ID
         setCurrentJobId(data.jobId);
         
-        // Transition Step 2 label to "Assembling Scenes..." while pipelineOrchestrator works in background
         setActiveLoading("assembling_scenes"); 
         startBackgroundSync(data.jobId);
       } else {
         setActiveLoading(null);
       }
     } catch (err) {
-      console.error("💥 [Voiceover Engine Exception] Generation failed:", err);
+      console.error("Voiceover synthesis error:", err);
       setActiveLoading(null);
     }
   };
@@ -205,7 +199,7 @@ export default function LandingPage() {
     const interval = setInterval(async () => {
       try {
         attempts++;
-        if (attempts > 120) { // Timeout after 3 minutes (120 * 1500ms)
+        if (attempts > 120) {
             clearInterval(interval);
             console.error("Background extraction pipeline timed out.");
             setActiveLoading(null);
@@ -217,17 +211,12 @@ export default function LandingPage() {
 
         if (statusData.status === "done") {
           clearInterval(interval);
-          console.log("✅ [Sync] Backend confirmed pipeline completion in database!");
-          
-          // Unlocks Step 3 Button & frees up controls
           setPipelineResult(statusData.result); 
           setActiveLoading(null);
         } else if (statusData.status === "failed") {
           clearInterval(interval);
-          console.error("❌ Background extraction pipeline failed on server.");
+          console.error("Pipeline status reported failure.");
           setActiveLoading(null);
-        } else {
-            console.log(`[Sync] Database status: ${statusData.status}... waiting.`);
         }
       } catch (err) {
         console.error("Network error during status check", err);
@@ -235,35 +224,24 @@ export default function LandingPage() {
     }, 1500);
   };
 
-  // BUTTON 3: Handle Render Animation
+  // Step 3: Render animation timeline
   const handleRenderAnimation = async () => {
     if (!pipelineResult) return;
 
-    console.log("🎬 [Render Rig] --- Starting Step 3 Process ---");
     setActiveLoading("animation");
 
     try {
       const { transcript, sceneConfig: incomingScenes } = pipelineResult;
-      
-      if (!transcript) {
-        console.error("❌ [Render Rig Error] 'transcript' property is completely missing or broken inside payload object!");
-      } else {
-        console.log("📝 [Render Rig Log] Transcript captured text matches:", transcript.text);
+
+      if (transcript) {
+        setTranscription({ text: transcript.text, words: transcript.words });
       }
 
-      if (!incomingScenes || !Array.isArray(incomingScenes)) {
-        console.error("❌ [Render Rig Error] 'sceneConfig' array is either missing, empty, or not an array structure!");
-      } else {
-        console.log(`📊 [Render Rig Log] Found ${incomingScenes.length} total raw scenes generated by pipeline orchestrator.`);
-      }
-
-      setTranscription({ text: transcript.text, words: transcript.words });
-
-      const sanitized = incomingScenes.map((s: any) => {
+      const sanitized = (incomingScenes || []).map((s: any) => {
         const widgetType = s.widget || s.type || DEFAULT_WIDGET_TYPE;
         return {
           ...s,
-          widget: widgetType
+          widget: widgetType,
         };
       });
 
@@ -273,14 +251,10 @@ export default function LandingPage() {
       if (playerRef.current) {
         playerRef.current.seekTo(0);
       }
-
-      console.log("🎉 [Render Rig] Pipeline execution completed successfully! Scene layout is fully mounted.");
-
     } catch (err) {
-      console.error("💥 [Render Rig Exception Error] Critical failure handling configurations pipeline mapping:", err);
+      console.error("Failed to render animation layout:", err);
     } finally {
       setActiveLoading(null);
-      console.log("🎬 [Render Rig] --- Step 3 Process Block Exited ---");
     }
   };
 
@@ -339,8 +313,8 @@ export default function LandingPage() {
       ...updated[sceneIndex],
       props: {
         ...updated[sceneIndex].props,
-        [propKey]: value
-      }
+        [propKey]: value,
+      },
     };
     setLocalConfig(updated);
   };
@@ -440,9 +414,6 @@ export default function LandingPage() {
             <h1 className="text-3xl font-bold tracking-tight text-white sm:text-4xl">
               Automated Motion Graphics
             </h1>
-            {/* <p className="text-sm text-neutral-400">
-              Paste deep professional domain scripts or brainstorm using structural templates.
-            </p> */}
           </div>
         </div>
 
@@ -457,7 +428,6 @@ export default function LandingPage() {
                 AI Prompt
               </button>
               <button
-                // disabled={true}
                 onClick={() => setLeftTab("custom-script")}
                 className={`flex-1 py-2.5 text-xs font-semibold tracking-wide rounded-lg transition-all ${leftTab === "custom-script" ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"}`}
               >
@@ -475,7 +445,7 @@ export default function LandingPage() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe the type of script you want created..."
-                    className="w-full min-h-[110px] p-3.5 bg-[#141414] border border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 resize-none text-neutral-100 placeholder:text-neutral-600 transition-all"
+                    className="w-full min-h-[90px] p-3.5 bg-[#141414] border border-neutral-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 resize-none text-neutral-100 placeholder:text-neutral-600 transition-all"
                   />
                 </div>
                 <button
@@ -490,6 +460,21 @@ export default function LandingPage() {
                   </span>
                   {activeLoading === "script" && <Spinner colorClass="text-emerald-400" />}
                 </button>
+
+                {/* EDITABLE AI GENERATED SCRIPT TEXTAREA */}
+                {aiScript !== "" && (
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-emerald-400 mb-2">
+                      Editable Generated Script
+                    </label>
+                    <textarea
+                      value={aiScript}
+                      onChange={(e) => setAiScript(e.target.value)}
+                      placeholder="AI generated script will appear here. Edit as needed..."
+                      className="w-full min-h-[140px] p-3.5 bg-[#141414] border border-emerald-900/60 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 text-neutral-100 placeholder:text-neutral-600 transition-all"
+                    />
+                  </div>
+                )}
 
                 {aiAudioUrl && (
                   <div className="rounded-xl border border-neutral-800 bg-[#141414] p-4 mt-2">
@@ -533,17 +518,6 @@ export default function LandingPage() {
               </div>
             )}
 
-            {currentActiveScript && (
-              <div className="mt-5 p-4 bg-emerald-950/30 border border-emerald-900/40 rounded-xl">
-                <div className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 mb-1.5">
-                  Active Execution Script:
-                </div>
-                <p className="text-xs text-neutral-300 leading-relaxed max-h-[140px] overflow-y-auto pr-1 scrollbar-thin">
-                  {currentActiveScript}
-                </p>
-              </div>
-            )}
-
             <div className="mt-6 pt-5 border-t border-neutral-800 space-y-3">
               <button 
                 onClick={handleGenerateVoiceover}
@@ -555,6 +529,8 @@ export default function LandingPage() {
                     ? "Generating Audio..."
                     : activeLoading === "assembling_scenes"
                     ? "Assembling Scenes..."
+                    : currentJobId
+                    ? "Step 2: Update Voiceover & Script"
                     : "Step 2: Generate Voiceover"
                   }
                 </span>
@@ -754,9 +730,7 @@ export default function LandingPage() {
                     <div key={sceneIdx} className="p-3.5 bg-[#141414] border border-neutral-800 rounded-xl space-y-3">
                       
                       <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-
                         <div className="flex items-center gap-2">
-
                           <button
                             onClick={() => toggleSceneCollapse(sceneIdx)}
                             className="flex items-center justify-center w-5 h-5 text-neutral-400 hover:text-white transition-all duration-200"
@@ -774,18 +748,15 @@ export default function LandingPage() {
 
                           <span className="text-xs font-bold text-neutral-200">
                             Scene #{sceneIdx + 1}
-
                             {collapsedScenes[sceneIdx] && (
                               <span className="ml-2 text-neutral-400 font-normal">
                                 · {scene.widget}
                               </span>
                             )}
                           </span>
-
                         </div>
 
                         <div className="flex gap-1">
-
                           <button
                             onClick={() => moveSceneUp(sceneIdx)}
                             disabled={sceneIdx === 0}
@@ -815,9 +786,7 @@ export default function LandingPage() {
                           >
                             ×
                           </button>
-
                         </div>
-
                       </div>
 
                       <div
@@ -845,7 +814,7 @@ export default function LandingPage() {
                                 onChange={(e) => updateWidgetType(sceneIdx, e.target.value)}
                                 className="w-full p-2 bg-black border border-neutral-800 rounded-lg text-xs font-medium text-neutral-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
                               >
-                                {WIDGET_OPTIONS.map((opt) => (
+                                {DYNAMIC_WIDGET_OPTIONS.map((opt) => (
                                   <option key={opt} value={opt}>{opt}</option>
                                 ))}
                               </select>
@@ -950,7 +919,7 @@ export default function LandingPage() {
                                             try {
                                               updateWidgetProp(sceneIdx, propKey, JSON.parse(e.target.value));
                                             } catch {
-                                              // Keep the last valid JSON until it parses cleanly.
+                                              // Retain current JSON text state until parsed
                                             }
                                           }}
                                           className="w-full min-h-[90px] p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs font-mono text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
