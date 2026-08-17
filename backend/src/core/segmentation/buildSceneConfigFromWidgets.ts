@@ -42,23 +42,81 @@ function applyInternalDurationRule(durationFrames: number): number {
 }
 
 /**
- * Text utility ensuring widget parameters receive short, punchy upper-case headlines
- * rather than sprawling sentences that blow out canvas boundaries.
+ * Turns transcript sentences into short, topic-driven scene titles instead of
+ * reproducing the full sentence verbatim in the config.
  */
-function toPunchyPhrase(text: string): string {
-  if (!text) return '';
+const SUMMARY_STOP_WORDS = new Set([
+  'a', 'an', 'and', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'have',
+  'he', 'her', 'his', 'i', 'in', 'is', 'it', 'its', 'of', 'on', 'or', 'our',
+  'she', 'that', 'the', 'their', 'them', 'they', 'this', 'to', 'we', 'were',
+  'with', 'you', 'your', 'into', 'about', 'through', 'using', 'while', 'which',
+  'what', 'when', 'where', 'why', 'how', 'also', 'just', 'like', 'more', 'most',
+  'over', 'under', 'after', 'before', 'because', 'around', 'across', 'again',
+  'there', 'here', 'all', 'some', 'any', 'each', 'every', 'these', 'those', 'our',
+  'company', 'business', 'team', 'people', 'story'
+]);
 
-  const clean = text
-    .replace(/^(in a|this shift is|for investors|but here's the kicker|by 2026)\s+/i, '')
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '')
+export function summarizeSentenceToHeadline(text: string): string {
+  const rawText = (text ?? '').replace(/\s+/g, ' ').trim();
+  if (!rawText) return '';
+
+  const sentence = rawText
+    .replace(/[“”"'`]/g, '')
+    .replace(/\s+(?:by|using|through|with|via|that|which|while|because|as)\s+/i, ' ')
+    .replace(/\s+/g, ' ')
     .trim();
 
-  const words = clean.split(/\s+/);
-  if (words.length <= 5) {
-    return clean.toUpperCase();
+  const candidate = sentence.split(/(?<=[.!?])\s+|;\s+|\s+-\s+/).find((part) => part && part.length > 12) ?? sentence;
+  const tokens = candidate
+    .split(/\s+/)
+    .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
+    .filter((token) => token.length > 1 && !SUMMARY_STOP_WORDS.has(token.toLowerCase()))
+    .slice(0, 5);
+
+  if (tokens.length === 0) {
+    const fallback = sentence
+      .split(/\s+/)
+      .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
+      .filter(Boolean)
+      .slice(0, 4);
+
+    return fallback.length > 0 ? fallback.join(' ').toUpperCase() : rawText.slice(0, 32).toUpperCase();
   }
 
-  return words.slice(0, 4).join(' ').toUpperCase() + '...';
+  return tokens.join(' ').toUpperCase();
+}
+
+export function buildBulletItemsFromText(text: string): string[] {
+  const rawText = (text ?? '').replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!rawText) return [];
+
+  const bulletCandidates = rawText
+    .split(/\n|•|▪|\u2022|\s+-\s+|\s*\|\s*|;\s+/)
+    .map((part) => part.replace(/^[-*]\s*/, '').trim())
+    .filter(Boolean);
+
+  const explicitBullets = bulletCandidates.length > 1
+    ? bulletCandidates
+    : rawText
+        .split(/(?<=[.!?])\s+|\s+(?:and|but|however)\s+/i)
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .filter((part) => part.length > 12);
+
+  const summarized = explicitBullets
+    .map((item) => summarizeSentenceToHeadline(item))
+    .filter((item) => item && item.length > 0)
+    .filter((item, index, arr) => arr.indexOf(item) === index);
+
+  if (summarized.length > 0) {
+    return summarized.slice(0, 4);
+  }
+
+  return [summarizeSentenceToHeadline(rawText)].filter(Boolean);
+}
+
+function toPunchyPhrase(text: string): string {
+  return summarizeSentenceToHeadline(text);
 }
 
 function resolveTranscriptTargetFrames(

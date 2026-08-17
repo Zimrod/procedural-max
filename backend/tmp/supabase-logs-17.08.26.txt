@@ -1,0 +1,998 @@
+transcript:
+{
+  "text": "Every week, teams lose 12 hours chasing updates, fixing handoffs, and searching for answers. Critical work slows. Revenue slips. Meet Flowpilot, the SaaS command center for modern operations. Connect your tools in minutes. Automate repetitive workflows. See every task, status, and bottleneck in one place. Teams cut manual work by 40%, respond 3x faster, and reclaim 10 hours every week. No spreadsheets. No chasing. No blind spots. Turn operational friction into measurable momentum. Start your free trial today. Build a faster business with Flowpilot.",
+  "words": [
+    {
+      "end": 0.3400000035762787,
+      "word": "Every",
+      "start": 0
+    },
+    {
+      "end": 0.6000000238418579,
+      "word": "week,",
+      "start": 0.3400000035762787
+    },
+    {
+      "end": 0.9599999785423279,
+      "word": "teams",
+      "start": 0.699999988079071
+    },
+    {
+      "end": 1.2200000286102295,
+      "word": "lose",
+      "start": 0.9599999785423279
+    },
+    {
+      "end": 1.6399999856948853,
+      "word": "12",
+      "start": 1.2200000286102295
+    },
+    {
+      "end": 1.9800000190734863,
+      "word": "hours",
+      "start": 1.6399999856948853
+    },
+    {
+      "end": 2.380000114440918,
+      "word": "chasing",
+      "start": 1.9800000190734863
+    },
+    {
+      "end": 2.880000114440918,
+      "word": "updates,",
+      "start": 2.380000114440918
+    },
+    {
+      "end": 3.299999952316284,
+      "word": "fixing",
+      "start": 3.299999952316284
+    },
+    {
+      "end": 3.8399999141693115,
+      "word": "handoffs,",
+      "start": 3.299999952316284
+    },
+    {
+      "end": 4.239999771118164,
+      "word": "and",
+      "start": 4.019999980926514
+    },
+    {
+      "end": 4.320000171661377,
+      "word": "searching",
+      "start": 4.239999771118164
+    },
+    {
+      "end": 5.460000038146973,
+      "word": "for",
+      "start": 4.320000171661377
+    },
+    {
+      "end": 5.460000038146973,
+      "word": "answers.",
+      "start": 5.460000038146973
+    },
+    {
+      "end": 5.78000020980835,
+      "word": "Critical",
+      "start": 5.78000020980835
+    },
+    {
+      "end": 6.159999847412109,
+      "word": "work",
+      "start": 5.78000020980835
+    },
+    {
+      "end": 6.579999923706055,
+      "word": "slows.",
+      "start": 6.159999847412109
+    },
+    {
+      "end": 7.420000076293945,
+      "word": "Revenue",
+      "start": 7.420000076293945
+    },
+    {
+      "end": 7.880000114440918,
+      "word": "slips.",
+      "start": 7.420000076293945
+    },
+    {
+      "end": 8.65999984741211,
+      "word": "Meet",
+      "start": 8.65999984741211
+    },
+    {
+      "end": 9.199999809265137,
+      "word": "Flowpilot,",
+      "start": 8.65999984741211
+    },
+    {
+      "end": 9.800000190734863,
+      "word": "the",
+      "start": 9.619999885559082
+    },
+    {
+      "end": 10.039999961853027,
+      "word": "SaaS",
+      "start": 9.800000190734863
+    },
+    {
+      "end": 10.380000114440918,
+      "word": "command",
+      "start": 10.039999961853027
+    },
+    {
+      "end": 10.5600004196167,
+      "word": "center",
+      "start": 10.380000114440918
+    },
+    {
+      "end": 10.920000076293945,
+      "word": "for",
+      "start": 10.5600004196167
+    },
+    {
+      "end": 11.0600004196167,
+      "word": "modern",
+      "start": 10.920000076293945
+    },
+    {
+      "end": 11.699999809265137,
+      "word": "operations.",
+      "start": 11.0600004196167
+    },
+    {
+      "end": 12.359999656677246,
+      "word": "Connect",
+      "start": 12.359999656677246
+    },
+    {
+      "end": 12.800000190734863,
+      "word": "your",
+      "start": 12.359999656677246
+    },
+    {
+      "end": 12.800000190734863,
+      "word": "tools",
+      "start": 12.800000190734863
+    },
+    {
+      "end": 13.460000038146973,
+      "word": "in",
+      "start": 12.800000190734863
+    },
+    {
+      "end": 13.460000038146973,
+      "word": "minutes.",
+      "start": 13.460000038146973
+    },
+    {
+      "end": 14.0600004196167,
+      "word": "Automate",
+      "start": 13.9399995803833
+    },
+    {
+      "end": 14.520000457763672,
+      "word": "repetitive",
+      "start": 14.0600004196167
+    },
+    {
+      "end": 15.039999961853027,
+      "word": "workflows.",
+      "start": 14.520000457763672
+    },
+    {
+      "end": 15.800000190734863,
+      "word": "See",
+      "start": 15.65999984741211
+    },
+    {
+      "end": 16.100000381469727,
+      "word": "every",
+      "start": 15.800000190734863
+    },
+    {
+      "end": 16.540000915527344,
+      "word": "task,",
+      "start": 16.100000381469727
+    },
+    {
+      "end": 16.979999542236328,
+      "word": "status,",
+      "start": 16.799999237060547
+    },
+    {
+      "end": 17.299999237060547,
+      "word": "and",
+      "start": 17.040000915527344
+    },
+    {
+      "end": 17.559999465942383,
+      "word": "bottleneck",
+      "start": 17.299999237060547
+    },
+    {
+      "end": 17.780000686645508,
+      "word": "in",
+      "start": 17.559999465942383
+    },
+    {
+      "end": 17.940000534057617,
+      "word": "one",
+      "start": 17.780000686645508
+    },
+    {
+      "end": 18.280000686645508,
+      "word": "place.",
+      "start": 17.940000534057617
+    },
+    {
+      "end": 18.8799991607666,
+      "word": "Teams",
+      "start": 18.8799991607666
+    },
+    {
+      "end": 19.18000030517578,
+      "word": "cut",
+      "start": 18.8799991607666
+    },
+    {
+      "end": 19.5,
+      "word": "manual",
+      "start": 19.18000030517578
+    },
+    {
+      "end": 19.739999771118164,
+      "word": "work",
+      "start": 19.5
+    },
+    {
+      "end": 19.940000534057617,
+      "word": "by",
+      "start": 19.739999771118164
+    },
+    {
+      "end": 20.700000762939453,
+      "word": "40%,",
+      "start": 19.940000534057617
+    },
+    {
+      "end": 21.18000030517578,
+      "word": "respond",
+      "start": 20.700000762939453
+    },
+    {
+      "end": 21.719999313354492,
+      "word": "3x",
+      "start": 21.18000030517578
+    },
+    {
+      "end": 22.079999923706055,
+      "word": "faster,",
+      "start": 21.719999313354492
+    },
+    {
+      "end": 22.3799991607666,
+      "word": "and",
+      "start": 22.239999771118164
+    },
+    {
+      "end": 22.68000030517578,
+      "word": "reclaim",
+      "start": 22.3799991607666
+    },
+    {
+      "end": 23.059999465942383,
+      "word": "10",
+      "start": 22.68000030517578
+    },
+    {
+      "end": 23.34000015258789,
+      "word": "hours",
+      "start": 23.059999465942383
+    },
+    {
+      "end": 23.700000762939453,
+      "word": "every",
+      "start": 23.34000015258789
+    },
+    {
+      "end": 23.920000076293945,
+      "word": "week.",
+      "start": 23.700000762939453
+    },
+    {
+      "end": 24.559999465942383,
+      "word": "No",
+      "start": 24.299999237060547
+    },
+    {
+      "end": 25.18000030517578,
+      "word": "spreadsheets.",
+      "start": 24.559999465942383
+    },
+    {
+      "end": 25.84000015258789,
+      "word": "No",
+      "start": 25.600000381469727
+    },
+    {
+      "end": 26.18000030517578,
+      "word": "chasing.",
+      "start": 25.84000015258789
+    },
+    {
+      "end": 26.760000228881836,
+      "word": "No",
+      "start": 26.600000381469727
+    },
+    {
+      "end": 27.079999923706055,
+      "word": "blind",
+      "start": 26.760000228881836
+    },
+    {
+      "end": 27.420000076293945,
+      "word": "spots.",
+      "start": 27.079999923706055
+    },
+    {
+      "end": 27.799999237060547,
+      "word": "Turn",
+      "start": 27.420000076293945
+    },
+    {
+      "end": 28.440000534057617,
+      "word": "operational",
+      "start": 27.799999237060547
+    },
+    {
+      "end": 28.799999237060547,
+      "word": "friction",
+      "start": 28.440000534057617
+    },
+    {
+      "end": 29.299999237060547,
+      "word": "into",
+      "start": 28.799999237060547
+    },
+    {
+      "end": 29.739999771118164,
+      "word": "measurable",
+      "start": 29.299999237060547
+    },
+    {
+      "end": 30.200000762939453,
+      "word": "momentum.",
+      "start": 29.739999771118164
+    },
+    {
+      "end": 31.1200008392334,
+      "word": "Start",
+      "start": 31.1200008392334
+    },
+    {
+      "end": 31.31999969482422,
+      "word": "your",
+      "start": 31.1200008392334
+    },
+    {
+      "end": 31.559999465942383,
+      "word": "free",
+      "start": 31.31999969482422
+    },
+    {
+      "end": 31.760000228881836,
+      "word": "trial",
+      "start": 31.559999465942383
+    },
+    {
+      "end": 32.220001220703125,
+      "word": "today.",
+      "start": 31.760000228881836
+    },
+    {
+      "end": 32.97999954223633,
+      "word": "Build",
+      "start": 32.97999954223633
+    },
+    {
+      "end": 33.439998626708984,
+      "word": "a",
+      "start": 32.97999954223633
+    },
+    {
+      "end": 33.47999954223633,
+      "word": "faster",
+      "start": 33.439998626708984
+    },
+    {
+      "end": 33.84000015258789,
+      "word": "business",
+      "start": 33.47999954223633
+    },
+    {
+      "end": 34.13999938964844,
+      "word": "with",
+      "start": 33.84000015258789
+    },
+    {
+      "end": 34.63999938964844,
+      "word": "Flowpilot.",
+      "start": 34.13999938964844
+    }
+  ]
+}
+
+semantic pose:
+[{"timing":{"endSec":5.460000038146973,"endFrame":164,"startSec":0,"startFrame":0,"durationFrames":164},"reasoning":"The sentence presents a compact parent/outcome structure: a repeated temporal frame leads into a quantified loss experienced by teams, with three operational causes listed as parallel components. The dominant cinematic idea is not the activities individually, but the cumulative weekly waste of 12 hours. The listed actions should remain grouped as a coordinated inefficiency cluster because they function together as the explanation for the loss. The number stays attached to its unit and meaning as a concrete time-cost anchor. Narratively, this works as an intro problem statement: broad relevance, immediate pain, measurable stakes, and clear visual metaphors for chaos, broken flow, and information hunting.","confidence":0.97,"sentenceId":"sentence-1","sentenceText":"Every week, teams lose 12 hours chasing updates, fixing handoffs, and searching for answers.","semanticIdeas":[{"id":"idea_01","type":"productivity loss","phrase":"Every week, teams lose 12 hours","meaning":"A recurring and measurable loss of team time on a weekly basis","importance":0.98,"timingWeight":0.96,"cinematicRole":"primary","emotionalWeight":0.82,"visualPotential":0.9,"abstractionLevel":0.22,"parentRelationship":null},{"id":"idea_02","type":"organizational inefficiency","phrase":"chasing updates, fixing handoffs, and searching for answers","meaning":"Fragmented coordination work consumes attention through status pursuit, workflow repair, and information retrieval","importance":0.94,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.78,"visualPotential":0.88,"abstractionLevel":0.36,"parentRelationship":"idea_01"},{"id":"idea_03","type":"recurring pattern","phrase":"Every week","meaning":"The problem is ongoing, habitual, and structurally embedded rather than occasional","importance":0.8,"timingWeight":0.84,"cinematicRole":"secondary","emotionalWeight":0.58,"visualPotential":0.62,"abstractionLevel":0.28,"parentRelationship":"idea_01"},{"id":"idea_04","type":"workforce collective","phrase":"teams","meaning":"The burden affects coordinated groups rather than isolated individuals, implying organizational scale","importance":0.76,"timingWeight":0.67,"cinematicRole":"secondary","emotionalWeight":0.55,"visualPotential":0.72,"abstractionLevel":0.34,"parentRelationship":"idea_01"},{"id":"idea_05","type":"time cost","phrase":"12 hours","meaning":"A concrete quantified duration that makes the inefficiency tangible and credible","importance":0.92,"timingWeight":0.93,"cinematicRole":"primary","emotionalWeight":0.73,"visualPotential":0.86,"abstractionLevel":0.12,"parentRelationship":"idea_01"},{"id":"idea_06","type":"status-seeking process","phrase":"chasing updates","meaning":"Teams spend time actively pursuing information that should already be visible or accessible","importance":0.83,"timingWeight":0.73,"cinematicRole":"supporting","emotionalWeight":0.68,"visualPotential":0.85,"abstractionLevel":0.25,"parentRelationship":"idea_02"},{"id":"idea_07","type":"workflow breakdown","phrase":"fixing handoffs","meaning":"Work transitions between people or stages are failing and require manual repair","importance":0.87,"timingWeight":0.78,"cinematicRole":"supporting","emotionalWeight":0.74,"visualPotential":0.89,"abstractionLevel":0.3,"parentRelationship":"idea_02"},{"id":"idea_08","type":"information retrieval friction","phrase":"searching for answers","meaning":"Needed knowledge is not readily available, creating drag and uncertainty in work","importance":0.84,"timingWeight":0.75,"cinematicRole":"supporting","emotionalWeight":0.72,"visualPotential":0.8,"abstractionLevel":0.27,"parentRelationship":"idea_02"}],"semanticSummary":{"dominantTheme":"Recurring team productivity loss caused by coordination and information friction","visualDensity":0.86,"complexityScore":0.46,"emotionalIntensity":0.74,"recommendedMaxVisualIdeas":4},"narrativePosition":{"section":"intro","progressionWeight":0},"semanticRelationships":[{"to":"idea_01","from":"idea_03","relationshipType":"frames"},{"to":"idea_01","from":"idea_04","relationshipType":"experiences"},{"to":"idea_01","from":"idea_05","relationshipType":"quantifies"},{"to":"idea_01","from":"idea_02","relationshipType":"causes"},{"to":"idea_02","from":"idea_06","relationshipType":"component_of"},{"to":"idea_02","from":"idea_07","relationshipType":"component_of"},{"to":"idea_02","from":"idea_08","relationshipType":"component_of"},{"to":"idea_05","from":"idea_06","relationshipType":"contributes_to"},{"to":"idea_05","from":"idea_07","relationshipType":"contributes_to"},{"to":"idea_05","from":"idea_08","relationshipType":"contributes_to"}]},{"timing":{"endSec":6.579999923706055,"endFrame":198,"startSec":5.78000020980835,"startFrame":173,"durationFrames":25},"reasoning":"The sentence is extremely compact but semantically unified. The core meaning is not merely 'work' plus 'slows' as isolated words, but a high-stakes process experiencing reduced momentum. 'Critical' elevates the work from ordinary labor to something essential, urgent, or consequential. 'Slows' introduces temporal drag and implies delay, resistance, or interruption. The strongest cinematic concept is the combined state change: essential progress losing speed.","confidence":0.97,"sentenceId":"sentence-2","sentenceText":"Critical work slows.","semanticIdeas":[{"id":"idea_01","type":"process","phrase":"critical work","meaning":"An essential task or high-priority effort that carries significant importance to the broader situation","importance":0.94,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.68,"abstractionLevel":0.5,"parentRelationship":null},{"id":"idea_02","type":"change","phrase":"slows","meaning":"A reduction in pace, momentum, or progress affecting the ongoing activity","importance":0.89,"timingWeight":0.95,"cinematicRole":"primary","emotionalWeight":0.66,"visualPotential":0.74,"abstractionLevel":0.42,"parentRelationship":"idea_01"},{"id":"idea_03","type":"cause_effect","phrase":"critical work slows","meaning":"An important process loses speed, implying delay, friction, or interruption in something vital","importance":0.98,"timingWeight":0.98,"cinematicRole":"primary","emotionalWeight":0.8,"visualPotential":0.82,"abstractionLevel":0.35,"parentRelationship":null}],"semanticSummary":{"dominantTheme":"Vital progress is being hindered","visualDensity":0.56,"complexityScore":0.2,"emotionalIntensity":0.63,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"intro","progressionWeight":0.07692307692307693},"semanticRelationships":[{"to":"idea_03","from":"idea_01","relationshipType":"modified_into"},{"to":"idea_03","from":"idea_02","relationshipType":"defines_state_change"},{"to":"idea_01","from":"idea_02","relationshipType":"affects"}]},{"timing":{"endSec":7.880000114440918,"endFrame":237,"startSec":7.420000076293945,"startFrame":222,"durationFrames":15},"reasoning":"The sentence is extremely compact but semantically unified: it conveys a negative financial movement centered on declining revenue. The primary concept is not the individual words but the business condition of reduced earnings. This also implies downward momentum and can serve narratively as an early warning signal of instability. Because the line appears in an intro section, its pacing importance is high: it quickly establishes concern, tension, or deterioration.","confidence":0.96,"sentenceId":"sentence-3","sentenceText":"Revenue slips.","semanticIdeas":[{"id":"idea_01","type":"finance","phrase":"Revenue slips","meaning":"A decline in revenue, implying weakening financial performance or reduced incoming earnings","importance":0.97,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.74,"abstractionLevel":0.52,"parentRelationship":null},{"id":"idea_02","type":"growth","phrase":"financial decline","meaning":"Negative movement in business or economic momentum","importance":0.78,"timingWeight":0.72,"cinematicRole":"secondary","emotionalWeight":0.68,"visualPotential":0.81,"abstractionLevel":0.44,"parentRelationship":"idea_01"},{"id":"idea_03","type":"cause/effect","phrase":"emerging instability signal","meaning":"The revenue drop functions as an indicator of possible broader operational or market trouble","importance":0.64,"timingWeight":0.58,"cinematicRole":"supporting","emotionalWeight":0.61,"visualPotential":0.66,"abstractionLevel":0.67,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Financial decline","visualDensity":0.55,"complexityScore":0.18,"emotionalIntensity":0.63,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"intro","progressionWeight":0.15384615384615385},"semanticRelationships":[{"to":"idea_02","from":"idea_01","relationshipType":"expresses"},{"to":"idea_03","from":"idea_01","relationshipType":"signals"},{"to":"idea_03","from":"idea_02","relationshipType":"supports"}]},{"timing":{"endSec":11.699999809265137,"endFrame":351,"startSec":8.65999984741211,"startFrame":259,"durationFrames":92},"reasoning":"The sentence is a compact product-reveal structure. Its narrative core is the introduction of Flowpilot, immediately defined through a strong value metaphor: a SaaS command center. The meaning hierarchy centers on brand introduction first, then platform identity, then operational application. 'Command center' is the most cinematically useful phrase because it implies dashboards, orchestration, visibility, and control. 'Modern operations' broadens the relevance and suggests contemporary, interconnected business workflows. The sentence functions as a middle-section positioning statement rather than a full argument, so the cinematic emphasis should stay on identity, centralization, and operational intelligence instead of detailed feature breakdown.","confidence":0.96,"sentenceId":"sentence-4","sentenceText":"Meet Flowpilot, the SaaS command center for modern operations.","semanticIdeas":[{"id":"idea_01","type":"entity_introduction","phrase":"Meet Flowpilot","meaning":"An introduction of a named product or brand intended to establish recognition and invite attention.","importance":0.98,"timingWeight":0.92,"cinematicRole":"primary","emotionalWeight":0.62,"visualPotential":0.78,"abstractionLevel":0.25,"parentRelationship":null},{"id":"idea_02","type":"technology_platform","phrase":"the SaaS command center","meaning":"A software-as-a-service platform positioned as a central hub for oversight, coordination, and control.","importance":0.94,"timingWeight":0.88,"cinematicRole":"primary","emotionalWeight":0.5,"visualPotential":0.88,"abstractionLevel":0.42,"parentRelationship":"idea_01"},{"id":"idea_03","type":"operational_domain","phrase":"for modern operations","meaning":"The platform is designed to serve contemporary operational environments characterized by complexity, speed, and connected workflows.","importance":0.86,"timingWeight":0.76,"cinematicRole":"secondary","emotionalWeight":0.44,"visualPotential":0.74,"abstractionLevel":0.5,"parentRelationship":"idea_02"},{"id":"idea_04","type":"value_positioning","phrase":"command center for modern operations","meaning":"The product is framed not as a simple tool but as the central operational intelligence layer that organizes and directs work.","importance":0.91,"timingWeight":0.84,"cinematicRole":"primary","emotionalWeight":0.57,"visualPotential":0.9,"abstractionLevel":0.38,"parentRelationship":"idea_01"},{"id":"idea_05","type":"brand_tone","phrase":"Meet","meaning":"A direct, welcoming invitation that creates an onboarding moment and signals a product reveal.","importance":0.72,"timingWeight":0.7,"cinematicRole":"supporting","emotionalWeight":0.6,"visualPotential":0.63,"abstractionLevel":0.3,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Product introduction of a centralized SaaS platform for modern operational control","visualDensity":0.79,"complexityScore":0.34,"emotionalIntensity":0.52,"recommendedMaxVisualIdeas":3},"narrativePosition":{"section":"middle","progressionWeight":0.23076923076923078},"semanticRelationships":[{"to":"idea_02","from":"idea_01","relationshipType":"is_defined_as"},{"to":"idea_03","from":"idea_02","relationshipType":"serves"},{"to":"idea_01","from":"idea_04","relationshipType":"positions"},{"to":"idea_01","from":"idea_05","relationshipType":"introduces"},{"to":"idea_04","from":"idea_02","relationshipType":"expresses"},{"to":"idea_04","from":"idea_03","relationshipType":"contextualizes"}]},{"timing":{"endSec":13.460000038146973,"endFrame":404,"startSec":12.359999656677246,"startFrame":370,"durationFrames":34},"reasoning":"The sentence functions as a compact value proposition centered on rapid integration. The primary semantic unit is not merely 'connect' or 'tools' separately, but the combined action 'connect your tools,' which conveys workflow unification and practical interoperability. 'In minutes' must remain attached as a time-value claim that reduces perceived effort and increases momentum. The phrase also carries a secondary narrative of user empowerment because the tools are already the user's own assets, suggesting compatibility rather than disruption. Cinematically, the strongest structure is a process-to-outcome transformation: disconnected tools become connected quickly, producing a seamless setup experience.","confidence":0.97,"sentenceId":"sentence-5","sentenceText":"Connect your tools in minutes.","semanticIdeas":[{"id":"idea_01","type":"process","phrase":"connect your tools","meaning":"A user is invited to link their existing tools into a unified system or workflow.","importance":0.97,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.62,"visualPotential":0.88,"abstractionLevel":0.34,"parentRelationship":null},{"id":"idea_02","type":"time-efficiency","phrase":"in minutes","meaning":"The connection process is positioned as fast, low-friction, and immediately achievable.","importance":0.9,"timingWeight":0.93,"cinematicRole":"secondary","emotionalWeight":0.58,"visualPotential":0.72,"abstractionLevel":0.28,"parentRelationship":"idea_01"},{"id":"idea_03","type":"user-empowerment","phrase":"your tools","meaning":"The tools already belong to the user, implying personalization, compatibility, and control rather than replacement.","importance":0.78,"timingWeight":0.64,"cinematicRole":"supporting","emotionalWeight":0.55,"visualPotential":0.7,"abstractionLevel":0.4,"parentRelationship":"idea_01"},{"id":"idea_04","type":"integration-value","phrase":"seamless setup experience","meaning":"The sentence implies a frictionless onboarding moment where separate components become operational together quickly.","importance":0.84,"timingWeight":0.82,"cinematicRole":"secondary","emotionalWeight":0.6,"visualPotential":0.86,"abstractionLevel":0.46,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Fast user-controlled tool integration","visualDensity":0.74,"complexityScore":0.22,"emotionalIntensity":0.52,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"middle","progressionWeight":0.3076923076923077},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"qualifies"},{"to":"idea_01","from":"idea_03","relationshipType":"personalizes"},{"to":"idea_01","from":"idea_04","relationshipType":"implies"},{"to":"idea_04","from":"idea_01","relationshipType":"results_in"},{"to":"idea_04","from":"idea_02","relationshipType":"accelerates"}]},{"timing":{"endSec":15.039999961853027,"endFrame":452,"startSec":13.9399995803833,"startFrame":418,"durationFrames":34},"reasoning":"The sentence is a concise imperative centered on one dominant action: converting repeated operational workflows into automated processes. The core meaning is not merely 'automation' or 'workflows' separately, but the transformation of routine work into systemized execution. Narrative function in a middle section suggests forward momentum and capability expansion rather than setup or conclusion. Cinematically, the strongest structure is a before/after process transformation with repetitive manual loops resolving into streamlined automated flow.","confidence":0.96,"sentenceId":"sentence-6","sentenceText":"Automate repetitive workflows.","semanticIdeas":[{"id":"idea_01","type":"process_automation","phrase":"automate repetitive workflows","meaning":"Transform recurring operational processes from manual execution into automated systems","importance":0.98,"timingWeight":0.86,"cinematicRole":"primary","emotionalWeight":0.52,"visualPotential":0.84,"abstractionLevel":0.42,"parentRelationship":null},{"id":"idea_02","type":"efficiency","phrase":"repetitive workflows","meaning":"Routine, repeated task sequences that consume time and are suitable for streamlining","importance":0.8,"timingWeight":0.68,"cinematicRole":"secondary","emotionalWeight":0.34,"visualPotential":0.72,"abstractionLevel":0.36,"parentRelationship":"idea_01"},{"id":"idea_03","type":"transformation","phrase":"manual-to-automated process shift","meaning":"A functional upgrade from human repetition to system-driven execution","importance":0.88,"timingWeight":0.74,"cinematicRole":"secondary","emotionalWeight":0.46,"visualPotential":0.83,"abstractionLevel":0.48,"parentRelationship":"idea_01"},{"id":"idea_04","type":"productivity","phrase":"operational time savings","meaning":"Automation reduces friction and frees time by removing repeated manual effort","importance":0.71,"timingWeight":0.55,"cinematicRole":"supporting","emotionalWeight":0.39,"visualPotential":0.58,"abstractionLevel":0.51,"parentRelationship":"idea_03"}],"semanticSummary":{"dominantTheme":"Process automation for efficiency","visualDensity":0.67,"complexityScore":0.28,"emotionalIntensity":0.41,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"middle","progressionWeight":0.38461538461538464},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"object_of_action"},{"to":"idea_01","from":"idea_03","relationshipType":"defines_transformation"},{"to":"idea_04","from":"idea_01","relationshipType":"leads_to"},{"to":"idea_03","from":"idea_02","relationshipType":"undergoes"}]},{"timing":{"endSec":18.280000686645508,"endFrame":549,"startSec":15.65999984741211,"startFrame":469,"durationFrames":80},"reasoning":"The sentence is a concise product promise centered on comprehensive visibility. Its primary semantic unit is not the separate nouns alone, but the combined claim that all meaningful workflow information—tasks, progress states, and constraints—can be seen together in a centralized view. The narrative structure is an imperative invitation ('See') leading to a consolidation outcome ('in one place'). Conceptually, 'task,' 'status,' and 'bottleneck' function as coordinated components of a broader operational picture rather than isolated ideas. Cinematically, the strongest hierarchy is: first, the unified dashboard-like visibility; second, the specific workflow elements being revealed; third, the sense of empowerment and simplification created by centralization. This is a middle-section sentence, so its pacing role is clarifying and organizing rather than introducing or concluding a broader story.","confidence":0.96,"sentenceId":"sentence-7","sentenceText":"See every task, status, and bottleneck in one place.","semanticIdeas":[{"id":"idea_01","type":"operational visibility","phrase":"every task, status, and bottleneck in one place","meaning":"A unified view of all work elements and constraints within a single interface or location","importance":0.97,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.9,"abstractionLevel":0.38,"parentRelationship":null},{"id":"idea_02","type":"work management","phrase":"every task","meaning":"The complete set of actionable work items being tracked","importance":0.82,"timingWeight":0.7,"cinematicRole":"secondary","emotionalWeight":0.45,"visualPotential":0.78,"abstractionLevel":0.35,"parentRelationship":"idea_01"},{"id":"idea_03","type":"progress monitoring","phrase":"status","meaning":"The current state or progress condition of ongoing work","importance":0.8,"timingWeight":0.68,"cinematicRole":"secondary","emotionalWeight":0.42,"visualPotential":0.76,"abstractionLevel":0.4,"parentRelationship":"idea_01"},{"id":"idea_04","type":"constraint detection","phrase":"bottleneck","meaning":"Points of blockage, slowdown, or friction that limit workflow performance","importance":0.88,"timingWeight":0.8,"cinematicRole":"secondary","emotionalWeight":0.66,"visualPotential":0.84,"abstractionLevel":0.33,"parentRelationship":"idea_01"},{"id":"idea_05","type":"centralization","phrase":"in one place","meaning":"Consolidation of dispersed information into a single accessible location","importance":0.9,"timingWeight":0.83,"cinematicRole":"supporting","emotionalWeight":0.58,"visualPotential":0.87,"abstractionLevel":0.28,"parentRelationship":"idea_01"},{"id":"idea_06","type":"user empowerment","phrase":"See","meaning":"An invitation to gain immediate clarity, awareness, and control through visibility","importance":0.76,"timingWeight":0.62,"cinematicRole":"supporting","emotionalWeight":0.64,"visualPotential":0.7,"abstractionLevel":0.44,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Unified operational visibility","visualDensity":0.83,"complexityScore":0.42,"emotionalIntensity":0.58,"recommendedMaxVisualIdeas":3},"narrativePosition":{"section":"middle","progressionWeight":0.46153846153846156},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"component_of"},{"to":"idea_01","from":"idea_03","relationshipType":"component_of"},{"to":"idea_01","from":"idea_04","relationshipType":"component_of"},{"to":"idea_01","from":"idea_05","relationshipType":"enables"},{"to":"idea_01","from":"idea_06","relationshipType":"frames"},{"to":"idea_02","from":"idea_05","relationshipType":"aggregates"},{"to":"idea_03","from":"idea_05","relationshipType":"aggregates"},{"to":"idea_04","from":"idea_05","relationshipType":"aggregates"},{"to":"idea_03","from":"idea_04","relationshipType":"affects"},{"to":"idea_06","from":"idea_01","relationshipType":"delivers"}]},{"timing":{"endSec":23.920000076293945,"endFrame":718,"startSec":18.8799991607666,"startFrame":566,"durationFrames":152},"reasoning":"The sentence is a compact performance-outcome structure centered on teams achieving three linked operational benefits. The concepts should remain grouped as quantified outcomes rather than fragmented metrics. The strongest cinematic elements are the reduction of manual work, acceleration of response speed, and recovery of weekly time, all of which are concrete, measurable, and visually translatable. Narratively, this functions as a middle-section proof point: a credibility-building demonstration of impact through numbers. The conceptual hierarchy places the team as the subject, the three metrics as primary evidence, and the broader transformation narrative as supporting meaning.","confidence":0.96,"sentenceId":"sentence-8","sentenceText":"Teams cut manual work by 40%, respond 3x faster, and reclaim 10 hours every week.","semanticIdeas":[{"id":"idea_01","type":"organizational performance improvement","phrase":"Teams","meaning":"Collective workers or operational units experiencing measurable productivity gains","importance":0.88,"timingWeight":0.7,"cinematicRole":"primary","emotionalWeight":0.56,"visualPotential":0.72,"abstractionLevel":0.42,"parentRelationship":null},{"id":"idea_02","type":"efficiency gain","phrase":"cut manual work by 40%","meaning":"A substantial reduction in repetitive human effort, signaling automation or process optimization","importance":0.96,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.68,"visualPotential":0.86,"abstractionLevel":0.34,"parentRelationship":"idea_01"},{"id":"idea_03","type":"responsiveness improvement","phrase":"respond 3x faster","meaning":"Teams dramatically accelerate reaction time, implying higher agility and service performance","importance":0.94,"timingWeight":0.88,"cinematicRole":"primary","emotionalWeight":0.7,"visualPotential":0.83,"abstractionLevel":0.36,"parentRelationship":"idea_01"},{"id":"idea_04","type":"time recovery","phrase":"reclaim 10 hours every week","meaning":"Previously lost labor time is returned as usable capacity on a recurring weekly basis","importance":0.95,"timingWeight":0.92,"cinematicRole":"primary","emotionalWeight":0.78,"visualPotential":0.9,"abstractionLevel":0.28,"parentRelationship":"idea_01"},{"id":"idea_05","type":"compound outcome structure","phrase":"three measurable gains from one team-level improvement","meaning":"The sentence presents a coordinated outcome bundle: less manual effort, faster response, and recovered time","importance":0.91,"timingWeight":0.84,"cinematicRole":"secondary","emotionalWeight":0.62,"visualPotential":0.8,"abstractionLevel":0.49,"parentRelationship":null},{"id":"idea_06","type":"productivity narrative","phrase":"operational transformation through measurable efficiency","meaning":"The broader narrative is that teams become more effective through quantifiable workflow improvement","importance":0.89,"timingWeight":0.66,"cinematicRole":"supporting","emotionalWeight":0.6,"visualPotential":0.69,"abstractionLevel":0.58,"parentRelationship":null}],"semanticSummary":{"dominantTheme":"Team productivity transformation through measurable efficiency gains","visualDensity":0.82,"complexityScore":0.43,"emotionalIntensity":0.67,"recommendedMaxVisualIdeas":3},"narrativePosition":{"section":"middle","progressionWeight":0.5384615384615384},"semanticRelationships":[{"to":"idea_02","from":"idea_01","relationshipType":"experiences"},{"to":"idea_03","from":"idea_01","relationshipType":"experiences"},{"to":"idea_04","from":"idea_01","relationshipType":"experiences"},{"to":"idea_05","from":"idea_02","relationshipType":"contributes_to"},{"to":"idea_05","from":"idea_03","relationshipType":"contributes_to"},{"to":"idea_05","from":"idea_04","relationshipType":"contributes_to"},{"to":"idea_06","from":"idea_05","relationshipType":"supports"},{"to":"idea_04","from":"idea_02","relationshipType":"leads_to"},{"to":"idea_03","from":"idea_02","relationshipType":"supports"}]},{"timing":{"endSec":25.18000030517578,"endFrame":756,"startSec":24.299999237060547,"startFrame":728,"durationFrames":28},"reasoning":"The sentence is extremely short but semantically directive. It functions as a prohibition rather than a descriptive statement. The core unit is not merely the object 'spreadsheets' but the complete concept 'No spreadsheets,' which rejects a specific representational mode. In narrative terms, this likely serves as a mid-sequence correction or tonal pivot, steering the cinematic language away from data-heavy, corporate, or analytical visuals toward a more visceral or story-driven approach. The primary meaning is exclusion; the secondary meaning is the symbolic identity of spreadsheets as a stand-in for sterile analysis; the supporting meaning is the implied narrative redirection created by that exclusion.","confidence":0.96,"sentenceId":"sentence-9","sentenceText":"No spreadsheets.","semanticIdeas":[{"id":"idea_01","type":"rejection","phrase":"No spreadsheets","meaning":"An explicit dismissal of spreadsheets as the desired frame, tool, or mode of communication.","importance":0.98,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.52,"visualPotential":0.72,"abstractionLevel":0.34,"parentRelationship":null},{"id":"idea_02","type":"communication_mode","phrase":"spreadsheets","meaning":"A symbol of quantitative, corporate, analytical, or administrative representation.","importance":0.74,"timingWeight":0.63,"cinematicRole":"secondary","emotionalWeight":0.28,"visualPotential":0.66,"abstractionLevel":0.48,"parentRelationship":"idea_01"},{"id":"idea_03","type":"narrative_redirection","phrase":"implicit move away from sterile analysis","meaning":"The phrase redirects the narrative toward something more human, visual, intuitive, or experiential by excluding spreadsheet logic.","importance":0.81,"timingWeight":0.76,"cinematicRole":"supporting","emotionalWeight":0.58,"visualPotential":0.77,"abstractionLevel":0.61,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Rejection of analytical or corporate framing","visualDensity":0.51,"complexityScore":0.22,"emotionalIntensity":0.45,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"middle","progressionWeight":0.6153846153846154},"semanticRelationships":[{"to":"idea_02","from":"idea_01","relationshipType":"negates"},{"to":"idea_03","from":"idea_01","relationshipType":"implies"},{"to":"idea_03","from":"idea_02","relationshipType":"symbolizes_opposite_of"}]},{"timing":{"endSec":26.18000030517578,"endFrame":786,"startSec":25.600000381469727,"startFrame":768,"durationFrames":18},"reasoning":"The sentence is extremely short and functions as a complete semantic directive. Its core meaning is not the literal word alone, but the behavioral rule against pursuit. In a cinematic system, this suggests restraint, pause, control, or disengagement rather than active action. Because the phrase is compact and imperative in tone, it carries pacing significance in a middle section by interrupting momentum or redefining intent.","confidence":0.94,"sentenceId":"sentence-10","sentenceText":"No chasing.","semanticIdeas":[{"id":"idea_01","type":"behavioral constraint","phrase":"No chasing","meaning":"An instruction or declaration rejecting pursuit, urgency, or aggressive follow-up","importance":0.97,"timingWeight":0.86,"cinematicRole":"primary","emotionalWeight":0.58,"visualPotential":0.72,"abstractionLevel":0.52,"parentRelationship":null},{"id":"idea_02","type":"pace regulation","phrase":"absence of pursuit","meaning":"The scene or message establishes stillness, restraint, or non-escalation instead of motion toward a target","importance":0.76,"timingWeight":0.78,"cinematicRole":"secondary","emotionalWeight":0.5,"visualPotential":0.64,"abstractionLevel":0.56,"parentRelationship":"idea_01"},{"id":"idea_03","type":"relational stance","phrase":"refusal to pursue","meaning":"A subject chooses not to run after, pressure, or seek someone or something","importance":0.71,"timingWeight":0.69,"cinematicRole":"supporting","emotionalWeight":0.55,"visualPotential":0.68,"abstractionLevel":0.49,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Rejection of pursuit","visualDensity":0.42,"complexityScore":0.18,"emotionalIntensity":0.46,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"middle","progressionWeight":0.6923076923076923},"semanticRelationships":[{"to":"idea_02","from":"idea_01","relationshipType":"establishes"},{"to":"idea_03","from":"idea_01","relationshipType":"defines"},{"to":"idea_03","from":"idea_02","relationshipType":"contextualizes"}]},{"timing":{"endSec":27.420000076293945,"endFrame":823,"startSec":26.600000381469727,"startFrame":798,"durationFrames":25},"reasoning":"The sentence is a compact assurance statement. As a connected semantic unit, it expresses a guarantee of complete awareness, coverage, or scrutiny by negating the risk concept of blind spots. Its narrative function in a middle section is likely to reinforce trust, capability, or precision after prior setup. Cinematically, it works best as a single strong idea: reveal complete field of view, remove occluded zones, or show seamless surveillance/oversight. The phrase is short but conceptually potent because it implies prevention of error, hidden risk, and informational gaps.","confidence":0.96,"sentenceId":"sentence-11","sentenceText":"No blind spots.","semanticIdeas":[{"id":"idea_01","type":"perception","phrase":"No blind spots","meaning":"Complete visibility or awareness with no areas overlooked","importance":0.98,"timingWeight":0.84,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.86,"abstractionLevel":0.64,"parentRelationship":null},{"id":"idea_02","type":"risk","phrase":"blind spots","meaning":"Hidden gaps in perception, knowledge, coverage, or oversight that could create vulnerability","importance":0.78,"timingWeight":0.63,"cinematicRole":"secondary","emotionalWeight":0.66,"visualPotential":0.82,"abstractionLevel":0.68,"parentRelationship":"idea_01"},{"id":"idea_03","type":"assurance","phrase":"No","meaning":"Absolute negation that frames the statement as a confident guarantee of full coverage","importance":0.74,"timingWeight":0.57,"cinematicRole":"supporting","emotionalWeight":0.58,"visualPotential":0.49,"abstractionLevel":0.79,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Total visibility and absence of oversight gaps","visualDensity":0.62,"complexityScore":0.18,"emotionalIntensity":0.55,"recommendedMaxVisualIdeas":1},"narrativePosition":{"section":"middle","progressionWeight":0.7692307692307693},"semanticRelationships":[{"to":"idea_02","from":"idea_03","relationshipType":"negates"},{"to":"idea_02","from":"idea_01","relationshipType":"eliminates"},{"to":"idea_03","from":"idea_01","relationshipType":"is_defined_by"}]},{"timing":{"endSec":30.200000762939453,"endFrame":907,"startSec":27.420000076293945,"startFrame":822,"durationFrames":85},"reasoning":"This sentence is a compact transformation structure built around a before-state and after-state. The primary meaning is not simply operations or measurement alone, but the conversion of internal drag into observable forward progress. 'Operational friction' functions as the problem state, carrying implications of inefficiency, resistance, bottlenecks, and effort loss. 'Measurable momentum' functions as the desired outcome, combining both quantification and acceleration. The phrase 'turn into' is crucial because it introduces agency and intentional intervention, making the sentence feel like a strategic imperative rather than a neutral description. Cinematically, the strongest structure is a friction-to-motion transformation: obstruction, release, acceleration, then validation through metrics. As a middle-section sentence, it likely serves as a pivot from diagnosing challenges to demonstrating solution-driven progress.","confidence":0.96,"sentenceId":"sentence-12","sentenceText":"Turn operational friction into measurable momentum.","semanticIdeas":[{"id":"idea_01","type":"process_transformation","phrase":"turn operational friction into measurable momentum","meaning":"A directive to convert inefficiency and resistance within operations into visible, trackable forward progress.","importance":0.98,"timingWeight":0.94,"cinematicRole":"primary","emotionalWeight":0.82,"visualPotential":0.9,"abstractionLevel":0.62,"parentRelationship":null},{"id":"idea_02","type":"operations","phrase":"operational friction","meaning":"The drag, bottlenecks, complexity, or internal resistance that slows execution and reduces efficiency.","importance":0.86,"timingWeight":0.78,"cinematicRole":"secondary","emotionalWeight":0.68,"visualPotential":0.84,"abstractionLevel":0.56,"parentRelationship":"idea_01"},{"id":"idea_03","type":"performance_growth","phrase":"measurable momentum","meaning":"Sustained forward movement that can be quantified through metrics, outcomes, or performance indicators.","importance":0.91,"timingWeight":0.85,"cinematicRole":"secondary","emotionalWeight":0.76,"visualPotential":0.88,"abstractionLevel":0.48,"parentRelationship":"idea_01"},{"id":"idea_04","type":"measurement","phrase":"measurable","meaning":"The progress is not symbolic alone; it is validated by evidence, data, and accountability.","importance":0.72,"timingWeight":0.58,"cinematicRole":"supporting","emotionalWeight":0.42,"visualPotential":0.72,"abstractionLevel":0.44,"parentRelationship":"idea_03"},{"id":"idea_05","type":"symbolic_motion","phrase":"momentum","meaning":"A metaphor for accelerating progress, compounding movement, and growing force once resistance is overcome.","importance":0.83,"timingWeight":0.74,"cinematicRole":"supporting","emotionalWeight":0.79,"visualPotential":0.93,"abstractionLevel":0.4,"parentRelationship":"idea_03"},{"id":"idea_06","type":"strategic_intent","phrase":"turn into","meaning":"An intentional act of transformation rather than passive change, implying agency, design, and intervention.","importance":0.77,"timingWeight":0.69,"cinematicRole":"supporting","emotionalWeight":0.55,"visualPotential":0.75,"abstractionLevel":0.51,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Strategic transformation of operational inefficiency into quantifiable progress","visualDensity":0.84,"complexityScore":0.55,"emotionalIntensity":0.72,"recommendedMaxVisualIdeas":3},"narrativePosition":{"section":"middle","progressionWeight":0.8461538461538461},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"source_condition_for_transformation"},{"to":"idea_01","from":"idea_03","relationshipType":"target_outcome_of_transformation"},{"to":"idea_02","from":"idea_06","relationshipType":"acts_upon"},{"to":"idea_03","from":"idea_06","relationshipType":"creates"},{"to":"idea_03","from":"idea_04","relationshipType":"qualifies"},{"to":"idea_03","from":"idea_05","relationshipType":"symbolically_expresses"},{"to":"idea_03","from":"idea_02","relationshipType":"transformed_into"}]},{"timing":{"endSec":32.220001220703125,"endFrame":967,"startSec":31.1200008392334,"startFrame":933,"durationFrames":34},"reasoning":"The sentence functions as a concise outro conversion prompt. Its primary meaning is not descriptive but directive: it asks the viewer to take action now. The full semantic unit combines an action command (start), a low-barrier offer (free trial), and a time pressure cue (today). Together they form a classic end-card structure designed to convert interest into immediate participation. Cinematically, the most important idea is the unified call to action, while 'free trial' and 'today' serve as persuasive modifiers that reduce hesitation and increase urgency.","confidence":0.97,"sentenceId":"sentence-13","sentenceText":"Start your free trial today.","semanticIdeas":[{"id":"idea_01","type":"call_to_action","phrase":"Start your free trial today","meaning":"A direct invitation to begin using a product or service immediately without upfront cost.","importance":0.98,"timingWeight":0.96,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.74,"abstractionLevel":0.28,"parentRelationship":null},{"id":"idea_02","type":"access","phrase":"free trial","meaning":"A risk-reduced entry point that lowers commitment barriers and encourages adoption.","importance":0.9,"timingWeight":0.82,"cinematicRole":"secondary","emotionalWeight":0.64,"visualPotential":0.58,"abstractionLevel":0.35,"parentRelationship":"idea_01"},{"id":"idea_03","type":"urgency","phrase":"today","meaning":"Immediate action is encouraged, creating temporal urgency and closing momentum.","importance":0.86,"timingWeight":0.9,"cinematicRole":"secondary","emotionalWeight":0.68,"visualPotential":0.52,"abstractionLevel":0.4,"parentRelationship":"idea_01"},{"id":"idea_04","type":"user_activation","phrase":"Start","meaning":"The audience is positioned as the active participant who initiates the next step.","importance":0.84,"timingWeight":0.85,"cinematicRole":"supporting","emotionalWeight":0.61,"visualPotential":0.63,"abstractionLevel":0.33,"parentRelationship":"idea_01"}],"semanticSummary":{"dominantTheme":"Immediate low-risk conversion call to action","visualDensity":0.57,"complexityScore":0.18,"emotionalIntensity":0.66,"recommendedMaxVisualIdeas":2},"narrativePosition":{"section":"outro","progressionWeight":0.9230769230769231},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"defines_offer"},{"to":"idea_01","from":"idea_03","relationshipType":"adds_urgency"},{"to":"idea_01","from":"idea_04","relationshipType":"initiates_action"},{"to":"idea_04","from":"idea_02","relationshipType":"motivates"},{"to":"idea_04","from":"idea_03","relationshipType":"accelerates"}]},{"timing":{"endSec":34.63999938964844,"endFrame":1040,"startSec":32.97999954223633,"startFrame":989,"durationFrames":51},"reasoning":"The sentence is a concise outro call to action built around a transformation promise. The core semantic unit is not separate words but a single persuasive proposition: a business can be intentionally made faster through Flowpilot. 'Build a faster business' functions as the main narrative promise and conveys growth, efficiency, and momentum. 'Flowpilot' is the instrumental enabler and brand anchor. The phrase structure is imperative, causal, and promotional, making it suitable for a closing cinematic beat that emphasizes outcome first and tool second.","confidence":0.96,"sentenceId":"sentence-14","sentenceText":"Build a faster business with Flowpilot.","semanticIdeas":[{"id":"idea_01","type":"business_growth","phrase":"faster business","meaning":"A business operating with greater speed, efficiency, and momentum toward outcomes","importance":0.96,"timingWeight":0.9,"cinematicRole":"primary","emotionalWeight":0.72,"visualPotential":0.82,"abstractionLevel":0.46,"parentRelationship":null},{"id":"idea_02","type":"technology_enabler","phrase":"Flowpilot","meaning":"A branded tool or platform positioned as the enabling system that helps accelerate business performance","importance":0.93,"timingWeight":0.88,"cinematicRole":"primary","emotionalWeight":0.58,"visualPotential":0.76,"abstractionLevel":0.38,"parentRelationship":null},{"id":"idea_03","type":"process_transformation","phrase":"Build a faster business","meaning":"An imperative promise of transformation, suggesting intentional construction of a better-performing company rather than passive improvement","importance":0.91,"timingWeight":0.94,"cinematicRole":"primary","emotionalWeight":0.68,"visualPotential":0.79,"abstractionLevel":0.41,"parentRelationship":null},{"id":"idea_04","type":"cause_effect","phrase":"with Flowpilot","meaning":"A causal instrument relationship in which Flowpilot is presented as the means for achieving business acceleration","importance":0.84,"timingWeight":0.73,"cinematicRole":"secondary","emotionalWeight":0.49,"visualPotential":0.64,"abstractionLevel":0.35,"parentRelationship":"idea_03"},{"id":"idea_05","type":"brand_positioning","phrase":"outro call to action","meaning":"A closing branded directive that consolidates the message into a memorable action-oriented takeaway","importance":0.8,"timingWeight":0.86,"cinematicRole":"supporting","emotionalWeight":0.61,"visualPotential":0.7,"abstractionLevel":0.44,"parentRelationship":null}],"semanticSummary":{"dominantTheme":"Business acceleration through a branded enabling platform","visualDensity":0.69,"complexityScore":0.32,"emotionalIntensity":0.63,"recommendedMaxVisualIdeas":3},"narrativePosition":{"section":"outro","progressionWeight":1},"semanticRelationships":[{"to":"idea_01","from":"idea_02","relationshipType":"enables"},{"to":"idea_02","from":"idea_03","relationshipType":"uses"},{"to":"idea_02","from":"idea_04","relationshipType":"identifies_as_instrument"},{"to":"idea_01","from":"idea_04","relationshipType":"causes"},{"to":"idea_01","from":"idea_03","relationshipType":"promises"},{"to":"idea_03","from":"idea_05","relationshipType":"frames"},{"to":"idea_02","from":"idea_05","relationshipType":"brands"}]}]
+
+narrative analysis:
+[
+  {
+    "beatId": "beat_1",
+    "intent": "concept",
+    "timing": {
+      "endSec": 5.460000038146973,
+      "endFrame": 164,
+      "startSec": 0,
+      "startFrame": 0,
+      "durationFrames": 164
+    },
+    "reasoning": "Selected primary structural focus \"Every week, teams lose 12 hours\" (productivity loss) out of 8 potential semantic tags.",
+    "sentenceText": "Every week, teams lose 12 hours chasing updates, fixing handoffs, and searching for answers.",
+    "narrativeRole": "intro",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "productivity loss",
+        "phrase": "Every week, teams lose 12 hours",
+        "importance": 0.98,
+        "visualPotential": 0.9
+      }
+    ],
+    "sourceSentenceId": "sentence-1",
+    "emotionalIntensity": 0.74
+  },
+  {
+    "beatId": "beat_2",
+    "intent": "concept",
+    "timing": {
+      "endSec": 6.579999923706055,
+      "endFrame": 198,
+      "startSec": 5.78000020980835,
+      "startFrame": 173,
+      "durationFrames": 25
+    },
+    "reasoning": "Selected primary structural focus \"critical work slows\" (cause_effect) out of 3 potential semantic tags.",
+    "sentenceText": "Critical work slows.",
+    "narrativeRole": "intro",
+    "selectedIdeas": [
+      {
+        "id": "idea_03",
+        "type": "cause_effect",
+        "phrase": "critical work slows",
+        "importance": 0.98,
+        "visualPotential": 0.82
+      }
+    ],
+    "sourceSentenceId": "sentence-2",
+    "emotionalIntensity": 0.63
+  },
+  {
+    "beatId": "beat_3",
+    "intent": "capital_structure",
+    "timing": {
+      "endSec": 7.880000114440918,
+      "endFrame": 237,
+      "startSec": 7.420000076293945,
+      "startFrame": 222,
+      "durationFrames": 15
+    },
+    "reasoning": "Selected primary structural focus \"Revenue slips\" (finance) out of 3 potential semantic tags.",
+    "sentenceText": "Revenue slips.",
+    "narrativeRole": "intro",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "finance",
+        "phrase": "Revenue slips",
+        "importance": 0.97,
+        "visualPotential": 0.74
+      }
+    ],
+    "sourceSentenceId": "sentence-3",
+    "emotionalIntensity": 0.63
+  },
+  {
+    "beatId": "beat_4",
+    "intent": "concept",
+    "timing": {
+      "endSec": 11.699999809265137,
+      "endFrame": 351,
+      "startSec": 8.65999984741211,
+      "startFrame": 259,
+      "durationFrames": 92
+    },
+    "reasoning": "Selected primary structural focus \"Meet Flowpilot\" (entity_introduction) out of 5 potential semantic tags.",
+    "sentenceText": "Meet Flowpilot, the SaaS command center for modern operations.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "entity_introduction",
+        "phrase": "Meet Flowpilot",
+        "importance": 0.98,
+        "visualPotential": 0.78
+      }
+    ],
+    "sourceSentenceId": "sentence-4",
+    "emotionalIntensity": 0.52
+  },
+  {
+    "beatId": "beat_5",
+    "intent": "process",
+    "timing": {
+      "endSec": 13.460000038146973,
+      "endFrame": 404,
+      "startSec": 12.359999656677246,
+      "startFrame": 370,
+      "durationFrames": 34
+    },
+    "reasoning": "Selected primary structural focus \"connect your tools\" (process) out of 4 potential semantic tags.",
+    "sentenceText": "Connect your tools in minutes.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process",
+        "phrase": "connect your tools",
+        "importance": 0.97,
+        "visualPotential": 0.88
+      }
+    ],
+    "sourceSentenceId": "sentence-5",
+    "emotionalIntensity": 0.52
+  },
+  {
+    "beatId": "beat_6",
+    "intent": "process",
+    "timing": {
+      "endSec": 15.039999961853027,
+      "endFrame": 452,
+      "startSec": 13.9399995803833,
+      "startFrame": 418,
+      "durationFrames": 34
+    },
+    "reasoning": "Selected primary structural focus \"automate repetitive workflows\" (process_automation) out of 4 potential semantic tags.",
+    "sentenceText": "Automate repetitive workflows.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process_automation",
+        "phrase": "automate repetitive workflows",
+        "importance": 0.98,
+        "visualPotential": 0.84
+      }
+    ],
+    "sourceSentenceId": "sentence-6",
+    "emotionalIntensity": 0.41
+  },
+  {
+    "beatId": "beat_7",
+    "intent": "financial_metric",
+    "timing": {
+      "endSec": 18.280000686645508,
+      "endFrame": 549,
+      "startSec": 15.65999984741211,
+      "startFrame": 469,
+      "durationFrames": 80
+    },
+    "reasoning": "Selected primary structural focus \"every task, status, and bottleneck in one place\" (operational visibility) out of 6 potential semantic tags.",
+    "sentenceText": "See every task, status, and bottleneck in one place.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "operational visibility",
+        "phrase": "every task, status, and bottleneck in one place",
+        "importance": 0.97,
+        "visualPotential": 0.9
+      }
+    ],
+    "sourceSentenceId": "sentence-7",
+    "emotionalIntensity": 0.58
+  },
+  {
+    "beatId": "beat_8",
+    "intent": "concept",
+    "timing": {
+      "endSec": 23.920000076293945,
+      "endFrame": 718,
+      "startSec": 18.8799991607666,
+      "startFrame": 566,
+      "durationFrames": 152
+    },
+    "reasoning": "Selected primary structural focus \"cut manual work by 40%\" (efficiency gain) out of 6 potential semantic tags.",
+    "sentenceText": "Teams cut manual work by 40%, respond 3x faster, and reclaim 10 hours every week.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_02",
+        "type": "efficiency gain",
+        "phrase": "cut manual work by 40%",
+        "importance": 0.96,
+        "visualPotential": 0.86
+      }
+    ],
+    "sourceSentenceId": "sentence-8",
+    "emotionalIntensity": 0.67
+  },
+  {
+    "beatId": "beat_9",
+    "intent": "concept",
+    "timing": {
+      "endSec": 25.18000030517578,
+      "endFrame": 756,
+      "startSec": 24.299999237060547,
+      "startFrame": 728,
+      "durationFrames": 28
+    },
+    "reasoning": "Selected primary structural focus \"No spreadsheets\" (rejection) out of 3 potential semantic tags.",
+    "sentenceText": "No spreadsheets.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "rejection",
+        "phrase": "No spreadsheets",
+        "importance": 0.98,
+        "visualPotential": 0.72
+      }
+    ],
+    "sourceSentenceId": "sentence-9",
+    "emotionalIntensity": 0.45
+  },
+  {
+    "beatId": "beat_10",
+    "intent": "concept",
+    "timing": {
+      "endSec": 26.18000030517578,
+      "endFrame": 786,
+      "startSec": 25.600000381469727,
+      "startFrame": 768,
+      "durationFrames": 18
+    },
+    "reasoning": "Selected primary structural focus \"No chasing\" (behavioral constraint) out of 3 potential semantic tags.",
+    "sentenceText": "No chasing.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "behavioral constraint",
+        "phrase": "No chasing",
+        "importance": 0.97,
+        "visualPotential": 0.72
+      }
+    ],
+    "sourceSentenceId": "sentence-10",
+    "emotionalIntensity": 0.46
+  },
+  {
+    "beatId": "beat_11",
+    "intent": "concept",
+    "timing": {
+      "endSec": 27.420000076293945,
+      "endFrame": 823,
+      "startSec": 26.600000381469727,
+      "startFrame": 798,
+      "durationFrames": 25
+    },
+    "reasoning": "Selected primary structural focus \"No blind spots\" (perception) out of 3 potential semantic tags.",
+    "sentenceText": "No blind spots.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "perception",
+        "phrase": "No blind spots",
+        "importance": 0.98,
+        "visualPotential": 0.86
+      }
+    ],
+    "sourceSentenceId": "sentence-11",
+    "emotionalIntensity": 0.55
+  },
+  {
+    "beatId": "beat_12",
+    "intent": "process",
+    "timing": {
+      "endSec": 30.200000762939453,
+      "endFrame": 907,
+      "startSec": 27.420000076293945,
+      "startFrame": 822,
+      "durationFrames": 85
+    },
+    "reasoning": "Selected primary structural focus \"turn operational friction into measurable momentum\" (process_transformation) out of 6 potential semantic tags.",
+    "sentenceText": "Turn operational friction into measurable momentum.",
+    "narrativeRole": "middle",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "process_transformation",
+        "phrase": "turn operational friction into measurable momentum",
+        "importance": 0.98,
+        "visualPotential": 0.9
+      }
+    ],
+    "sourceSentenceId": "sentence-12",
+    "emotionalIntensity": 0.72
+  },
+  {
+    "beatId": "beat_13",
+    "intent": "concept",
+    "timing": {
+      "endSec": 32.220001220703125,
+      "endFrame": 967,
+      "startSec": 31.1200008392334,
+      "startFrame": 933,
+      "durationFrames": 34
+    },
+    "reasoning": "Selected primary structural focus \"Start your free trial today\" (call_to_action) out of 4 potential semantic tags.",
+    "sentenceText": "Start your free trial today.",
+    "narrativeRole": "outro",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "call_to_action",
+        "phrase": "Start your free trial today",
+        "importance": 0.98,
+        "visualPotential": 0.74
+      }
+    ],
+    "sourceSentenceId": "sentence-13",
+    "emotionalIntensity": 0.66
+  },
+  {
+    "beatId": "beat_14",
+    "intent": "concept",
+    "timing": {
+      "endSec": 34.63999938964844,
+      "endFrame": 1040,
+      "startSec": 32.97999954223633,
+      "startFrame": 989,
+      "durationFrames": 51
+    },
+    "reasoning": "Selected primary structural focus \"faster business\" (business_growth) out of 5 potential semantic tags.",
+    "sentenceText": "Build a faster business with Flowpilot.",
+    "narrativeRole": "outro",
+    "selectedIdeas": [
+      {
+        "id": "idea_01",
+        "type": "business_growth",
+        "phrase": "faster business",
+        "importance": 0.96,
+        "visualPotential": 0.82
+      }
+    ],
+    "sourceSentenceId": "sentence-14",
+    "emotionalIntensity": 0.63
+  }
+]
+
+selected widgets:
+[
+  {
+    "beatId": "beat_1",
+    "metadata": {
+      "role": "intro",
+      "intent": "concept",
+      "ideaType": "productivity loss",
+      "primaryIdeaText": "Every week, teams lose 12 hours"
+    },
+    "widgetType": "TITLE_CARD"
+  },
+  {
+    "beatId": "beat_2",
+    "metadata": {
+      "role": "intro",
+      "intent": "concept",
+      "ideaType": "cause_effect",
+      "primaryIdeaText": "critical work slows"
+    },
+    "widgetType": "BULLET_POINTS"
+  },
+  {
+    "beatId": "beat_3",
+    "metadata": {
+      "role": "intro",
+      "intent": "capital_structure",
+      "ideaType": "finance",
+      "primaryIdeaText": "Revenue slips"
+    },
+    "widgetType": "TEXT_ANIMATIONS_WORD_HIGHLIGHT"
+  },
+  {
+    "beatId": "beat_4",
+    "metadata": {
+      "role": "middle",
+      "intent": "concept",
+      "ideaType": "entity_introduction",
+      "primaryIdeaText": "Meet Flowpilot"
+    },
+    "widgetType": "TERMINAL_TYPING_TEXT"
+  },
+  {
+    "beatId": "beat_5",
+    "metadata": {
+      "role": "middle",
+      "intent": "process",
+      "ideaType": "process",
+      "primaryIdeaText": "connect your tools"
+    },
+    "widgetType": "SEQUENTIAL_ELASTIC_TEXT"
+  },
+  {
+    "beatId": "beat_6",
+    "metadata": {
+      "role": "middle",
+      "intent": "process",
+      "ideaType": "process_automation",
+      "primaryIdeaText": "automate repetitive workflows"
+    },
+    "widgetType": "TEXT"
+  },
+  {
+    "beatId": "beat_7",
+    "metadata": {
+      "role": "middle",
+      "intent": "financial_metric",
+      "ideaType": "operational visibility",
+      "primaryIdeaText": "every task, status, and bottleneck in one place"
+    },
+    "widgetType": "SVG_DRAW_IN_TEXT"
+  },
+  {
+    "beatId": "beat_8",
+    "metadata": {
+      "role": "middle",
+      "intent": "concept",
+      "ideaType": "efficiency gain",
+      "primaryIdeaText": "cut manual work by 40%"
+    },
+    "widgetType": "TYPEWRITER"
+  },
+  {
+    "beatId": "beat_9",
+    "metadata": {
+      "role": "middle",
+      "intent": "concept",
+      "ideaType": "rejection",
+      "primaryIdeaText": "No spreadsheets"
+    },
+    "widgetType": "SEQUENTIAL_ELASTIC_TEXT"
+  },
+  {
+    "beatId": "beat_10",
+    "metadata": {
+      "role": "middle",
+      "intent": "concept",
+      "ideaType": "behavioral constraint",
+      "primaryIdeaText": "No chasing"
+    },
+    "widgetType": "TYPEWRITER"
+  },
+  {
+    "beatId": "beat_11",
+    "metadata": {
+      "role": "middle",
+      "intent": "concept",
+      "ideaType": "perception",
+      "primaryIdeaText": "No blind spots"
+    },
+    "widgetType": "SVG_DRAW_IN_TEXT"
+  },
+  {
+    "beatId": "beat_12",
+    "metadata": {
+      "role": "middle",
+      "intent": "process",
+      "ideaType": "process_transformation",
+      "primaryIdeaText": "turn operational friction into measurable momentum"
+    },
+    "widgetType": "SVG_DRAW_IN_TEXT"
+  },
+  {
+    "beatId": "beat_13",
+    "metadata": {
+      "role": "outro",
+      "intent": "concept",
+      "ideaType": "call_to_action",
+      "primaryIdeaText": "Start your free trial today"
+    },
+    "widgetType": "TYPEWRITER"
+  },
+  {
+    "beatId": "beat_14",
+    "metadata": {
+      "role": "outro",
+      "intent": "concept",
+      "ideaType": "business_growth",
+      "primaryIdeaText": "faster business"
+    },
+    "widgetType": "TITLE_CARD"
+  }
+]
+
+scene config:
+[
+  {
+    "props": {
+      "title": "Every week, teams lose 12 hours chasing updates, fixing handoffs, and searching for answers.",
+      "subtitle": "EVERY WEEK TEAMS LOSE...",
+      "durationInFrames": 113
+    },
+    "widget": "TITLE_CARD",
+    "startFrame": 0,
+    "durationFrames": 173
+  },
+  {
+    "props": {
+      "items": [
+        "Critical work slows. Revenue slips. Meet Flowpilot, the SaaS command center for modern operations."
+      ],
+      "durationInFrames": 137
+    },
+    "widget": "BULLET_POINTS",
+    "startFrame": 173,
+    "durationFrames": 197
+  },
+  {
+    "props": {
+      "textToAnimate": "Connect your tools in minutes. Automate repetitive workflows. See every task, status, and bottleneck in one place.",
+      "durationInFrames": 136
+    },
+    "widget": "SEQUENTIAL_ELASTIC_TEXT",
+    "startFrame": 370,
+    "durationFrames": 196
+  },
+  {
+    "props": {
+      "text": "TEAMS CUT MANUAL WORK...",
+      "durationInFrames": 102
+    },
+    "widget": "TYPEWRITER",
+    "startFrame": 566,
+    "durationFrames": 162
+  },
+  {
+    "props": {
+      "textToAnimate": "No spreadsheets. No chasing. No blind spots.",
+      "durationInFrames": 55
+    },
+    "widget": "SEQUENTIAL_ELASTIC_TEXT",
+    "startFrame": 728,
+    "durationFrames": 95
+  },
+  {
+    "props": {
+      "textToAnimate": "Turn operationa",
+      "durationInFrames": 107
+    },
+    "widget": "SVG_DRAW_IN_TEXT",
+    "startFrame": 822,
+    "durationFrames": 167
+  },
+  {
+    "props": {
+      "title": "Build a faster business with Flowpilot.",
+      "subtitle": "BUILD A FASTER BUSINESS...",
+      "durationInFrames": 21
+    },
+    "widget": "TITLE_CARD",
+    "startFrame": 989,
+    "durationFrames": 61
+  }
+]

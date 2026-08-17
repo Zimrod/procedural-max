@@ -252,8 +252,11 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     ],
     buildFallbackProps: ({ text, shortSummary }) => {
       const content = text || shortSummary;
-      const items = content.split('\n').filter(line => line.trim());
-      return { items };
+      const items = content
+        .split(/\n|•|▪|\u2022|\s*\|\s*|;\s+/)
+        .map((line) => line.replace(/^[-*]\s*/, '').trim())
+        .filter(Boolean);
+      return { items: items.length > 1 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
     },
   },
   // GEOMETRIC_QUOTE: {
