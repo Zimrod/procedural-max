@@ -1,4 +1,4 @@
-// src/remotion/MyComp/MultiLineChartRig.tsx
+// src/graphics/MultiLineChartRig.tsx
 
 import React, { useMemo } from 'react';
 import {
@@ -105,7 +105,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
 
   if (!labels.length || !series.length) return null;
 
-  // Layout: chart area (70% of canvas)
   const containerWidth = width * 0.7;
   const containerHeight = height * 0.7;
   const startX = (width - containerWidth) / 2;
@@ -113,7 +112,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
   const endX = startX + containerWidth;
   const endY = startY + containerHeight;
 
-  // Determine global max value across all series
   const allValues = series.flatMap(s => s.values);
   const rawMax = customMaxValue ?? Math.max(...allValues);
   const getNiceMax = (val: number) => {
@@ -125,9 +123,8 @@ export const MultiLineChartRig: React.FC<Props> = ({
 
   // Timing
   const axisDuration = fps * 2;
-  const seriesDelay = fps * 0.5; // delay between series
-  const pointStagger = 3; // frames per point within a series
-  const lineDrawDuration = fps * 1.2;
+  const seriesDelay = fps * 0.5;
+  const pointStagger = 3;
 
   // Axis animation
   const totalAxisLength = containerHeight + containerWidth;
@@ -138,7 +135,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
     { extrapolateRight: 'clamp' }
   );
 
-  // Precompute points for each series
   const processedSeries = useMemo(() => {
     return series.map((s, sIdx) => {
       const points = s.values.map((value, i) => ({
@@ -157,14 +153,10 @@ export const MultiLineChartRig: React.FC<Props> = ({
     });
   }, [series, labels, startX, endY, containerWidth, maxValue, curveType]);
 
-  // Y-axis ticks & grid
   const yTicks = [0, maxValue / 2, maxValue];
   const formatValue = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(1));
 
-  // Legend layout
   const legendItemHeight = 32;
-  const legendWidth = 200;
-  const legendPadding = 20;
   let legendX: number, legendY: number;
   if (legendPosition === 'right') {
     legendX = endX + 40;
@@ -176,7 +168,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
 
   return (
     <svg width={width} height={height} style={{ backgroundColor: 'transparent' }}>
-      {/* Axes */}
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
@@ -187,7 +178,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
         strokeLinecap="round"
       />
 
-      {/* Grid lines */}
       {yTicks.map((tick, i) => {
         const yPos = endY - (tick / maxValue) * containerHeight;
         const distanceToTick = yPos - startY;
@@ -212,7 +202,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
         );
       })}
 
-      {/* Y-axis labels */}
       {yTicks.map((tick, i) => {
         const yPos = endY - (tick / maxValue) * containerHeight;
         const distanceToTick = yPos - startY;
@@ -232,14 +221,13 @@ export const MultiLineChartRig: React.FC<Props> = ({
         );
       })}
 
-      {/* X-axis labels */}
       {labels.map((label, idx) => {
         const xPos = startX + (idx / (labels.length - 1)) * containerWidth;
         const labelRevealFrame = axisDuration + series.length * seriesDelay;
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
           fps,
-          config: { friction: 10 },
+          config: { damping: 10 },
         });
         const opacity = interpolate(labelProgress, [0, 1], [0, 1]);
         const translateY = interpolate(labelProgress, [0, 1], [10, 0]);
@@ -259,13 +247,11 @@ export const MultiLineChartRig: React.FC<Props> = ({
         );
       })}
 
-      {/* Lines and points per series */}
       {processedSeries.map((series, sIdx) => {
         const seriesStartFrame = axisDuration + sIdx * seriesDelay;
         const pointsStartFrame = seriesStartFrame;
         const lineStartFrame = pointsStartFrame + series.points.length * pointStagger;
 
-        // Line drawing progress
         const lineProgress = spring({
           frame: frame - lineStartFrame,
           fps,
@@ -275,7 +261,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
           extrapolateRight: 'clamp',
         });
 
-        // Points
         const pointElements = series.points.map((point, pIdx) => {
           const pointFrame = pointsStartFrame + pIdx * pointStagger;
           const pointProgress = spring({
@@ -301,7 +286,6 @@ export const MultiLineChartRig: React.FC<Props> = ({
 
         return (
           <g key={`series-${sIdx}`}>
-            {/* Line */}
             {frame >= lineStartFrame && lineProgress > 0 && (
               <path
                 d={series.fullPath}
@@ -314,13 +298,11 @@ export const MultiLineChartRig: React.FC<Props> = ({
                 strokeDashoffset={strokeDashoffset}
               />
             )}
-            {/* Points */}
             {pointElements}
           </g>
         );
       })}
 
-      {/* Legend */}
       <g opacity={spring({ frame: frame - axisDuration, fps, config: { damping: 10 } })}>
         {processedSeries.map((series, idx) => (
           <g
