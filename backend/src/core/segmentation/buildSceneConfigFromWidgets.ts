@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { NarrativeBeat } from '../narrative/narrativeAnalyzer.js';
-import { SelectedWidget } from '../planning/selectWidgetsRobust.js';
+import { extractDataHints, SelectedWidget } from '../planning/selectWidgetsRobust.js';
 import { widgetRegistry } from '../widgetRegistry.js';
 
 export type SceneConfigItem = {
@@ -234,6 +234,7 @@ export function buildSceneConfigFromWidgets(
     accumulatedText += `${accumulatedText ? '. ' : ''}${semanticCopy}`;
     combinedDataHints = {
       ...combinedDataHints,
+      ...extractDataHints(beat.sentenceText),
       ...(sel as SelectedWidget & { dataHints?: Record<string, any> }).dataHints,
     };
     clusterEndFrame = Math.max(clusterEndFrame, beat.timing.endFrame);

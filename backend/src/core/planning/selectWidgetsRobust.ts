@@ -39,10 +39,10 @@ function normalizeNumber(value: string): number | null {
   return null;
 }
 
-function extractDataHints(text: string): Record<string, any> {
+export function extractDataHints(text: string): Record<string, any> {
   const normalized = text.replace(/[\u2013\u2014]/g, '-');
   const values: number[] = [];
-  const valuePattern = /\b(\d+(?:\.\d+)?|[a-z]+(?:-[a-z]+)?)\s*percent\b/gi;
+  const valuePattern = /\b(\d+(?:\.\d+)?|[a-z]+(?:-[a-z]+)?)\s*(?:percent|%)(?=\s|[.,;!?)]|$)/gi;
   for (const match of normalized.matchAll(valuePattern)) {
     const value = normalizeNumber(match[1]);
     if (value !== null) values.push(value);

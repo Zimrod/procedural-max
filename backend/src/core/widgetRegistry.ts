@@ -117,6 +117,8 @@ const field = (
   defaultValue,
 });
 
+const DEFAULT_CHART_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
+
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   BAR_CHART: {
     category: 'DATA_REPORTING',
@@ -131,7 +133,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      ...(extractedData?.barColors ? { barColors: extractedData.barColors } : {}),
+      barColors: extractedData?.barColors ?? DEFAULT_CHART_COLORS,
     }),
   },
   LINE_CHART: {
@@ -150,8 +152,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      ...(extractedData?.lineColor ? { lineColor: extractedData.lineColor } : {}),
-      ...(extractedData?.pointColors ? { pointColors: extractedData.pointColors } : {}),
+      lineColor: extractedData?.lineColor ?? DEFAULT_CHART_COLORS[0],
+      pointColors: extractedData?.pointColors ?? DEFAULT_CHART_COLORS,
       ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
       ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
     }),
@@ -169,7 +171,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      pieColors: extractedData?.pieColors ?? DEFAULT_CHART_COLORS,
     }),
   },
   PIE_CHART: {
@@ -185,7 +187,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      pieColors: extractedData?.pieColors ?? DEFAULT_CHART_COLORS,
     }),
   },
   MULTI_LINE_CHART: {

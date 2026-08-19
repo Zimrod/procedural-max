@@ -233,23 +233,17 @@ export function applyThemeToWidgetProps(
 
   switch (widgetType) {
     case "BAR_CHART":
+      next.barColors = palette;
+      next.backgroundColor = "transparent";
+      break;
     case "LINE_CHART":
+      next.lineColor = theme.chartStrokeColor;
+      next.pointColors = palette;
+      next.backgroundColor = "transparent";
+      break;
     case "DONUT_CHART":
-      // FIX: Ensure that if we are in light/minimal stroke mode, 
-      // the base fill colors don't bleed solid colors over the lines.
-      next.barColors = theme.mode === "light" 
-        ? theme.chartPalette.map(() => "transparent") // Clear fills for true strokes-only layout
-        : theme.chartPalette;
-
-      next.strokeColor = theme.chartStrokeColor;
-      next.strokeWidth = theme.chartStrokeWidth;
-      next.borderRadius = theme.chartBorderRadius;
-      next.axisColor = theme.borderColor;
-      next.gridColor = theme.mutedTextColor;
-      next.labelColor = theme.textColor;
-      
-      // Backgrounds inside the SVG tag must not solid-fill the vector shapes
-      next.backgroundColor = "transparent"; 
+      next.pieColors = palette;
+      next.backgroundColor = "transparent";
       break;
     case "DONUT_STEP_CHART_RIG":
       // FIX: Ensure that if we are in light/minimal stroke mode, 
