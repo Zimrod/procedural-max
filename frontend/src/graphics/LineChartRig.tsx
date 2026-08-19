@@ -252,7 +252,7 @@ export const LineChartRig: React.FC<Props> = ({
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
           fps,
-          config: { friction: 10 },
+          config: { damping: 10 }, // Changed from friction: 10
         });
         const opacity = interpolate(labelProgress, [0, 1], [0, 1]);
         const translateY = interpolate(labelProgress, [0, 1], [10, 0]);
