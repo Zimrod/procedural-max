@@ -1,5 +1,4 @@
-// src/remotion/MyComp/DonutChartRig.tsx
-
+// src/graphics/DonutChartRig.tsx
 import React, { useMemo } from 'react';
 import {
   useCurrentFrame,
@@ -14,6 +13,11 @@ type Props = {
     values: number[];
   };
   pieColors?: string[];
+  labelColor?: string;
+  labelFontSize?: number;
+  legendFontSize?: number;
+  fontFamily?: string;
+  backgroundColor?: string;
 };
 
 const generateColor = (index: number, saturation: number = 70, lightness: number = 80) => {
@@ -24,7 +28,6 @@ const generateColor = (index: number, saturation: number = 70, lightness: number
 
 const degToRad = (deg: number) => (deg * Math.PI) / 180;
 
-// Path generator for a donut slice (two concentric arcs)
 const donutSlice = (cx: number, cy: number, outerR: number, innerR: number, startAngle: number, endAngle: number) => {
   const startRad = degToRad(startAngle);
   const endRad = degToRad(endAngle);
@@ -50,7 +53,15 @@ const donutSlice = (cx: number, cy: number, outerR: number, innerR: number, star
   `;
 };
 
-export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
+export const DonutChartRig: React.FC<Props> = ({
+  data,
+  pieColors,
+  labelColor = '#333',
+  labelFontSize,
+  legendFontSize = 22,
+  fontFamily = 'Poppins, sans-serif',
+  backgroundColor = 'transparent',
+}) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
   const { labels, values } = data;
@@ -59,7 +70,7 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
   if (total === 0) return null;
 
   const outerRadius = Math.min(width, height) * 0.28;
-  const innerRadius = outerRadius * 0.5; // Creates the "donut" hole
+  const innerRadius = outerRadius * 0.5;
   const centerX = width * 0.4;
   const centerY = height / 2;
 
@@ -85,7 +96,6 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
     return result;
   }, [values, labels, total, pieColors]);
 
-  // Pointer spacing logic
   const outerPointer1 = outerRadius * 1.1;
   const outerPointer2 = outerRadius * 1.25;
   const textPadding = 12;
@@ -105,9 +115,10 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
 
   const legendX = Math.max(centerX + outerRadius + 70, maxPointerX);
   const legendY = centerY - (labels.length * 35) / 2;
+  const computedLabelFontSize = labelFontSize ?? outerRadius * 0.1;
 
   return (
-    <svg width={width} height={height} style={{ display: 'block' }}>
+    <svg width={width} height={height} style={{ display: 'block', backgroundColor }}>
       {slices.map((slice, idx) => {
         const progress = spring({
           frame: frame - (idx * 5),
@@ -123,12 +134,10 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
         const midAngle = slice.startAngle + (slice.endAngle - slice.startAngle) / 2;
         const isSmall = slice.percent < 0.05;
 
-        // Positioning for internal labels (centered in the ring)
         const ringMidRadius = (outerRadius + innerRadius) / 2;
         const internalX = centerX + ringMidRadius * Math.cos(degToRad(midAngle));
         const internalY = centerY + ringMidRadius * Math.sin(degToRad(midAngle));
 
-        // Positioning for external pointers
         const pRadius = idx % 2 === 0 ? outerPointer1 : outerPointer2;
         const textX = centerX + (pRadius + textPadding) * Math.cos(degToRad(midAngle));
         const textY = centerY + (pRadius + textPadding) * Math.sin(degToRad(midAngle));
@@ -146,15 +155,15 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
                       y1={centerY + outerRadius * Math.sin(degToRad(midAngle))}
                       x2={centerX + pRadius * Math.cos(degToRad(midAngle))}
                       y2={centerY + pRadius * Math.sin(degToRad(midAngle))}
-                      stroke="#333"
+                      stroke={labelColor}
                       strokeWidth="1.5"
                       strokeDasharray="2,2"
                     />
                     <text
                       x={textX} y={textY}
                       textAnchor="middle" dominantBaseline="middle"
-                      fontSize={outerRadius * 0.1} fill="#333"
-                      fontFamily="Poppins, sans-serif" fontWeight="600"
+                      fontSize={computedLabelFontSize} fill={labelColor}
+                      fontFamily={fontFamily} fontWeight="600"
                     >
                       {`${(slice.percent * 100).toFixed(0)}%`}
                     </text>
@@ -163,8 +172,8 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
                   <text
                     x={internalX} y={internalY}
                     textAnchor="middle" dominantBaseline="middle"
-                    fontSize={outerRadius * 0.1} fill="#333"
-                    fontFamily="Poppins, sans-serif" fontWeight="600"
+                    fontSize={computedLabelFontSize} fill={labelColor}
+                    fontFamily={fontFamily} fontWeight="600"
                   >
                     {`${(slice.percent * 100).toFixed(0)}%`}
                   </text>
@@ -175,12 +184,11 @@ export const DonutChartRig: React.FC<Props> = ({ data, pieColors }) => {
         );
       })}
 
-      {/* Unified Legend */}
       <g opacity={spring({ frame: frame - 15, fps, config: { damping: 10 } })}>
         {slices.map((slice, idx) => (
           <g key={`legend-${idx}`} transform={`translate(${legendX}, ${legendY + idx * 35})`}>
             <rect width={20} height={20} fill={slice.color} rx={4} />
-            <text x={32} y={16} fontSize={22} fill="#333" fontFamily="Poppins, sans-serif" fontWeight="500">
+            <text x={32} y={16} fontSize={legendFontSize} fill={labelColor} fontFamily={fontFamily} fontWeight="500">
               {slice.label}: {slice.value}
             </text>
           </g>

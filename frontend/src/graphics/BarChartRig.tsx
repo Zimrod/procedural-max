@@ -1,5 +1,4 @@
-// src/remotion/MyComp/BarChartRig.tsx
-
+// src/graphics/BarChartRig.tsx
 import React from 'react';
 import {
   useCurrentFrame,
@@ -20,6 +19,8 @@ type Props = {
   axisColor?: string;
   gridColor?: string;
   labelColor?: string;
+  labelFontSize?: number;
+  fontFamily?: string;
   backgroundColor?: string;
 };
 
@@ -34,6 +35,8 @@ export const BarChartRig: React.FC<Props> = ({
   axisColor = '#333',
   gridColor = '#a0d1ff',
   labelColor = '#333',
+  labelFontSize = 20,
+  fontFamily = 'sans-serif',
   backgroundColor = 'transparent',
 }) => {
   const frame = useCurrentFrame();
@@ -42,7 +45,6 @@ export const BarChartRig: React.FC<Props> = ({
 
   if (!values.length) return null;
 
-  // 1. Layout Calculations (70% container)
   const containerWidth = width * 0.7;
   const containerHeight = height * 0.7;
   const startX = (width - containerWidth) / 2;
@@ -50,33 +52,25 @@ export const BarChartRig: React.FC<Props> = ({
   const endX = startX + containerWidth;
   const endY = startY + containerHeight;
 
-  // 1. Calculate the raw max
   const rawMax = Math.max(...values);
   
-  // 2. Determine the "Nice" Max Value to ensure whole-number midpoints
   const getNiceMax = (val: number) => {
-    if (val === 0) return 10; // Default fallback
-    
+    if (val === 0) return 10;
     if (val > 30) {
-      // Round up to the next multiple of 10
       return Math.ceil(val / 10) * 10;
     } else {
-      // For <= 30, round up to the next even number
       return Math.ceil(val / 2) * 2;
     }
   };
 
   const maxValue = getNiceMax(rawMax);
-
   const barWidth = containerWidth / values.length;
   const formatValue = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(1));
 
-  // 2. Timing Definitions (Total 3 seconds for intro)
   const introDuration = fps * 1.5;
-  const axisDrawDuration = fps * 2; // 2 seconds for lines
+  const axisDrawDuration = fps * 2;
   const barsStartFrame = introDuration;
 
-  // 3. Axis Animation (Total length = height + width)
   const totalPathLength = containerHeight + containerWidth;
   const lineProgress = interpolate(
     frame,
@@ -85,7 +79,6 @@ export const BarChartRig: React.FC<Props> = ({
     { extrapolateRight: 'clamp' }
   );
 
-  // 4. Easing for Bars (The bounce requested previously)
   const easeOutBounce = (t: number) => {
     const n1 = 7.5625; const d1 = 2.75;
     if (t < 1 / d1) return n1 * t * t;
@@ -96,7 +89,6 @@ export const BarChartRig: React.FC<Props> = ({
 
   return (
     <svg width={width} height={height} style={{ backgroundColor }}>
-      {/* Animated Axis Line (L-shape drawn from top-left to bottom-right) */}
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
@@ -107,12 +99,8 @@ export const BarChartRig: React.FC<Props> = ({
         strokeLinecap="round"
       />
 
-      {/* Faint Background Grid Lines */}
       {[maxValue / 2, maxValue].map((tickValue, i) => {
         const yPos = endY - (tickValue / maxValue) * containerHeight;
-        
-        // Calculate when this specific line should start appearing
-        // (Syncing it roughly with the Y-axis draw progress)
         const lineRevealFrame = interpolate(
           yPos - startY, 
           [0, containerHeight], 
@@ -132,18 +120,16 @@ export const BarChartRig: React.FC<Props> = ({
             y1={yPos}
             x2={endX}
             y2={yPos}
-            stroke={gridColor}      // Faint gray
+            stroke={gridColor}
             strokeWidth={1}
-            strokeDasharray="15,5" // Dotted effect
-            style={{ opacity: lineOpacity * 0.5 }} // Extra faintness
+            strokeDasharray="15,5"
+            style={{ opacity: lineOpacity * 0.5 }}
           />
         );
       })}
 
-      {/* Y-Axis Ticks & Labels */}
       {[0, maxValue / 2, maxValue].map((tick, i) => {
         const yPos = endY - (tick / maxValue) * containerHeight;
-        // Logic: Reveal when the drawing line passes this Y coordinate
         const distanceToTick = yPos - startY;
         const revealFrame = interpolate(distanceToTick, [0, containerHeight], [0, axisDrawDuration]);
         
@@ -157,12 +143,12 @@ export const BarChartRig: React.FC<Props> = ({
           <g key={`y-${i}`} style={{ opacity: pop, transform: `scale(${pop})`, transformOrigin: `${startX}px ${yPos}px` }}>
             <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} />
             <text
-              x={startX - 20} // Padding between label and axis
+              x={startX - 20}
               y={yPos + 5}
               textAnchor="end"
-              fontSize={20}
+              fontSize={labelFontSize}
               fill={labelColor}
-              fontFamily="sans-serif"
+              fontFamily={fontFamily}
             >
               {formatValue(tick)}
             </text>
@@ -170,17 +156,14 @@ export const BarChartRig: React.FC<Props> = ({
         );
       })}
 
-      {/* Bars & X-Axis Labels */}
       {values.map((value, i) => {
         const xPos = startX + i * barWidth;
         const labelX = xPos + barWidth / 2;
         
-        // Label pop timing: Triggered as the line passes the bar's center point
         const distanceToLabel = containerHeight + (i + 0.5) * barWidth;
         const labelRevealFrame = interpolate(distanceToLabel, [0, totalPathLength], [0, axisDrawDuration]);
         const labelPop = spring({ frame: frame - labelRevealFrame, fps, config: { damping: 10 } });
 
-        // Bar animation timing: Starts only after introDuration (3s)
         const barProgress = spring({
           frame: frame - barsStartFrame - i * 5,
           fps,
@@ -200,14 +183,13 @@ export const BarChartRig: React.FC<Props> = ({
               stroke={strokeColor}
               strokeWidth={strokeWidth}
             />
-            {/* X-Axis Label with padding */}
             <text
               x={labelX}
-              y={endY + 35} // Padding below the axis
+              y={endY + 35}
               textAnchor="middle"
-              fontSize={22}
+              fontSize={labelFontSize}
               fill={labelColor}
-              fontFamily="sans-serif"
+              fontFamily={fontFamily}
               style={{ opacity: labelPop, transform: `translateY(${(1 - labelPop) * 10}px)` }}
             >
               {labels[i]}

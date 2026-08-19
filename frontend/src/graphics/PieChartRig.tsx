@@ -1,5 +1,4 @@
-// src/remotion/MyComp/PieChartRig.tsx
-
+// src/graphics/PieChartRig.tsx
 import React, { useMemo } from 'react';
 import {
   useCurrentFrame,
@@ -14,6 +13,11 @@ type Props = {
     values: number[];
   };
   pieColors?: string[];
+  labelColor?: string;
+  labelFontSize?: number;
+  legendFontSize?: number;
+  fontFamily?: string;
+  backgroundColor?: string;
 };
 
 const generateColor = (index: number, saturation: number = 70, lightness: number = 80) => {
@@ -35,7 +39,15 @@ const pieSlice = (cx: number, cy: number, radius: number, startAngle: number, en
   return `M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
 };
 
-export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
+export const PieChartRig: React.FC<Props> = ({
+  data,
+  pieColors,
+  labelColor = '#333',
+  labelFontSize,
+  legendFontSize = 22,
+  fontFamily = 'Poppins, sans-serif',
+  backgroundColor = 'transparent',
+}) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
   const { labels, values } = data;
@@ -73,9 +85,8 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
   const outerRadius2 = pieRadius * 1.3;
   const textPadding = 12;
 
-  // Compute maximum X extent of external pointers on the right side
   const maxPointerX = useMemo(() => {
-    let maxX = centerX + pieRadius + 70; // default legend X
+    let maxX = centerX + pieRadius + 70;
     slices.forEach((slice, idx) => {
       const isSmall = slice.percent < 0.05;
       if (!isSmall) return;
@@ -87,14 +98,14 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
       const textX = lineEndX + textPadding * Math.cos(degToRad(midAngle));
       if (textX > maxX) maxX = textX;
     });
-    return maxX + 40; // add margin after the farthest pointer
+    return maxX + 40;
   }, [slices, centerX, pieRadius, outerRadius1, outerRadius2]);
 
   const legendX = Math.max(centerX + pieRadius + 70, maxPointerX);
   const legendY = centerY - (labels.length * 35) / 2;
 
   return (
-    <svg width={width} height={height} style={{ display: 'block' }}>
+    <svg width={width} height={height} style={{ display: 'block', backgroundColor }}>
       {slices.map((slice, idx) => {
         const delay = idx * 5;
         const progress = spring({
@@ -139,7 +150,7 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
                       y1={lineStartY}
                       x2={lineEndX}
                       y2={lineEndY}
-                      stroke="#333"
+                      stroke={labelColor}
                       strokeWidth="1.5"
                       strokeDasharray="2,2"
                     />
@@ -148,9 +159,9 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
                       y={textY}
                       textAnchor="middle"
                       dominantBaseline="middle"
-                      fontSize={pieRadius * 0.1}
-                      fill="#333"
-                      fontFamily="Bahnschrift, sans-serif"
+                      fontSize={labelFontSize ?? pieRadius * 0.1}
+                      fill={labelColor}
+                      fontFamily={fontFamily}
                       fontWeight="600"
                     >
                       {`${(slice.percent * 100).toFixed(0)}%`}
@@ -162,9 +173,9 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
                     y={internalY}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    fontSize={pieRadius * 0.12}
-                    fill="#333"
-                    fontFamily="Bahnschrift, sans-serif"
+                    fontSize={labelFontSize ?? pieRadius * 0.12}
+                    fill={labelColor}
+                    fontFamily={fontFamily}
                     fontWeight="600"
                   >
                     {`${(slice.percent * 100).toFixed(0)}%`}
@@ -176,12 +187,11 @@ export const PieChartRig: React.FC<Props> = ({ data, pieColors }) => {
         );
       })}
 
-      {/* Legend with dynamic X position to avoid pointer overlap */}
       <g opacity={spring({ frame: frame - 15, fps, config: { damping: 10 } })}>
         {slices.map((slice, idx) => (
           <g key={`legend-${idx}`} transform={`translate(${legendX - 50}, ${legendY + idx * 35})`}>
             <rect width={20} height={20} fill={slice.color} rx={4} />
-            <text x={32} y={16} fontSize={22} fill="#333" fontFamily="Poppins, sans-serif" fontWeight="500">
+            <text x={32} y={16} fontSize={legendFontSize} fill={labelColor} fontFamily={fontFamily} fontWeight="500">
               {slice.label}: {slice.value}
             </text>
           </g>

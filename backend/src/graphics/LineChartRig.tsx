@@ -1,5 +1,4 @@
-// src/remotion/MyComp/LineChartRig.tsx
-
+// src/graphics/LineChartRig.tsx
 import React from 'react';
 import {
   useCurrentFrame,
@@ -17,6 +16,12 @@ type Props = {
   pointColors?: string[];
   curveType?: 'linear' | 'curved';
   maxValue?: number;
+  axisColor?: string;
+  gridColor?: string;
+  labelColor?: string;
+  labelFontSize?: number;
+  fontFamily?: string;
+  backgroundColor?: string;
 };
 
 const DEFAULT_POINT_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#F0A07C', '#B0A8B9'];
@@ -24,13 +29,11 @@ const DEFAULT_POINT_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEA
 const distance = (x1: number, y1: number, x2: number, y2: number) =>
   Math.hypot(x2 - x1, y2 - y1);
 
-// Cubic bezier evaluation
 const bezierPoint = (t: number, p0: number, cp1: number, cp2: number, p1: number) => {
   const mt = 1 - t;
   return mt * mt * mt * p0 + 3 * mt * mt * t * cp1 + 3 * mt * t * t * cp2 + t * t * t * p1;
 };
 
-// Generate smooth curved path through all points (Catmull-Rom to Bezier)
 const getCurvedPath = (points: { x: number; y: number }[]) => {
   if (points.length < 2) return '';
   if (points.length === 2) return `M ${points[0].x} ${points[0].y} L ${points[1].x} ${points[1].y}`;
@@ -51,7 +54,6 @@ const getCurvedPath = (points: { x: number; y: number }[]) => {
   return path.join(' ');
 };
 
-// Compute exact length of curved path by sampling each cubic Bezier segment
 const getCurvedPathLength = (points: { x: number; y: number }[], samplesPerSegment = 20) => {
   if (points.length < 2) return 0;
   if (points.length === 2) return distance(points[0].x, points[0].y, points[1].x, points[1].y);
@@ -92,6 +94,12 @@ export const LineChartRig: React.FC<Props> = ({
   pointColors = DEFAULT_POINT_COLORS,
   curveType = 'linear',
   maxValue: customMaxValue,
+  axisColor = '#7f7f7f',
+  gridColor = '#a0d1ff',
+  labelColor = '#7f7f7f',
+  labelFontSize = 20,
+  fontFamily = 'sans-serif',
+  backgroundColor = 'transparent',
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
@@ -156,11 +164,11 @@ export const LineChartRig: React.FC<Props> = ({
   const formatValue = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(1));
 
   return (
-    <svg width={width} height={height} style={{ backgroundColor: 'transparent' }}>
+    <svg width={width} height={height} style={{ backgroundColor }}>
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
-        stroke="#7f7f7f"
+        stroke={axisColor}
         strokeWidth={3}
         strokeDasharray={totalAxisLength}
         strokeDashoffset={axisProgress}
@@ -183,7 +191,7 @@ export const LineChartRig: React.FC<Props> = ({
             y1={yPos}
             x2={endX}
             y2={yPos}
-            stroke="#a0d1ff"
+            stroke={gridColor}
             strokeWidth={1.5}
             strokeDasharray="8,6"
             style={{ opacity: opacity * 0.4 }}
@@ -202,8 +210,8 @@ export const LineChartRig: React.FC<Props> = ({
         });
         return (
           <g key={`y-${i}`} style={{ opacity: pop, transform: `scale(${pop})`, transformOrigin: `${startX}px ${yPos}px` }}>
-            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke="#7f7f7f" strokeWidth={2} />
-            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={20} fill="#7f7f7f" fontFamily="sans-serif">
+            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} />
+            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={labelFontSize} fill={labelColor} fontFamily={fontFamily}>
               {formatValue(tick)}
             </text>
           </g>
@@ -252,7 +260,7 @@ export const LineChartRig: React.FC<Props> = ({
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
           fps,
-          config: { damping: 10 }, // Changed from friction: 10
+          config: { damping: 10 },
         });
         const opacity = interpolate(labelProgress, [0, 1], [0, 1]);
         const translateY = interpolate(labelProgress, [0, 1], [10, 0]);
@@ -262,9 +270,9 @@ export const LineChartRig: React.FC<Props> = ({
             x={point.x}
             y={endY + 35}
             textAnchor="middle"
-            fontSize={22}
-            fill="#7f7f7f"
-            fontFamily="sans-serif"
+            fontSize={labelFontSize}
+            fill={labelColor}
+            fontFamily={fontFamily}
             style={{ opacity, transform: `translateY(${translateY}px)` }}
           >
             {point.label}

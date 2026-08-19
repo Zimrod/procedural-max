@@ -1,5 +1,4 @@
 // src/graphics/MultiLineChartRig.tsx
-
 import React, { useMemo } from 'react';
 import {
   useCurrentFrame,
@@ -24,6 +23,13 @@ type Props = {
   legendPosition?: 'right' | 'bottom';
   lineWidth?: number;
   pointRadius?: number;
+  axisColor?: string;
+  gridColor?: string;
+  labelColor?: string;
+  labelFontSize?: number;
+  legendFontSize?: number;
+  fontFamily?: string;
+  backgroundColor?: string;
 };
 
 const DEFAULT_COLORS = [
@@ -98,6 +104,13 @@ export const MultiLineChartRig: React.FC<Props> = ({
   legendPosition = 'right',
   lineWidth = 3,
   pointRadius = 6,
+  axisColor = '#333',
+  gridColor = '#a0d1ff',
+  labelColor = '#333',
+  labelFontSize = 20,
+  legendFontSize = 18,
+  fontFamily = 'sans-serif',
+  backgroundColor = 'transparent',
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
@@ -121,12 +134,10 @@ export const MultiLineChartRig: React.FC<Props> = ({
   };
   const maxValue = getNiceMax(rawMax);
 
-  // Timing
   const axisDuration = fps * 2;
   const seriesDelay = fps * 0.5;
   const pointStagger = 3;
 
-  // Axis animation
   const totalAxisLength = containerHeight + containerWidth;
   const axisProgress = interpolate(
     frame,
@@ -167,11 +178,11 @@ export const MultiLineChartRig: React.FC<Props> = ({
   }
 
   return (
-    <svg width={width} height={height} style={{ backgroundColor: 'transparent' }}>
+    <svg width={width} height={height} style={{ backgroundColor }}>
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
-        stroke="#333"
+        stroke={axisColor}
         strokeWidth={3}
         strokeDasharray={totalAxisLength}
         strokeDashoffset={axisProgress}
@@ -194,7 +205,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
             y1={yPos}
             x2={endX}
             y2={yPos}
-            stroke="#a0d1ff"
+            stroke={gridColor}
             strokeWidth={1.5}
             strokeDasharray="8,6"
             style={{ opacity: opacity * 0.4 }}
@@ -213,8 +224,8 @@ export const MultiLineChartRig: React.FC<Props> = ({
         });
         return (
           <g key={`y-${i}`} style={{ opacity: pop, transform: `scale(${pop})`, transformOrigin: `${startX}px ${yPos}px` }}>
-            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke="#333" strokeWidth={2} />
-            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={20} fill="#333" fontFamily="sans-serif">
+            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} />
+            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={labelFontSize} fill={labelColor} fontFamily={fontFamily}>
               {formatValue(tick)}
             </text>
           </g>
@@ -237,9 +248,9 @@ export const MultiLineChartRig: React.FC<Props> = ({
             x={xPos}
             y={endY + 35}
             textAnchor="middle"
-            fontSize={22}
-            fill="#333"
-            fontFamily="sans-serif"
+            fontSize={labelFontSize}
+            fill={labelColor}
+            fontFamily={fontFamily}
             style={{ opacity, transform: `translateY(${translateY}px)` }}
           >
             {label}
@@ -310,7 +321,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
             transform={`translate(${legendX}, ${legendY + idx * legendItemHeight})`}
           >
             <rect width={16} height={16} fill={series.color} rx={2} />
-            <text x={24} y={13} fontSize={18} fill="#333" fontFamily="sans-serif">
+            <text x={24} y={13} fontSize={legendFontSize} fill={labelColor} fontFamily={fontFamily}>
               {series.name}
             </text>
           </g>
