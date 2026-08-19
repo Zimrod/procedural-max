@@ -42,7 +42,8 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
   terminalTitle = "bash — main_pipeline.sh",
 }) => {
   const frame = useCurrentFrame();
-  const { width, height, durationInFrames: videoConfigDuration } = useVideoConfig();
+  // const { width, height, durationInFrames: videoConfigDuration } = useVideoConfig();
+  const { durationInFrames: videoConfigDuration } = useVideoConfig();
   
   // Fallback to video config duration if durationInFrames prop is not passed
   const durationInFrames = customDurationInFrames ?? videoConfigDuration;
