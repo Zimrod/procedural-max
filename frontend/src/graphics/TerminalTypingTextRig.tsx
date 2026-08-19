@@ -1,6 +1,6 @@
 // src/remotion/MyComp/TerminalTypingTextRig.tsx
 import React, { useMemo } from "react";
-import { useCurrentFrame, interpolate, AbsoluteFill, Easing } from "remotion";
+import { useCurrentFrame, useVideoConfig, interpolate, AbsoluteFill, Easing } from "remotion";
 
 type RigProps = {
   readonly textToAnimate: string;
@@ -8,7 +8,10 @@ type RigProps = {
   // Custom Typography & Sizing Configuration
   readonly fontSize?: number;
   readonly startFrameOffset?: number;
-  readonly durationInFrames?: number; // 💡 MASTER TIMELINE LIMIT CONTROLLER
+  readonly durationInFrames?: number; // Total composition lifespan (falls back to useVideoConfig)
+  readonly holdDurationInFrames?: number; // Explicit frames to hold card visible after typing
+  readonly exitDurationInFrames?: number; // Explicit duration for the scale-out animation
+  readonly entranceDurationInFrames?: number; // Explicit duration for scale-in animation
 
   // Full System Theme Injection Properties
   readonly textColor?: string;
@@ -24,7 +27,10 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
   textToAnimate = "To give the terminal card that high-end, organic floating feel, we use dynamic percentage remapping.", 
   fontSize = 32,
   startFrameOffset = 0,
-  durationInFrames = 90, // Bound directly to internal lifespans below
+  durationInFrames: customDurationInFrames,
+  holdDurationInFrames,
+  exitDurationInFrames,
+  entranceDurationInFrames,
 
   // Modern Dev Theme Fallbacks
   textColor = "#38bdf8",     
@@ -36,11 +42,13 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
   terminalTitle = "bash — main_pipeline.sh",
 }) => {
   const frame = useCurrentFrame();
-  // const { width, height } = useVideoConfig();
+  const { width, height, durationInFrames: videoConfigDuration } = useVideoConfig();
+  
+  // Fallback to video config duration if durationInFrames prop is not passed
+  const durationInFrames = customDurationInFrames ?? videoConfigDuration;
   const totalCharacters = textToAnimate.length;
 
-  // 💡 CENTRAL FIXED PERCENTAGE TIMING ENGINE
-  // All sequence components are completely relative to durationInFrames
+  // CENTRAL FLEXIBLE TIMING ENGINE
   const {
     entranceStart,
     entranceEnd,
@@ -49,17 +57,43 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
     exitStart,
     exitEnd,
   } = useMemo(() => {
-    const usableDuration = durationInFrames - startFrameOffset;
-    
+    const usableDuration = Math.max(1, durationInFrames - startFrameOffset);
+
+    // Frame durations for entrance and exit transitions
+    const entranceFrames = entranceDurationInFrames ?? Math.round(usableDuration * 0.10);
+    const exitFrames = exitDurationInFrames ?? Math.round(usableDuration * 0.15); // Extended default exit duration
+
+    let calculatedExitStart: number;
+    let calculatedTypingEnd: number;
+
+    if (holdDurationInFrames !== undefined) {
+      // Direct hold control: work backwards from exit
+      calculatedExitStart = durationInFrames - exitFrames;
+      calculatedTypingEnd = Math.max(
+        startFrameOffset + entranceFrames,
+        calculatedExitStart - holdDurationInFrames
+      );
+    } else {
+      // Proportional fallback with generous hold period
+      calculatedExitStart = startFrameOffset + Math.round(usableDuration * 0.82);
+      calculatedTypingEnd = startFrameOffset + Math.round(usableDuration * 0.60);
+    }
+
     return {
       entranceStart: startFrameOffset,
-      entranceEnd: startFrameOffset + Math.round(usableDuration * 0.10), // First 10% Pop-In
-      typingStart: startFrameOffset + Math.round(usableDuration * 0.10),
-      typingEnd: startFrameOffset + Math.round(usableDuration * 0.70),   // Next 60% Typing Out
-      exitStart: startFrameOffset + Math.round(usableDuration * 0.90),   // Holds 20%, exits at 90%
-      exitEnd: durationInFrames,                                         // Last 10% Pop-Out
+      entranceEnd: startFrameOffset + entranceFrames,
+      typingStart: startFrameOffset + entranceFrames,
+      typingEnd: calculatedTypingEnd,
+      exitStart: calculatedExitStart,
+      exitEnd: durationInFrames,
     };
-  }, [durationInFrames, startFrameOffset]);
+  }, [
+    durationInFrames,
+    startFrameOffset,
+    entranceDurationInFrames,
+    exitDurationInFrames,
+    holdDurationInFrames,
+  ]);
 
   // 1. ENTRANCE TIMELINE
   const entranceScale = interpolate(
@@ -69,7 +103,7 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-      easing: Easing.out(Easing.bezier(0.34, 1.56, 0.64, 1)), // Organic spring-like overshoot
+      easing: Easing.out(Easing.bezier(0.34, 1.56, 0.64, 1)),
     }
   );
 
@@ -89,7 +123,7 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
 
   const isTypingFinished = frame >= typingEnd;
 
-  // 3. EXIT TIMELINE
+  // 3. EXIT TIMELINE (Slower, smoother scale out)
   const exitScale = interpolate(
     frame,
     [exitStart, exitEnd],
@@ -97,22 +131,20 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-      easing: Easing.in(Easing.bezier(0.36, 0, 0.66, -0.56)), // Anticipatory snap exit
+      easing: Easing.out(Easing.cubic),
     }
   );
 
   const exitTranslateY = interpolate(
     frame,
     [exitStart, exitEnd],
-    [0, 50],
+    [0, 30],
     { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
-  // Combine scaling behaviors safely
   const finalCardScale = entranceScale * exitScale;
 
   // 4. PERIODIC HARMONIC HOVER MOTION
-  // Frequencies scale to match frame constraints natively
   const waveHoverY = Math.sin(frame / 15) * 12; 
   const waveTiltZ = Math.cos(frame / 20) * 0.5;
 

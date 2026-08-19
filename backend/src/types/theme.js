@@ -131,9 +131,38 @@ export const COMPOSITION_THEME_PRESETS: CompositionThemePreset[] = [
 ];
 
 export const THEME_PROP_ALIASES: Record<string, string[]> = {
-  backgroundColor: ["backgroundColor", "background", "bgColor", "surfaceColor", "panelColor", "cardBackgroundColor", "nodeBgColor", "basePanelColor", "fillColor", "emptyPanelColor"],
-  textColor: ["textColor", "color", "titleColor", "subtitleColor", "labelColor", "legendTextColor", "trendLabelColor", "primaryColor"],
-  accentColor: ["accentColor", "lineColor", "increaseColor", "decreaseColor", "startEndColor", "cursorColor", "glowColor", "fillColor"],
+  backgroundColor: [
+    "backgroundColor",
+    "background",
+    "bgColor",
+    "surfaceColor",
+    "panelColor",
+    "cardBackgroundColor",
+    "nodeBgColor",
+    "basePanelColor",
+    "fillColor",
+    "emptyPanelColor",
+  ],
+  textColor: [
+    "textColor",
+    "color",
+    "titleColor",
+    "subtitleColor",
+    "labelColor",
+    "legendTextColor",
+    "trendLabelColor",
+    "primaryColor",
+  ],
+  accentColor: [
+    "accentColor",
+    "lineColor",
+    "increaseColor",
+    "decreaseColor",
+    "startEndColor",
+    "cursorColor",
+    "glowColor",
+    "highlightColor",
+  ],
   borderColor: ["borderColor", "trackColor", "gridColor", "axisColor", "inactiveColor"],
   fontFamily: ["fontFamily"],
 };
@@ -170,9 +199,10 @@ export function applyThemeToWidgetProps(
     keys.forEach((key) => setIfPresent(key, value));
   };
 
-  setAliases(["backgroundColor", "background", "bgColor", "surfaceColor", "panelColor", "cardBackgroundColor", "nodeBgColor", "basePanelColor", "fillColor", "emptyPanelColor"], theme.backgroundColor);
-  setAliases(["textColor", "color", "titleColor", "subtitleColor", "labelColor", "legendTextColor", "trendLabelColor"], theme.textColor);
-  setAliases(["accentColor", "cursorColor", "glowColor"], theme.accentColor);
+  // General Alias Mappings
+  setAliases(THEME_PROP_ALIASES.backgroundColor, theme.backgroundColor);
+  setAliases(THEME_PROP_ALIASES.textColor, theme.textColor);
+  setAliases(THEME_PROP_ALIASES.accentColor, theme.accentColor);
   setAliases(["chartStrokeColor", "strokeColor"], theme.chartStrokeColor);
   setAliases(["chartStrokeWidth", "strokeWidth"], theme.chartStrokeWidth);
   setAliases(["chartBorderRadius", "borderRadius", "rx"], theme.chartBorderRadius);
@@ -180,94 +210,85 @@ export function applyThemeToWidgetProps(
   setAliases(["axisColor", "gridColor", "trackColor", "inactiveColor", "borderColor"], theme.borderColor);
   setAliases(["fontFamily"], theme.fontFamily);
 
-  if (Object.prototype.hasOwnProperty.call(next, "titleColor")) {
-    next.titleColor = theme.textColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "subtitleColor")) {
-    next.subtitleColor = theme.mutedTextColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "background")) {
-    next.background = theme.backgroundColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "areaColor")) {
-    next.areaColor = theme.accentSoftColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "strokeColor")) {
-    next.strokeColor = theme.chartStrokeColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "strokeWidth")) {
-    next.strokeWidth = theme.chartStrokeWidth;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "borderRadius")) {
-    next.borderRadius = theme.chartBorderRadius;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "increaseColor")) {
-    next.increaseColor = theme.accentColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "decreaseColor")) {
-    next.decreaseColor = theme.mode === "dark" ? "#f87171" : "#ef4444";
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "startEndColor")) {
-    next.startEndColor = theme.accentSoftColor;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "barColors")) {
-    next.barColors = palette;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "pieColors")) {
-    next.pieColors = palette;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "donutColors")) {
-    next.donutColors = palette;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "pointColors")) {
-    next.pointColors = palette;
-  }
-  if (Object.prototype.hasOwnProperty.call(next, "seriesColors")) {
-    next.seriesColors = palette;
-  }
+  // Fallback explicit property assignments
+  if (Object.prototype.hasOwnProperty.call(next, "titleColor")) next.titleColor = theme.textColor;
+  if (Object.prototype.hasOwnProperty.call(next, "subtitleColor")) next.subtitleColor = theme.mutedTextColor;
+  if (Object.prototype.hasOwnProperty.call(next, "background")) next.background = theme.backgroundColor;
+  if (Object.prototype.hasOwnProperty.call(next, "areaColor")) next.areaColor = theme.accentSoftColor;
+  if (Object.prototype.hasOwnProperty.call(next, "strokeColor")) next.strokeColor = theme.chartStrokeColor;
+  if (Object.prototype.hasOwnProperty.call(next, "strokeWidth")) next.strokeWidth = theme.chartStrokeWidth;
+  if (Object.prototype.hasOwnProperty.call(next, "borderRadius")) next.borderRadius = theme.chartBorderRadius;
+  if (Object.prototype.hasOwnProperty.call(next, "increaseColor")) next.increaseColor = theme.accentColor;
+  if (Object.prototype.hasOwnProperty.call(next, "decreaseColor")) next.decreaseColor = theme.mode === "dark" ? "#f87171" : "#ef4444";
+  if (Object.prototype.hasOwnProperty.call(next, "startEndColor")) next.startEndColor = theme.accentSoftColor;
+  if (Object.prototype.hasOwnProperty.call(next, "barColors")) next.barColors = palette;
+  if (Object.prototype.hasOwnProperty.call(next, "pieColors")) next.pieColors = palette;
+  if (Object.prototype.hasOwnProperty.call(next, "donutColors")) next.donutColors = palette;
+  if (Object.prototype.hasOwnProperty.call(next, "pointColors")) next.pointColors = palette;
+  if (Object.prototype.hasOwnProperty.call(next, "seriesColors")) next.seriesColors = palette;
 
-  // Ensure common svg/text props on dark themes stay legible even if the widget defaults are hard-coded elsewhere.
-  if (widgetType === "STAT_REVEAL" && Object.prototype.hasOwnProperty.call(next, "color")) {
-    next.color = theme.textColor;
-  }
-
+  // Registry Specific Overrides
   switch (widgetType) {
-    case "BAR_CHART":
-    case "LINE_CHART":
-    case "DONUT_CHART":
-      // FIX: Ensure that if we are in light/minimal stroke mode, 
-      // the base fill colors don't bleed solid colors over the lines.
-      next.barColors = theme.mode === "light" 
-        ? theme.chartPalette.map(() => "transparent") // Clear fills for true strokes-only layout
-        : theme.chartPalette;
-
-      next.strokeColor = theme.chartStrokeColor;
-      next.strokeWidth = theme.chartStrokeWidth;
-      next.borderRadius = theme.chartBorderRadius;
-      next.axisColor = theme.borderColor;
-      next.gridColor = theme.mutedTextColor;
-      next.labelColor = theme.textColor;
-      
-      // Backgrounds inside the SVG tag must not solid-fill the vector shapes
-      next.backgroundColor = "transparent"; 
+    case "TEXT_RIG":
+    case "TEXT_RIG_ANIMATION":
+      next.color = theme.textColor;
+      next.backgroundColor = theme.backgroundColor;
       break;
+
+    case "WORD_HIGHLIGHT":
+    case "TEXT_ANIMATIONS_WORD_HIGHLIGHT":
+      next.backgroundColor = theme.backgroundColor;
+      next.textColor = theme.textColor;
+      next.highlightColor = theme.accentSoftColor || theme.accentColor;
+      break;
+
+    case "TERMINAL_TYPING_TEXT":
+      next.backgroundColor = theme.surfaceColor || (theme.mode === "light" ? "#ffffff" : "#0d1117");
+      next.borderColor = theme.borderColor;
+      next.textColor = theme.textColor;
+      next.cursorColor = theme.accentColor;
+      next.headerBgColor = theme.mode === "light" ? "#f6f8fa" : "#161b22";
+      next.titleColor = theme.mutedTextColor;
+      break;
+
+    case "TITLE_CARD":
+    case "TITLE_CARD_RIG":
+      next.titleColor = theme.textColor;
+      next.subtitleColor = theme.mutedTextColor;
+      next.accentColor = theme.accentColor;
+      next.backgroundColor = theme.backgroundColor;
+      next.fontFamily = theme.fontFamily;
+      break;
+
     case "DONUT_STEP_CHART_RIG":
-      // FIX: Ensure that if we are in light/minimal stroke mode, 
-      // the base fill colors don't bleed solid colors over the lines.
       next.barColors = theme.mode === "light" 
-        ? theme.chartPalette.map(() => "transparent") // Clear fills for true strokes-only layout
+        ? theme.chartPalette.map(() => "transparent") 
         : theme.chartPalette;
-
       next.strokeColor = theme.chartStrokeColor;
       next.strokeWidth = theme.chartStrokeWidth;
       next.borderRadius = theme.chartBorderRadius;
       next.axisColor = theme.borderColor;
       next.gridColor = theme.mutedTextColor;
       next.labelColor = theme.textColor;
-      
-      // Backgrounds inside the SVG tag must not solid-fill the vector shapes
       next.backgroundColor = "transparent"; 
       break;
+
+    case "BAR_CHART":
+      next.barColors = palette;
+      next.backgroundColor = "transparent";
+      break;
+
+    case "LINE_CHART":
+      next.lineColor = theme.chartStrokeColor;
+      next.pointColors = palette;
+      next.backgroundColor = "transparent";
+      break;
+
+    case "DONUT_CHART":
+      next.pieColors = palette;
+      next.backgroundColor = "transparent";
+      break;
+
     case "AREA_CHART":
       next.areaColor = theme.accentSoftColor;
       next.lineColor = theme.chartStrokeColor;
@@ -278,6 +299,7 @@ export function applyThemeToWidgetProps(
       next.labelColor = theme.textColor;
       next.backgroundColor = theme.backgroundColor;
       break;
+
     case "PIE_CHART":
       next.pieColors = palette;
       next.strokeColor = theme.chartStrokeColor;
@@ -286,6 +308,7 @@ export function applyThemeToWidgetProps(
       next.fontFamily = theme.fontFamily;
       next.backgroundColor = theme.backgroundColor;
       break;
+
     case "WATERFALL_CHART":
       next.increaseColor = theme.chartStrokeColor;
       next.decreaseColor = theme.mode === "dark" ? "#f87171" : "#ef4444";
@@ -298,29 +321,26 @@ export function applyThemeToWidgetProps(
       next.labelColor = theme.textColor;
       next.backgroundColor = theme.backgroundColor;
       break;
+
     case "STAT_REVEAL":
       next.color = theme.textColor;
       next.backgroundColor = theme.backgroundColor;
       next.fontFamily = theme.fontFamily;
       break;
-    case "TITLE_CARD":
-      next.titleColor = theme.textColor;
-      next.subtitleColor = theme.mutedTextColor;
-      next.accentColor = theme.accentColor;
-      next.backgroundColor = theme.backgroundColor;
-      next.fontFamily = theme.fontFamily;
-      break;
+
     case "TYPEWRITER":
       next.textColor = theme.textColor;
       next.backgroundColor = theme.backgroundColor;
       next.cursorColor = theme.accentColor;
       next.fontFamily = theme.fontFamily;
       break;
+
     case "TEXT":
       next.color = theme.textColor;
       next.background = theme.surfaceColor;
       next.fontFamily = theme.fontFamily;
       break;
+
     default:
       break;
   }

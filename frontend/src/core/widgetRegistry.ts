@@ -225,6 +225,10 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('textToAnimate', 'Text to Animate', 'text'),
       field('fontSize', 'Font Size', 'number'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
+      field('durationInFrames', 'Total Duration (Frames)', 'number'),
+      field('holdDurationInFrames', 'Hold Duration (Frames)', 'number'),
+      field('entranceDurationInFrames', 'Entrance Duration (Frames)', 'number'),
+      field('exitDurationInFrames', 'Exit Duration (Frames)', 'number'),
       field('textColor', 'Text Color', 'color'),
       field('cursorColor', 'Cursor Color', 'color'),
       field('backgroundColor', 'Background Color', 'color'),
@@ -233,8 +237,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('titleColor', 'Title Color', 'color'),
       field('terminalTitle', 'Terminal Title', 'text'),
     ],
-    buildFallbackProps: ({ text, shortSummary }) => ({
-      textToAnimate: text || shortSummary,
+    buildFallbackProps: ({ shortSummary }) => ({
+      textToAnimate: shortSummary,
       terminalTitle: 'bash',
     }),
   },

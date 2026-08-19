@@ -1,4 +1,4 @@
-// src/remotion/MyComp/TitleCardRig.tsx
+// src/graphics/TitleCardRig.tsx
 
 import React, { useMemo } from "react";
 import {
@@ -59,44 +59,60 @@ export const TitleCardRig: React.FC<Props> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // 🚀 Split title into structured words and tracking character configurations
-  const structuralWords = useMemo(() => {
-    let trackingIndex = 0;
-    return title.split(" ").map((word) => {
-      const letters = word.split("").map((char) => {
-        const item = { char, index: trackingIndex };
-        trackingIndex += 1;
-        return item;
+  // Split title into words and assign global character indices for smooth continuous stagger
+  const { words, totalChars } = useMemo(() => {
+    let globalIndex = 0;
+    const wordList = title.split(" ").map((wordText) => {
+      const chars = wordText.split("").map((char) => {
+        const index = globalIndex;
+        globalIndex += 1;
+        return { char, index };
       });
-      // Increment space character stagger step index
-      trackingIndex += 1; 
-      return letters;
+      // Increment index for the space character between words
+      globalIndex += 1;
+      return { wordText, chars };
     });
+
+    return {
+      words: wordList,
+      totalChars: Math.max(1, globalIndex - 1),
+    };
   }, [title]);
 
+  // 💡 CENTRAL TIMING CALCULATOR
   const {
     charStaggerStep,
     charDuration,
     accentStartDelay,
+    accentDuration,
     subtitleStartDelay,
     subtitleDuration,
   } = useMemo(() => {
+    const baseDuration = Math.max(10, Math.round((24 / 90) * durationInFrames));
+    const availableTimeForStagger = Math.max(1, durationInFrames - baseDuration);
+    const calculatedStagger = totalChars > 1 
+      ? Math.max(1, Math.floor(availableTimeForStagger / (totalChars - 1)))
+      : 1;
+    
     return {
-      charStaggerStep: Math.max(1, Math.round((3 / 90) * durationInFrames)),
-      charDuration: Math.max(10, Math.round((24 / 90) * durationInFrames)),
+      charStaggerStep: calculatedStagger,
+      charDuration: baseDuration,
       accentStartDelay: Math.round((6 / 90) * durationInFrames),
       accentDuration: Math.max(8, Math.round((18 / 90) * durationInFrames)),
       subtitleStartDelay: Math.round((28 / 90) * durationInFrames),
       subtitleDuration: Math.max(10, Math.round((22 / 90) * durationInFrames)),
     };
-  }, [durationInFrames]);
+  }, [durationInFrames, totalChars]);
 
+  // Accent Bar Spring Driver
   const accentSpring = spring({
     fps,
     frame: frame - accentStartDelay,
+    durationInFrames: accentDuration,
     config: { damping: 12, stiffness: 120 },
   });
 
+  // Subtitle Animation Spring Driver
   const subtitleSpring = spring({
     fps,
     frame,
@@ -112,7 +128,7 @@ export const TitleCardRig: React.FC<Props> = ({
         display: "flex",
         flexDirection: "column",
         alignItems: align === "center" ? "center" : "flex-start",
-        justifyContent: "center", // Centering along the vertical viewport line
+        justifyContent: "center",
         padding: "0 90px",
         fontFamily,
       }}
@@ -124,12 +140,9 @@ export const TitleCardRig: React.FC<Props> = ({
           display: "flex",
           flexDirection: "column",
           alignItems: align === "center" ? "center" : "flex-start",
-          justifyContent: "center", // 🚀 FORCES INNER CHILD BLOCKS TO NODE-CENTER VERTICALLY
-          minHeight: "450px",       // 🚀 Provides a generous structural frame window to balance text layouts cleanly
         }}
       >
-
-        {/* THE ACCENT BAR */}
+        {/* ACCENT BAR */}
         <div
           style={{
             width: interpolate(accentSpring, [0, 1], [0, 180]),
@@ -147,24 +160,24 @@ export const TitleCardRig: React.FC<Props> = ({
           style={{
             display: "flex",
             flexWrap: "wrap",
-            rowGap: "16px",
             justifyContent: align === "center" ? "center" : "flex-start",
             fontSize: titleFontSize,
             lineHeight: 1.1,
             fontWeight: 900,
             letterSpacing: "-0.04em",
+            rowGap: "0.2em",
           }}
         >
-          {structuralWords.map((wordLetters, wordIdx) => (
-            <div
-              key={`word-${wordIdx}`}
+          {words.map((word, wordIndex) => (
+            <span
+              key={`word-${wordIndex}`}
               style={{
-                display: "flex",
+                display: "inline-block",
                 whiteSpace: "nowrap",
-                marginRight: "0.28em",
+                marginRight: "0.28em", // Spacing between words
               }}
             >
-              {wordLetters.map(({ char, index }) => {
+              {word.chars.map(({ char, index }) => {
                 const charDelay = index * charStaggerStep;
 
                 const charSpring = spring({
@@ -212,7 +225,7 @@ export const TitleCardRig: React.FC<Props> = ({
                   </span>
                 );
               })}
-            </div>
+            </span>
           ))}
         </div>
 
@@ -227,10 +240,10 @@ export const TitleCardRig: React.FC<Props> = ({
               fontFamily,
               color: subtitleColor,
               textAlign: align,
-              marginTop: 24,
               opacity: interpolate(subtitleSpring, [0, 1], [0, 1]),
               transform: `translateY(${interpolate(subtitleSpring, [0, 1], [24, 0])}px)`,
               letterSpacing: "-0.02em",
+              marginTop: 20,
             }}
           >
             {subtitle}

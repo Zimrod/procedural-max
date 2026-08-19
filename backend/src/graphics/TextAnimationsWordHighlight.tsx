@@ -1,4 +1,4 @@
-// src/remotion/MyComp/TextAnimationsWordHighlight.tsx
+// src/graphics/TextAnimationsWordHighlight.tsx
 import { loadFont } from '@remotion/google-fonts/Inter';
 import React, { useMemo } from 'react';
 import { AbsoluteFill, spring, useCurrentFrame, useVideoConfig } from 'remotion';
@@ -6,16 +6,15 @@ import { AbsoluteFill, spring, useCurrentFrame, useVideoConfig } from 'remotion'
 const { fontFamily } = loadFont();
 
 type Props = {
-  // Content & Target Configs
   text?: string;
   highlightWord?: string;
-  
-  // Styling Parameters
   fontSize?: number;
   fontWeight?: number;
-  colorBg?: string;
-  colorText?: string;
-  colorHighlight?: string;
+  
+  // Standardized Theme Color Properties
+  backgroundColor?: string;
+  textColor?: string;
+  highlightColor?: string;
   durationInFrames?: number;
 };
 
@@ -28,13 +27,12 @@ const Highlight: React.FC<{
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Highlight background expansion spring driver
   const highlightProgress = spring({
     fps,
     frame,
     config: { damping: 200 },
     delay,
-    durationInFrames: Math.max(1, durationInFrames), // Prevent 0-frame spring calculations
+    durationInFrames: Math.max(1, durationInFrames),
   });
   const scaleX = Math.max(0, Math.min(1, highlightProgress));
 
@@ -64,20 +62,14 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
   highlightWord = 'Remotion',
   fontSize = 72,
   fontWeight = 700,
-  colorBg = '#ffffff',
-  colorText = '#000000',
-  colorHighlight = '#A7C7E7',
-  durationInFrames = 90, // 💡 Default reference total layout frame duration window
+  backgroundColor = '#ffffff',
+  textColor = '#000000',
+  highlightColor = '#A7C7E7',
+  durationInFrames = 90,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // 💡 DYNAMIC PERCENTAGE TIMING ENGINE
-  // Relies on the base reference total of 45 frames:
-  // textEntranceStartFrame = 0   -> 0%
-  // textEntranceDuration   = 15  -> 15 / 45 = 33.333%
-  // highlightStartFrame    = 30  -> 30 / 45 = 66.666%
-  // highlightWipeDuration  = 15  -> 15 / 45 = 33.333%
   const {
     textEntranceStartFrame,
     textEntranceDuration,
@@ -92,7 +84,6 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
     };
   }, [durationInFrames]);
 
-  // Tokenize string safely on word boundaries
   const tokens = useMemo(() => {
     if (!text) return [];
     return text.split(/(\w+|\s+|[^\w\s]+)/g).filter(Boolean);
@@ -100,7 +91,6 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
 
   const cleanHighlight = highlightWord.trim().toLowerCase();
 
-  // SIDE REVEAL + SLIDE FADE-IN MECHANICAL DRIVER
   const entryProgress = spring({
     fps,
     frame,
@@ -109,13 +99,10 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
     durationInFrames: Math.max(1, textEntranceDuration),
   });
 
-  const entranceOpacity = entryProgress;
-  const entranceTranslateX = (1 - entryProgress) * -30;
-
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: colorBg,
+        backgroundColor,
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily,
@@ -123,16 +110,16 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
     >
       <div
         style={{
-          color: colorText,
+          color: textColor,
           fontSize: `${fontSize}px`,
-          fontWeight: fontWeight,
+          fontWeight,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           flexWrap: 'wrap',
           whiteSpace: 'pre',
-          opacity: entranceOpacity,
-          transform: `translateX(${entranceTranslateX}px)`,
+          opacity: entryProgress,
+          transform: `translateX(${(1 - entryProgress) * -30}px)`,
         }}
       >
         {tokens.map((token, index) => {
@@ -143,7 +130,7 @@ export const TextAnimationsWordHighlight: React.FC<Props> = ({
               <Highlight
                 key={`highlight-${index}`}
                 word={token}
-                color={colorHighlight}
+                color={highlightColor}
                 delay={highlightStartFrame}
                 durationInFrames={highlightWipeDuration}
               />

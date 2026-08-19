@@ -1,4 +1,4 @@
-// src/remotion/MyComp/TextRig.tsx
+// src/graphics/TextRig.tsx
 import React, { useEffect, useState, useMemo } from 'react';
 import {
   AbsoluteFill,
@@ -173,7 +173,9 @@ export const TextRig: React.FC<Props> = ({
           scaleY = progress;
         }
 
-        const coloredSvg = svgContent.replace(/fill="[^"]*"/g, `fill="${color}"`);
+        const coloredSvg = svgContent
+          .replace(/fill:\s*(?!none)[^;"]+/gi, `fill:${color}`)
+          .replace(/fill="(?!none)[^"]*"/gi, `fill="${color}"`);
 
         elements.push(
           <div
