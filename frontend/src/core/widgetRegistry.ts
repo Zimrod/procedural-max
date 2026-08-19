@@ -57,10 +57,19 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('barColors', 'Bar Colors', 'array'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
       ...(extractedData?.barColors ? { barColors: extractedData.barColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   LINE_CHART: {
@@ -76,6 +85,12 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('pointColors', 'Point Colors', 'array'),
       field('curveType', 'Curve Type', 'select', ['linear', 'curved']),
       field('maxValue', 'Max Value', 'number'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
@@ -83,6 +98,9 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       ...(extractedData?.pointColors ? { pointColors: extractedData.pointColors } : {}),
       ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
       ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   DONUT_CHART: {
@@ -95,10 +113,16 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
       ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
   },
   PIE_CHART: {
@@ -111,10 +135,16 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
       ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
   },
   MULTI_LINE_CHART: {
@@ -131,6 +161,13 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('legendPosition', 'Legend Position', 'select', ['right', 'bottom']),
       field('lineWidth', 'Line Width', 'number'),
       field('pointRadius', 'Point Radius', 'number'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], series: [] },
@@ -139,6 +176,9 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       ...(extractedData?.legendPosition ? { legendPosition: extractedData.legendPosition } : {}),
       ...(extractedData?.lineWidth ? { lineWidth: extractedData.lineWidth } : {}),
       ...(extractedData?.pointRadius ? { pointRadius: extractedData.pointRadius } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   TITLE_CARD: {

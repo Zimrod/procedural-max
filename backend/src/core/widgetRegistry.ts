@@ -1,79 +1,8 @@
-// src/core/widgetRegistry.ts
 import type {
   WidgetCategory as TaxonomyWidgetCategory,
   WidgetIntent,
   WidgetType as TaxonomyWidgetType,
-} from './taxonomy/widgetTaxonomy.js';
-
-const SUMMARY_STOP_WORDS = new Set([
-  'a', 'an', 'and', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'have',
-  'he', 'her', 'his', 'i', 'in', 'is', 'it', 'its', 'of', 'on', 'or', 'our',
-  'she', 'that', 'the', 'their', 'them', 'they', 'this', 'to', 'we', 'were',
-  'with', 'you', 'your', 'into', 'about', 'through', 'using', 'while', 'which',
-  'what', 'when', 'where', 'why', 'how', 'also', 'just', 'like', 'more', 'most',
-  'over', 'under', 'after', 'before', 'because', 'around', 'across', 'again',
-  'there', 'here', 'all', 'some', 'any', 'each', 'every', 'these', 'those',
-  'company', 'people', 'story'
-]);
-
-function summarizeSentenceToHeadline(text: string): string {
-  const rawText = (text ?? '').replace(/\s+/g, ' ').trim();
-  if (!rawText) return '';
-
-  const sentence = rawText
-    .replace(/[“”"'`]/g, '')
-    .replace(/\s+(?:by|using|through|with|via|that|which|while|because|as)\s+/i, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  const candidate = sentence.split(/(?<=[.!?])\s+|;\s+|\s+-\s+/).find((part) => part && part.length > 12) ?? sentence;
-  const tokens = candidate
-    .split(/\s+/)
-    .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
-    .filter((token) => token.length > 1 && !SUMMARY_STOP_WORDS.has(token.toLowerCase()))
-    .slice(0, 5);
-
-  if (tokens.length === 0) {
-    const fallback = sentence
-      .split(/\s+/)
-      .map((token) => token.replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9]+$/g, ''))
-      .filter(Boolean)
-      .slice(0, 4);
-
-    return fallback.length > 0 ? fallback.join(' ').toUpperCase() : rawText.slice(0, 32).toUpperCase();
-  }
-
-  return tokens.join(' ').toUpperCase();
-}
-
-function buildBulletItemsFromText(text: string): string[] {
-  const rawText = (text ?? '').replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
-  if (!rawText) return [];
-
-  const bulletCandidates = rawText
-    .split(/\n|•|▪|\u2022|\s+-\s+|\s*\|\s*|;\s+/)
-    .map((part) => part.replace(/^[-*]\s*/, '').trim())
-    .filter(Boolean);
-
-  const explicitBullets = bulletCandidates.length > 1
-    ? bulletCandidates
-    : rawText
-        .split(/(?<=[.!?])\s+|\s+(?:and|but|however)\s+/i)
-        .map((part) => part.trim())
-        .filter(Boolean)
-        .filter((part) => part.length > 12);
-
-  const summarized = explicitBullets
-    .map((item) => summarizeSentenceToHeadline(item))
-    .filter((item) => item && item.length > 0)
-    .filter((item, index, arr) => arr.indexOf(item) === index);
-
-  if (summarized.length > 0) {
-    return summarized.slice(0, 4);
-  }
-
-  return [summarizeSentenceToHeadline(rawText)].filter(Boolean);
-}
+} from './taxonomy/widgetTaxonomy';
 
 export type WidgetCategory = TaxonomyWidgetCategory;
 export type WidgetType = TaxonomyWidgetType;
@@ -117,8 +46,6 @@ const field = (
   defaultValue,
 });
 
-const DEFAULT_CHART_COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD'];
-
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   BAR_CHART: {
     category: 'DATA_REPORTING',
@@ -130,10 +57,19 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('barColors', 'Bar Colors', 'array'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      barColors: extractedData?.barColors ?? DEFAULT_CHART_COLORS,
+      ...(extractedData?.barColors ? { barColors: extractedData.barColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   LINE_CHART: {
@@ -149,13 +85,22 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('pointColors', 'Point Colors', 'array'),
       field('curveType', 'Curve Type', 'select', ['linear', 'curved']),
       field('maxValue', 'Max Value', 'number'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      lineColor: extractedData?.lineColor ?? DEFAULT_CHART_COLORS[0],
-      pointColors: extractedData?.pointColors ?? DEFAULT_CHART_COLORS,
+      ...(extractedData?.lineColor ? { lineColor: extractedData.lineColor } : {}),
+      ...(extractedData?.pointColors ? { pointColors: extractedData.pointColors } : {}),
       ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
       ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   DONUT_CHART: {
@@ -168,10 +113,16 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      pieColors: extractedData?.pieColors ?? DEFAULT_CHART_COLORS,
+      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
   },
   PIE_CHART: {
@@ -184,10 +135,16 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], values: [] },
-      pieColors: extractedData?.pieColors ?? DEFAULT_CHART_COLORS,
+      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
   },
   MULTI_LINE_CHART: {
@@ -204,6 +161,13 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('legendPosition', 'Legend Position', 'select', ['right', 'bottom']),
       field('lineWidth', 'Line Width', 'number'),
       field('pointRadius', 'Point Radius', 'number'),
+      field('axisColor', 'Axis Color', 'color'),
+      field('gridColor', 'Grid Color', 'color'),
+      field('labelColor', 'Label Color', 'color'),
+      field('labelFontSize', 'Label Font Size', 'number'),
+      field('legendFontSize', 'Legend Font Size', 'number'),
+      field('fontFamily', 'Font Family', 'text'),
+      field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
       data: extractedData?.data ?? { labels: [], series: [] },
@@ -212,6 +176,9 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       ...(extractedData?.legendPosition ? { legendPosition: extractedData.legendPosition } : {}),
       ...(extractedData?.lineWidth ? { lineWidth: extractedData.lineWidth } : {}),
       ...(extractedData?.pointRadius ? { pointRadius: extractedData.pointRadius } : {}),
+      ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
+      ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
+      ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
     }),
   },
   TITLE_CARD: {
@@ -236,8 +203,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('revealDirection', 'Reveal Direction', 'select', ['up', 'down', 'left', 'right']),
       field('cinematic', 'Cinematic', 'boolean'),
     ],
-    buildFallbackProps: ({ shortSummary }) => ({
-      title: shortSummary,
+    buildFallbackProps: ({ text, shortSummary }) => ({
+      title: text || shortSummary,
       subtitle: shortSummary || '',
     }),
   },
@@ -258,8 +225,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('cursorColor', 'Cursor Color', 'color'),
     ],
-    buildFallbackProps: ({ shortSummary }) => ({
-      text: shortSummary,
+    buildFallbackProps: ({ text, shortSummary }) => ({
+      text: text || shortSummary,
     }),
   },
   TEXT: {
@@ -283,8 +250,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('lineHeight', 'Line Height', 'number'),
       field('textAlign', 'Text Align', 'select', ['left', 'center']),
     ],
-    buildFallbackProps: ({ shortSummary }) => ({
-      text: shortSummary,
+    buildFallbackProps: ({ text, shortSummary }) => ({
+      text: text || shortSummary,
     }),
   },
   TERMINAL_TYPING_TEXT: {
@@ -331,10 +298,10 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('colorText', 'Text Color', 'color'),
       field('colorHighlight', 'Highlight Color', 'color'),
     ],
-    buildFallbackProps: ({ shortSummary }) => {
-      const words = shortSummary.split(' ');
+    buildFallbackProps: ({ text, shortSummary }) => {
+      const words = (text || shortSummary).split(' ');
       return {
-        text: shortSummary,
+        text: text || shortSummary,
         highlightWord: words[0] || '',
       };
     },
@@ -354,8 +321,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ shortSummary }) => ({
-      textToAnimate: shortSummary.substring(0, 15),
+    buildFallbackProps: ({ text, shortSummary }) => ({
+      textToAnimate: (text || shortSummary).substring(0, 15),
     }),
   },
   SEQUENTIAL_ELASTIC_TEXT: {
@@ -375,8 +342,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ shortSummary }) => ({
-      textToAnimate: shortSummary,
+    buildFallbackProps: ({ text, shortSummary }) => ({
+      textToAnimate: text || shortSummary,
     }),
   },
   BULLET_POINTS: {
@@ -397,10 +364,13 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
-    buildFallbackProps: ({ shortSummary }) => {
-      const content = shortSummary;
-      const items = buildBulletItemsFromText(content);
-      return { items: items.length > 0 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
+    buildFallbackProps: ({ text, shortSummary }) => {
+      const content = text || shortSummary;
+      const items = content
+        .split(/\n|•|▪|\u2022|\s*\|\s*|;\s+/)
+        .map((line) => line.replace(/^[-*]\s*/, '').trim())
+        .filter(Boolean);
+      return { items: items.length > 1 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
     },
   },
 };
