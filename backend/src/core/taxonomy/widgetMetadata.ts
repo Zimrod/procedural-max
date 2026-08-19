@@ -1,5 +1,4 @@
-// src/core/taxonomy/widgetMetadata.ts
-import { widgetRegistry, WidgetType } from '../widgetRegistry.js';
+import { widgetRegistry, WidgetType } from '../widgetRegistry';
 
 export type WidgetMetadata = {
   type: WidgetType;
@@ -10,6 +9,31 @@ export type WidgetMetadata = {
 };
 
 const manualDescriptions: Record<WidgetType, { description: string; visualStyle: string; bestForKeywords: string[] }> = {
+  BAR_CHART: {
+    description: 'Displays comparative categorical numeric values using animated vertical bars.',
+    visualStyle: 'Vector SVG layout with spring-eased bouncing vertical bar reveals and grid axes.',
+    bestForKeywords: ['bar chart', 'comparison', 'categorical comparison', 'revenue by product', 'metrics'],
+  },
+  LINE_CHART: {
+    description: 'Displays continuous trend data over time or sequential categories using line paths.',
+    visualStyle: 'Animated line drawing stroke with staggered point dots and grid axes.',
+    bestForKeywords: ['line chart', 'trend', 'time series', 'historical trend', 'growth rate'],
+  },
+  DONUT_CHART: {
+    description: 'Shows proportional segment distribution with a hollow center ring.',
+    visualStyle: 'Spring-animated radial slices with internal/external percentage callouts and a side legend.',
+    bestForKeywords: ['donut chart', 'market share', 'proportional split', 'percentage distribution', 'allocation'],
+  },
+  PIE_CHART: {
+    description: 'Presents proportional slice distribution across a filled circular area.',
+    visualStyle: 'Radial sector paths popping in sequence with smart pointer leaders and aligned key entries.',
+    bestForKeywords: ['pie chart', 'share of total', 'breakdown', 'proportional breakdown', 'slice allocation'],
+  },
+  MULTI_LINE_CHART: {
+    description: 'Compares multiple distinct numeric series over a shared timeline or category axis.',
+    visualStyle: 'Multi-colored layered animated paths with staggered point reveals and interactive legend position.',
+    bestForKeywords: ['multi line chart', 'comparative trend', 'multiple metrics', 'series comparison', 'revenue vs costs'],
+  },
   TITLE_CARD: {
     description: 'Introduces a major section, timeline milestone, or concept shift with bold typography.',
     visualStyle: 'Large centralized block text lands on screen with a clean editorial presentation.',
@@ -74,8 +98,8 @@ export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(wi
   acc[type] = {
     type,
     category: widgetRegistry[type]?.category ?? 'TEXT_TYPOGRAPHY',
-    description: manual?.description ?? 'Typography-led composition element.',
-    visualStyle: manual?.visualStyle ?? 'Restrained motion layout utilizing strict type tracking parameters.',
+    description: manual?.description ?? 'Typography or data visualizer element.',
+    visualStyle: manual?.visualStyle ?? 'Restrained motion layout utilizing strict design parameters.',
     bestForKeywords: manual?.bestForKeywords ?? [],
   };
   return acc;

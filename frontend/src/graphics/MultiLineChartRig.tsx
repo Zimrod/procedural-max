@@ -1,6 +1,6 @@
-// src/remotion/MyComp/AreaChartRig.tsx
+// src/remotion/MyComp/MultiLineChartRig.tsx
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   useCurrentFrame,
   useVideoConfig,
@@ -8,31 +8,32 @@ import {
   spring,
 } from 'remotion';
 
+type Series = {
+  name: string;
+  values: number[];
+  color?: string;
+};
+
 type Props = {
   data: {
     labels: string[];
-    values: number[];
+    series: Series[];
   };
-  areaColor?: string;
-  lineColor?: string;
-  strokeColor?: string;
-  strokeWidth?: number;
   curveType?: 'linear' | 'curved';
   maxValue?: number;
-  opacity?: number; // area fill opacity (0-1)
-  axisColor?: string;
-  gridColor?: string;
-  labelColor?: string;
-  backgroundColor?: string;
+  legendPosition?: 'right' | 'bottom';
+  lineWidth?: number;
+  pointRadius?: number;
 };
 
-const DEFAULT_AREA_COLOR = '#4ECDC4';
-const DEFAULT_LINE_COLOR = '#2C7A6E';
+const DEFAULT_COLORS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+  '#DDA0DD', '#F0A07C', '#B0A8B9', '#98D8C8', '#F7D794'
+];
 
 const distance = (x1: number, y1: number, x2: number, y2: number) =>
   Math.hypot(x2 - x1, y2 - y1);
 
-// ----- helper for curved paths (same as LineChartRig) -----
 const bezierPoint = (t: number, p0: number, cp1: number, cp2: number, p1: number) => {
   const mt = 1 - t;
   return mt * mt * mt * p0 + 3 * mt * mt * t * cp1 + 3 * mt * t * t * cp2 + t * t * t * p1;
@@ -90,28 +91,21 @@ const getLinearPathLength = (points: { x: number; y: number }[]) => {
   return len;
 };
 
-// ----- Area chart component -----
-export const AreaChartRig: React.FC<Props> = ({
+export const MultiLineChartRig: React.FC<Props> = ({
   data,
-  areaColor = DEFAULT_AREA_COLOR,
-  lineColor = DEFAULT_LINE_COLOR,
-  strokeColor,
-  strokeWidth = 3,
   curveType = 'linear',
   maxValue: customMaxValue,
-  opacity = 0.3,
-  axisColor = '#333',
-  gridColor = '#a0d1ff',
-  labelColor = '#333',
-  backgroundColor = 'transparent',
+  legendPosition = 'right',
+  lineWidth = 3,
+  pointRadius = 6,
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  const { labels, values } = data;
+  const { labels, series } = data;
 
-  if (!values.length) return null;
+  if (!labels.length || !series.length) return null;
 
-  // Layout (70% container)
+  // Layout: chart area (70% of canvas)
   const containerWidth = width * 0.7;
   const containerHeight = height * 0.7;
   const startX = (width - containerWidth) / 2;
@@ -119,8 +113,9 @@ export const AreaChartRig: React.FC<Props> = ({
   const endX = startX + containerWidth;
   const endY = startY + containerHeight;
 
-  // Nice max value
-  const rawMax = customMaxValue ?? Math.max(...values);
+  // Determine global max value across all series
+  const allValues = series.flatMap(s => s.values);
+  const rawMax = customMaxValue ?? Math.max(...allValues);
   const getNiceMax = (val: number) => {
     if (val === 0) return 10;
     if (val > 30) return Math.ceil(val / 10) * 10;
@@ -130,10 +125,9 @@ export const AreaChartRig: React.FC<Props> = ({
 
   // Timing
   const axisDuration = fps * 2;
-  const pointDelayStart = axisDuration;
-  const pointStagger = 4;
-  const lineDrawStart = pointDelayStart + values.length * pointStagger;
-  const lineDrawDuration = fps * 1.5;
+  const seriesDelay = fps * 0.5; // delay between series
+  const pointStagger = 3; // frames per point within a series
+  const lineDrawDuration = fps * 1.2;
 
   // Axis animation
   const totalAxisLength = containerHeight + containerWidth;
@@ -144,76 +138,49 @@ export const AreaChartRig: React.FC<Props> = ({
     { extrapolateRight: 'clamp' }
   );
 
-  // Points coordinates
-  const points = values.map((value, i) => ({
-    x: startX + (i / (values.length - 1)) * containerWidth,
-    y: endY - (value / maxValue) * containerHeight,
-    value,
-    label: labels[i],
-  }));
-
-  // Build area path: line + return to bottom
-  const buildAreaPath = (progress: number) => {
-    // For the animated area, we draw the line only up to the current progress
-    if (progress === 0) return '';
-    const animatedPoints = points.map((p, idx) => {
-      const t = Math.min(1, (idx / (points.length - 1)) / progress);
-      if (t >= 1) return null;
-      // For intermediate frames, interpolate between previous and next point
-      if (t <= 0) return points[0];
-      const exactIdx = t * (points.length - 1);
-      const lower = Math.floor(exactIdx);
-      const upper = Math.min(lower + 1, points.length - 1);
-      const blend = exactIdx - lower;
-      const x = points[lower].x + (points[upper].x - points[lower].x) * blend;
-      const y = points[lower].y + (points[upper].y - points[lower].y) * blend;
-      return { x, y, value: 0, label: '' };
-    }).filter(p => p !== null) as { x: number; y: number }[];
-
-    if (animatedPoints.length === 0) return '';
-
-    const linePath = curveType === 'linear'
-      ? `M ${animatedPoints.map(p => `${p.x} ${p.y}`).join(' L ')}`
-      : getCurvedPath(animatedPoints);
-
-    // Add the bottom edge (from last point to bottom-right to bottom-left)
-    const lastX = animatedPoints[animatedPoints.length - 1].x;
-    const firstX = animatedPoints[0].x;
-    return `${linePath} L ${lastX} ${endY} L ${firstX} ${endY} Z`;
-  };
-
-  // Full area path for reference (for the line animation we still use stroke-dashoffset)
-  const fullLinePath = curveType === 'linear'
-    ? `M ${points.map(p => `${p.x} ${p.y}`).join(' L ')}`
-    : getCurvedPath(points);
-
-  const pathTotalLength = curveType === 'linear'
-    ? getLinearPathLength(points)
-    : getCurvedPathLength(points);
-
-  const lineDrawProgress = spring({
-    frame: frame - lineDrawStart,
-    fps,
-    config: { damping: 12, mass: 0.8, stiffness: 100 },
-  });
-  const strokeDashoffset = interpolate(lineDrawProgress, [0, 1], [pathTotalLength, 0], {
-    extrapolateRight: 'clamp',
-  });
-
-  // For the area fill, we use the same progress
-  const areaPath = buildAreaPath(lineDrawProgress);
+  // Precompute points for each series
+  const processedSeries = useMemo(() => {
+    return series.map((s, sIdx) => {
+      const points = s.values.map((value, i) => ({
+        x: startX + (i / (labels.length - 1)) * containerWidth,
+        y: endY - (value / maxValue) * containerHeight,
+        value,
+      }));
+      const color = s.color || DEFAULT_COLORS[sIdx % DEFAULT_COLORS.length];
+      const fullPath = curveType === 'linear'
+        ? `M ${points.map(p => `${p.x} ${p.y}`).join(' L ')}`
+        : getCurvedPath(points);
+      const pathLength = curveType === 'linear'
+        ? getLinearPathLength(points)
+        : getCurvedPathLength(points);
+      return { ...s, points, color, fullPath, pathLength };
+    });
+  }, [series, labels, startX, endY, containerWidth, maxValue, curveType]);
 
   // Y-axis ticks & grid
   const yTicks = [0, maxValue / 2, maxValue];
   const formatValue = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(1));
 
+  // Legend layout
+  const legendItemHeight = 32;
+  const legendWidth = 200;
+  const legendPadding = 20;
+  let legendX: number, legendY: number;
+  if (legendPosition === 'right') {
+    legendX = endX + 40;
+    legendY = startY + (containerHeight - series.length * legendItemHeight) / 2;
+  } else {
+    legendX = startX;
+    legendY = endY + 50;
+  }
+
   return (
-    <svg width={width} height={height} style={{ backgroundColor }}>
+    <svg width={width} height={height} style={{ backgroundColor: 'transparent' }}>
       {/* Axes */}
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
-        stroke={axisColor}
+        stroke="#333"
         strokeWidth={3}
         strokeDasharray={totalAxisLength}
         strokeDashoffset={axisProgress}
@@ -225,7 +192,7 @@ export const AreaChartRig: React.FC<Props> = ({
         const yPos = endY - (tick / maxValue) * containerHeight;
         const distanceToTick = yPos - startY;
         const revealFrame = interpolate(distanceToTick, [0, containerHeight], [0, axisDuration]);
-        const opacityGrid = spring({
+        const opacity = spring({
           frame: frame - revealFrame,
           fps,
           config: { stiffness: 50 },
@@ -237,10 +204,10 @@ export const AreaChartRig: React.FC<Props> = ({
             y1={yPos}
             x2={endX}
             y2={yPos}
-            stroke={gridColor}
+            stroke="#a0d1ff"
             strokeWidth={1.5}
             strokeDasharray="8,6"
-            style={{ opacity: opacityGrid * 0.4 }}
+            style={{ opacity: opacity * 0.4 }}
           />
         );
       })}
@@ -257,82 +224,116 @@ export const AreaChartRig: React.FC<Props> = ({
         });
         return (
           <g key={`y-${i}`} style={{ opacity: pop, transform: `scale(${pop})`, transformOrigin: `${startX}px ${yPos}px` }}>
-            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} />
-            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={20} fill={labelColor} fontFamily="sans-serif">
+            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke="#333" strokeWidth={2} />
+            <text x={startX - 20} y={yPos + 5} textAnchor="end" fontSize={20} fill="#333" fontFamily="sans-serif">
               {formatValue(tick)}
             </text>
           </g>
         );
       })}
 
-      {/* Area fill (animated) */}
-      {frame >= lineDrawStart && lineDrawProgress > 0 && areaPath && (
-        <path d={areaPath} fill={areaColor} fillOpacity={opacity} stroke="none" />
-      )}
-
-      {/* Line (drawn after area) */}
-      {frame >= lineDrawStart && lineDrawProgress > 0 && (
-        <path
-          d={fullLinePath}
-          fill="none"
-          stroke={strokeColor ?? lineColor}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeDasharray={pathTotalLength}
-          strokeDashoffset={strokeDashoffset}
-        />
-      )}
-
-      {/* Points (staggered spring pop) */}
-      {points.map((point, idx) => {
-        const pointFrame = pointDelayStart + idx * pointStagger;
-        const pointProgress = spring({
-          frame: frame - pointFrame,
-          fps,
-          config: { damping: 12, mass: 0.6, stiffness: 200 },
-        });
-        if (pointProgress === 0) return null;
-        const radius = 6 * pointProgress;
-        return (
-          <circle
-            key={`point-${idx}`}
-            cx={point.x}
-            cy={point.y}
-            r={radius}
-            fill={lineColor}
-            stroke="#fff"
-            strokeWidth={2}
-            style={{ transform: `scale(${pointProgress})`, transformOrigin: `${point.x}px ${point.y}px` }}
-          />
-        );
-      })}
-
       {/* X-axis labels */}
-      {points.map((point, idx) => {
-        const labelRevealFrame = lineDrawStart + lineDrawDuration * 0.6;
+      {labels.map((label, idx) => {
+        const xPos = startX + (idx / (labels.length - 1)) * containerWidth;
+        const labelRevealFrame = axisDuration + series.length * seriesDelay;
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
           fps,
-          config: { damping: 10, mass: 0.5, stiffness: 150 },
+          config: { friction: 10 },
         });
-        const opacityLabel = interpolate(labelProgress, [0, 1], [0, 1]);
+        const opacity = interpolate(labelProgress, [0, 1], [0, 1]);
         const translateY = interpolate(labelProgress, [0, 1], [10, 0]);
         return (
           <text
             key={`x-label-${idx}`}
-            x={point.x}
+            x={xPos}
             y={endY + 35}
             textAnchor="middle"
             fontSize={22}
             fill="#333"
             fontFamily="sans-serif"
-            style={{ opacity: opacityLabel, transform: `translateY(${translateY}px)` }}
+            style={{ opacity, transform: `translateY(${translateY}px)` }}
           >
-            {point.label}
+            {label}
           </text>
         );
       })}
+
+      {/* Lines and points per series */}
+      {processedSeries.map((series, sIdx) => {
+        const seriesStartFrame = axisDuration + sIdx * seriesDelay;
+        const pointsStartFrame = seriesStartFrame;
+        const lineStartFrame = pointsStartFrame + series.points.length * pointStagger;
+
+        // Line drawing progress
+        const lineProgress = spring({
+          frame: frame - lineStartFrame,
+          fps,
+          config: { damping: 12, mass: 0.8, stiffness: 100 },
+        });
+        const strokeDashoffset = interpolate(lineProgress, [0, 1], [series.pathLength, 0], {
+          extrapolateRight: 'clamp',
+        });
+
+        // Points
+        const pointElements = series.points.map((point, pIdx) => {
+          const pointFrame = pointsStartFrame + pIdx * pointStagger;
+          const pointProgress = spring({
+            frame: frame - pointFrame,
+            fps,
+            config: { damping: 12, mass: 0.6, stiffness: 200 },
+          });
+          if (pointProgress === 0) return null;
+          const r = pointRadius * pointProgress;
+          return (
+            <circle
+              key={`point-${sIdx}-${pIdx}`}
+              cx={point.x}
+              cy={point.y}
+              r={r}
+              fill={series.color}
+              stroke="#fff"
+              strokeWidth={2}
+              style={{ transform: `scale(${pointProgress})`, transformOrigin: `${point.x}px ${point.y}px` }}
+            />
+          );
+        });
+
+        return (
+          <g key={`series-${sIdx}`}>
+            {/* Line */}
+            {frame >= lineStartFrame && lineProgress > 0 && (
+              <path
+                d={series.fullPath}
+                fill="none"
+                stroke={series.color}
+                strokeWidth={lineWidth}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeDasharray={series.pathLength}
+                strokeDashoffset={strokeDashoffset}
+              />
+            )}
+            {/* Points */}
+            {pointElements}
+          </g>
+        );
+      })}
+
+      {/* Legend */}
+      <g opacity={spring({ frame: frame - axisDuration, fps, config: { damping: 10 } })}>
+        {processedSeries.map((series, idx) => (
+          <g
+            key={`legend-${idx}`}
+            transform={`translate(${legendX}, ${legendY + idx * legendItemHeight})`}
+          >
+            <rect width={16} height={16} fill={series.color} rx={2} />
+            <text x={24} y={13} fontSize={18} fill="#333" fontFamily="sans-serif">
+              {series.name}
+            </text>
+          </g>
+        ))}
+      </g>
     </svg>
   );
 };

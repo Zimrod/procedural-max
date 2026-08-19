@@ -1,23 +1,29 @@
-// src/core/widgetComponentRegistry.tsx
 'use client';
 
 import React from 'react';
-import { WidgetType } from './widgetRegistry.js';
+import { WidgetType } from './widgetRegistry';
 
 // Existing Rig Imports
-import { TextRig } from '../graphics/TextRig.js';
-import { TitleCardRig } from '../graphics/TitleCardRig.js';
-import { TypewriterRig } from '../graphics/TypewriterRig.js';
+import { TextRig } from '../graphics/TextRig';
+import { TitleCardRig } from '../graphics/TitleCardRig';
+import { TypewriterRig } from '../graphics/TypewriterRig';
 
 // Newly Integrated Rig Imports
-import { TerminalTypingTextRig } from '../graphics/TerminalTypingTextRig.js';
-import { TextAnimationsWordHighlight } from '../graphics/TextAnimationsWordHighlight.js';
-import { SvgDrawInTextRig } from '../graphics/SvgDrawInTextRig.js';
-import { SlidingWordMaskRig } from '../graphics/SlidingWordMaskRig.js';
-import { SequentialElasticTextRig } from '../graphics/SequentialElasticTextRig.js';
-import { BulletPointsRig } from '../graphics/BulletPointsRig.js';
-import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig.js';
-import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig.js';
+import { TerminalTypingTextRig } from '../graphics/TerminalTypingTextRig';
+import { TextAnimationsWordHighlight } from '../graphics/TextAnimationsWordHighlight';
+import { SvgDrawInTextRig } from '../graphics/SvgDrawInTextRig';
+import { SlidingWordMaskRig } from '../graphics/SlidingWordMaskRig';
+import { SequentialElasticTextRig } from '../graphics/SequentialElasticTextRig';
+import { BulletPointsRig } from '../graphics/BulletPointsRig';
+import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig';
+import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig';
+
+// Chart Rig Imports
+import { BarChartRig } from '../remotion/MyComp/BarChartRig';
+import { LineChartRig } from '../remotion/MyComp/LineChartRig';
+import { DonutChartRig } from '../remotion/MyComp/DonutChartRig';
+import { PieChartRig } from '../remotion/MyComp/PieChartRig';
+import { MultiLineChartRig } from '../remotion/MyComp/MultiLineChartRig';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
@@ -39,8 +45,12 @@ export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) 
   </div>
 );
 
-// 🚀 Fix: Update keys to UPPERCASE to exactly match the WidgetType registry contract
 const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
+  BAR_CHART: BarChartRig,
+  LINE_CHART: LineChartRig,
+  DONUT_CHART: DonutChartRig,
+  PIE_CHART: PieChartRig,
+  MULTI_LINE_CHART: MultiLineChartRig,
   TITLE_CARD: TitleCardRig,
   TYPEWRITER: TypewriterRig,
   TEXT: TextRig,
@@ -55,8 +65,6 @@ const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {
-  // 🚀 Fix: Convert to UPPERCASE instead of lowercase to match your type matrix keys
   const normalized = widgetType.toUpperCase() as WidgetType;
   return componentMapping[normalized] || (() => <DiagnosticFallbackRig widget={widgetType} />);
 }
-

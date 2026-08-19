@@ -1,4 +1,3 @@
-// src/core/widgetRegistry.ts
 import type {
   WidgetCategory as TaxonomyWidgetCategory,
   WidgetIntent,
@@ -48,6 +47,100 @@ const field = (
 });
 
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
+  BAR_CHART: {
+    category: 'DATA_REPORTING',
+    intents: ['SINGLE_METRIC', 'COMPETITIVE_VERSUS', 'MATRIX_DISTRIBUTION'],
+    purpose: 'Display comparative categorical numerical data using animated vertical bars.',
+    bestFor: ['product comparison', 'monthly revenue', 'categorical benchmarks'],
+    avoidFor: ['text heavy narration'],
+    defaultProps: {},
+    editorFields: [
+      field('data', 'Chart Data', 'json'),
+      field('barColors', 'Bar Colors', 'array'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      data: extractedData?.data ?? { labels: [], values: [] },
+      ...(extractedData?.barColors ? { barColors: extractedData.barColors } : {}),
+    }),
+  },
+  LINE_CHART: {
+    category: 'DATA_REPORTING',
+    intents: ['HISTORICAL_TREND', 'ACCELERATION_VECTOR'],
+    purpose: 'Display sequential metric trends over continuous ranges.',
+    bestFor: ['time series', 'growth projections', 'performance history'],
+    avoidFor: ['unordered static lists'],
+    defaultProps: {},
+    editorFields: [
+      field('data', 'Chart Data', 'json'),
+      field('lineColor', 'Line Color', 'color'),
+      field('pointColors', 'Point Colors', 'array'),
+      field('curveType', 'Curve Type', 'select', ['linear', 'curved']),
+      field('maxValue', 'Max Value', 'number'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      data: extractedData?.data ?? { labels: [], values: [] },
+      ...(extractedData?.lineColor ? { lineColor: extractedData.lineColor } : {}),
+      ...(extractedData?.pointColors ? { pointColors: extractedData.pointColors } : {}),
+      ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
+      ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
+    }),
+  },
+  DONUT_CHART: {
+    category: 'DATA_REPORTING',
+    intents: ['PROPORTIONAL_SPLIT', 'MATRIX_DISTRIBUTION'],
+    purpose: 'Show proportion splits with an open hollow center ring.',
+    bestFor: ['market share', 'budget allocation', 'category composition'],
+    avoidFor: ['multi-series time trends'],
+    defaultProps: {},
+    editorFields: [
+      field('data', 'Chart Data', 'json'),
+      field('pieColors', 'Pie Colors', 'array'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      data: extractedData?.data ?? { labels: [], values: [] },
+      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+    }),
+  },
+  PIE_CHART: {
+    category: 'DATA_REPORTING',
+    intents: ['PROPORTIONAL_SPLIT', 'MATRIX_DISTRIBUTION'],
+    purpose: 'Show sector shares of a complete whole.',
+    bestFor: ['segment share', 'demographic split', 'percentage distributions'],
+    avoidFor: ['negative values'],
+    defaultProps: {},
+    editorFields: [
+      field('data', 'Chart Data', 'json'),
+      field('pieColors', 'Pie Colors', 'array'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      data: extractedData?.data ?? { labels: [], values: [] },
+      ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
+    }),
+  },
+  MULTI_LINE_CHART: {
+    category: 'DATA_REPORTING',
+    intents: ['HISTORICAL_TREND', 'COMPETITIVE_VERSUS'],
+    purpose: 'Compare multiple trend series along a common scale.',
+    bestFor: ['revenue vs costs', 'multi-product growth', 'competitor trends'],
+    avoidFor: ['single value callouts'],
+    defaultProps: {},
+    editorFields: [
+      field('data', 'Chart Data', 'json'),
+      field('curveType', 'Curve Type', 'select', ['linear', 'curved']),
+      field('maxValue', 'Max Value', 'number'),
+      field('legendPosition', 'Legend Position', 'select', ['right', 'bottom']),
+      field('lineWidth', 'Line Width', 'number'),
+      field('pointRadius', 'Point Radius', 'number'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      data: extractedData?.data ?? { labels: [], series: [] },
+      ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
+      ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
+      ...(extractedData?.legendPosition ? { legendPosition: extractedData.legendPosition } : {}),
+      ...(extractedData?.lineWidth ? { lineWidth: extractedData.lineWidth } : {}),
+      ...(extractedData?.pointRadius ? { pointRadius: extractedData.pointRadius } : {}),
+    }),
+  },
   TITLE_CARD: {
     category: 'TEXT_TYPOGRAPHY',
     intents: ['CORE_THESIS', 'STATUS_BADGE'],
@@ -185,32 +278,9 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('startFrameOffset', 'Start Frame Offset', 'number'),
     ],
     buildFallbackProps: ({ text, shortSummary }) => ({
-      textToAnimate: (text || shortSummary).substring(0, 15), // Kept clean for single-line path processing
+      textToAnimate: (text || shortSummary).substring(0, 15),
     }),
   },
-  // SLIDING_WORD_MASK: {
-  //   category: 'TEXT_TYPOGRAPHY',
-  //   intents: ['CORE_THESIS'],
-  //   purpose: 'Cycle through an array of kinetic keywords behind a geometric clipping mask wrapper.',
-  //   bestFor: ['value propositions', 'rotating descriptions', 'marketing hooks', 'dynamic lists'],
-  //   avoidFor: ['static numbers'],
-  //   defaultProps: {},
-  //   editorFields: [
-  //     field('prefixText', 'Prefix Text', 'text'),
-  //     field('wordsToCycle', 'Words to Cycle', 'array'),
-  //     field('fontSize', 'Font Size', 'number'),
-  //     field('fontWeight', 'Font Weight', 'text'),
-  //     field('fontFamily', 'Font Family', 'text'),
-  //     field('wordColor', 'Word Color', 'color'),
-  //     field('baseTextColor', 'Base Text Color', 'color'),
-  //     field('backgroundColor', 'Background Color', 'color'),
-  //     field('startFrameOffset', 'Start Frame Offset', 'number'),
-  //   ],
-  //   buildFallbackProps: ({ text, shortSummary }) => ({
-  //     prefixText: 'We build',
-  //     wordsToCycle: ['Software', 'Brands', 'Videos', 'Products'],
-  //   }),
-  // },
   SEQUENTIAL_ELASTIC_TEXT: {
     category: 'TEXT_TYPOGRAPHY',
     intents: ['CORE_THESIS', 'STATUS_BADGE'],
@@ -259,60 +329,6 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       return { items: items.length > 1 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
     },
   },
-  // GEOMETRIC_QUOTE: {
-  //   category: 'TEXT_TYPOGRAPHY',
-  //   intents: ['CORE_THESIS'],
-  //   purpose: 'Format editorial blockquotes wrapped in modern design geometries.',
-  //   bestFor: ['customer testimonials', 'expert reviews', 'famous philosophical soundbites'],
-  //   avoidFor: ['source spreadsheets'],
-  //   defaultProps: {},
-  //   editorFields: [
-  //     field('quoteText', 'Quote Text', 'text'),
-  //     field('authorName', 'Author Name', 'text'),
-  //     field('authorTitle', 'Author Title', 'text'),
-  //     field('quoteFontSize', 'Quote Font Size', 'number'),
-  //     field('authorFontSize', 'Author Font Size', 'number'),
-  //     field('titleFontSize', 'Title Font Size', 'number'),
-  //     field('textColor', 'Text Color', 'color'),
-  //     field('accentColor', 'Accent Color', 'color'),
-  //     field('backgroundColor', 'Background Color', 'color'),
-  //     field('fontFamily', 'Font Family', 'text'),
-  //   ],
-  //   buildFallbackProps: ({ text, shortSummary }) => ({
-  //     quoteText: text || shortSummary,
-  //     authorName: 'Jane Doe',
-  //     authorTitle: 'Consultant',
-  //   }),
-  // },
-  // GRID_PRINCIPLES: {
-  //   category: 'TEXT_TYPOGRAPHY',
-  //   intents: ['CORE_THESIS'],
-  //   purpose: 'Showcase structured cards layout across matrix grids to describe structural rules.',
-  //   bestFor: ['company values', 'design systems', 'product framework descriptions', '3-column overviews'],
-  //   avoidFor: ['single sentence headers'],
-  //   defaultProps: {},
-  //   editorFields: [
-  //     field('sectionTitle', 'Section Title', 'text'),
-  //     field('principles', 'Principles', 'json'),
-  //     field('sectionFontSize', 'Section Font Size', 'number'),
-  //     field('cardTitleFontSize', 'Card Title Font Size', 'number'),
-  //     field('cardDescFontSize', 'Card Desc Font Size', 'number'),
-  //     field('textColor', 'Text Color', 'color'),
-  //     field('mutedTextColor', 'Muted Text Color', 'color'),
-  //     field('accentColor', 'Accent Color', 'color'),
-  //     field('surfaceColor', 'Surface Color', 'color'),
-  //     field('backgroundColor', 'Background Color', 'color'),
-  //     field('borderColor', 'Border Color', 'color'),
-  //     field('fontFamily', 'Font Family', 'text'),
-  //   ],
-  //   buildFallbackProps: ({ text, shortSummary }) => ({
-  //     sectionTitle: 'Core Framework Principles',
-  //     principles: [
-  //       { title: 'Clarity First', description: text || shortSummary },
-  //       { title: 'Deterministic Build', description: 'Execution engines anchor flawlessly to video frame boundaries.' }
-  //     ],
-  //   }),
-  // },
 };
 
 export function getWidgetDefinition(widget: string) {

@@ -2,17 +2,17 @@ export const WIDGET_TAXONOMY = {
   DATA_REPORTING: {
     label: 'Data & Charts',
     types: {
-      BAR_CHART: 'bar_chart',
-      LINE_CHART: 'line_chart',
+      BAR_CHART: 'bar_chart', // Pick
+      LINE_CHART: 'line_chart', // Pick
       AREA_CHART: 'area_chart',
-      DONUT_CHART: 'donut_chart',
+      DONUT_CHART: 'donut_chart', // Pick
       DONUT_STEP_CHART: 'donut_step_chart',
       DONUT_COMPARISON: 'donut_comparison',
-      PIE_CHART: 'pie_chart',
+      PIE_CHART: 'pie_chart', // Pick
       WATERFALL_CHART: 'waterfall_chart',
       MULTI_AREA_CHART: 'multi_area_chart',
       MULTI_BAR_CHART: 'multi_bar_chart',
-      MULTI_LINE_CHART: 'multi_line_chart',
+      MULTI_LINE_CHART: 'multi_line_chart', // Pick
       STAT_REVEAL: 'stat_reveal',
     },
   },

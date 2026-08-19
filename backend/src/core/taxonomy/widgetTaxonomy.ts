@@ -1,4 +1,14 @@
 export const WIDGET_TAXONOMY = {
+  DATA_REPORTING: {
+    label: 'Data & Charts',
+    types: {
+      BAR_CHART: 'bar_chart',
+      LINE_CHART: 'line_chart',
+      DONUT_CHART: 'donut_chart',
+      PIE_CHART: 'pie_chart',
+      MULTI_LINE_CHART: 'multi_line_chart',
+    },
+  },
   TEXT_TYPOGRAPHY: {
     label: 'Text & Typography',
     types: {
