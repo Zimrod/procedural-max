@@ -19,11 +19,11 @@ import { GeometricQuoteRig } from '../graphics/GeometricQuoteRig';
 import { GridPrinciplesRig } from '../graphics/GridPrinciplesRig';
 
 // Chart Rig Imports
-import { BarChartRig } from '../remotion/MyComp/BarChartRig';
-import { LineChartRig } from '../remotion/MyComp/LineChartRig';
-import { DonutChartRig } from '../remotion/MyComp/DonutChartRig';
-import { PieChartRig } from '../remotion/MyComp/PieChartRig';
-import { MultiLineChartRig } from '../remotion/MyComp/MultiLineChartRig';
+import { BarChartRig } from '../graphics/BarChartRig';
+import { LineChartRig } from '../graphics/LineChartRig';
+import { DonutChartRig } from '../graphics/DonutChartRig';
+import { PieChartRig } from '../graphics/PieChartRig';
+import { MultiLineChartRig } from '../graphics/MultiLineChartRig';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
