@@ -23,7 +23,7 @@ export async function GET() {
     }
 
     const toneResponse = await apiKey.chat.completions.create({
-        model: "gpt-5-mini",
+        model: "gpt-4.1",
         temperature: 0.3,
         messages: [
           {

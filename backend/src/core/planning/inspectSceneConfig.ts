@@ -25,7 +25,7 @@ export async function inspectAndRefineConfig(config: SceneConfigItem[]): Promise
 
   try {
     const response = await apiKey.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4.1",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: JSON.stringify(config, null, 2) }
