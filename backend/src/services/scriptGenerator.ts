@@ -7,7 +7,7 @@ export async function generateScript(
     const completion =
         await openai.chat.completions.create({
 
-            model: "gpt-4.1",
+            model: "gpt-5-nano",
 
             messages: [
 
