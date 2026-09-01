@@ -21,6 +21,7 @@ export type SelectedWidget = {
 export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<SelectedWidget[]> {
   const usedWidgetsGlobal = new Set<string>();
   const batchPassTallies: Record<string, { count: number }> = {};
+  let lastWasDataWidget = false;
 
   // Read from the provided narrative analysis first, then fall back to disk.
   let sourceBeats = beats;
@@ -46,13 +47,19 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
     const primaryIdea = beat.selectedIdeas?.[0];
     const primaryIdeaText = primaryIdea?.phrase || beat.sentenceText;
     const ideaType = primaryIdea?.type || intent;
+    const hasDataSignal = /(?:\$\s*)?\d+(?:\.\d+)?\s*(?:%|percent|x|trillion|billion|million)\b/i.test(beat.sentenceText);
 
     let selectedWidgetType: string | null = null;
-    let highestScore = -Infinity;
-    let validCandidates: string[] = [];
+    const rankedCandidates: Array<{ widgetType: string; category: string; score: number }> = [];
 
     // Loop through ALL widgets declared in the widget registry dynamically
     for (const [widgetType, meta] of Object.entries(widgetRegistry)) {
+      // Never emit an empty chart. A numeric claim without a chart-ready data
+      // signal is better represented as typography.
+      if (meta.category === 'DATA_REPORTING' && !hasDataSignal) {
+        continue;
+      }
+
       const shouldAvoid = (meta.avoidFor ?? []).some((keyword) => text.includes(keyword.toLowerCase()));
       if (shouldAvoid) continue;
 
@@ -71,31 +78,38 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
         score += 30;
       }
 
+      if (meta.category === 'DATA_REPORTING' && hasDataSignal) {
+        score += 20;
+      }
+
       // Dynamic position weight modifiers
       if (role === 'intro' && widgetType.includes('TITLE')) score += 10;
       if (role === 'outro' && (widgetType.includes('TYPEWRITER') || widgetType.includes('CARD'))) score += 5;
 
       // Global pacing de-duplication penalty
       if (usedWidgetsGlobal.has(widgetType)) {
-        score -= 15;
+        score -= meta.category === 'DATA_REPORTING' ? 45 : 15;
       }
 
-      if (score > highestScore) {
-        highestScore = score;
-        validCandidates = [widgetType];
-      } else if (score === highestScore) {
-        validCandidates.push(widgetType);
-      }
+      rankedCandidates.push({ widgetType, category: meta.category, score });
     }
 
+    // Keep quantitative scenes from becoming a wall of charts.
+    const shouldInsertTextScene = hasDataSignal && lastWasDataWidget;
+    const preferredCandidates = (shouldInsertTextScene
+      ? rankedCandidates.filter((candidate) => candidate.category === 'TEXT_TYPOGRAPHY')
+      : rankedCandidates
+    ).sort((a, b) => b.score - a.score);
+
     // Assign best scoring candidate, or default to the first registry key available
-    if (validCandidates.length > 0 && highestScore > -100) {
-      selectedWidgetType = validCandidates[Math.floor(Math.random() * validCandidates.length)];
+    if (preferredCandidates.length > 0 && preferredCandidates[0].score > -100) {
+      selectedWidgetType = preferredCandidates[0].widgetType;
     } else {
       selectedWidgetType = Object.keys(widgetRegistry)[0];
     }
 
     usedWidgetsGlobal.add(selectedWidgetType);
+    lastWasDataWidget = widgetRegistry[selectedWidgetType as WidgetType]?.category === 'DATA_REPORTING';
 
     if (!batchPassTallies[selectedWidgetType]) {
       batchPassTallies[selectedWidgetType] = { count: 0 };

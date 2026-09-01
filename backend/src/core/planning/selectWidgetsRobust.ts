@@ -110,6 +110,7 @@ export async function selectWidgetsRobust(beats: NarrativeBeat[]): Promise<Selec
 
   const usedWidgetsGlobal = new Set<string>();
   const batchPassTallies: Record<string, { count: number }> = {};
+  let lastWasDataWidget = false;
 
   console.log(`\n==== SELECTING WIDGETS: PROCESSING PIPELINE MEMORY MATRICES (${beats.length} Beats) ====`);
 
@@ -126,11 +127,16 @@ export async function selectWidgetsRobust(beats: NarrativeBeat[]): Promise<Selec
     const dataHints = extractDataHints(beat.sentenceText);
 
     let selectedWidgetType: string | null = null;
-    let highestScore = -Infinity;
-    let validCandidates: string[] = [];
+    const rankedCandidates: Array<{ widgetType: string; category: string; score: number }> = [];
 
     // Loop through ALL widgets declared in the widget registry dynamically
     for (const [widgetType, meta] of Object.entries(widgetRegistry)) {
+      // Never emit an empty chart. A numeric claim without an extracted series
+      // is better represented as typography than as a blank data visualization.
+      if (meta.category === 'DATA_REPORTING' && Object.keys(dataHints).length === 0) {
+        continue;
+      }
+
       const shouldAvoid = (meta.avoidFor ?? []).some((keyword) => text.includes(keyword.toLowerCase()));
       if (shouldAvoid) continue;
 
@@ -163,26 +169,30 @@ export async function selectWidgetsRobust(beats: NarrativeBeat[]): Promise<Selec
 
       // Global pacing de-duplication penalty
       if (usedWidgetsGlobal.has(widgetType)) {
-        score -= 15;
+        score -= meta.category === 'DATA_REPORTING' ? 45 : 15;
       }
 
-      if (score > highestScore) {
-        highestScore = score;
-        validCandidates = [widgetType];
-      } else if (score === highestScore) {
-        validCandidates.push(widgetType);
-      }
+      rankedCandidates.push({ widgetType, category: meta.category, score });
     }
 
+    // Keep quantitative scenes from becoming a wall of charts. A text scene
+    // between data scenes also gives the next chart a chance to change form.
+    const shouldInsertTextScene = Object.keys(dataHints).length > 0 && lastWasDataWidget;
+    const preferredCandidates = (shouldInsertTextScene
+      ? rankedCandidates.filter((candidate) => candidate.category === 'TEXT_TYPOGRAPHY')
+      : rankedCandidates
+    ).sort((a, b) => b.score - a.score);
+
     // Assign best scoring candidate, or default to the first registry key available
-    if (validCandidates.length > 0 && highestScore > -100) {
+    if (preferredCandidates.length > 0 && preferredCandidates[0].score > -100) {
       // Keep scene generation reproducible for the same transcript and registry.
-      selectedWidgetType = validCandidates[0];
+      selectedWidgetType = preferredCandidates[0].widgetType;
     } else {
       selectedWidgetType = Object.keys(widgetRegistry)[0];
     }
 
     usedWidgetsGlobal.add(selectedWidgetType);
+    lastWasDataWidget = widgetRegistry[selectedWidgetType as WidgetType]?.category === 'DATA_REPORTING';
 
     if (!batchPassTallies[selectedWidgetType]) {
       batchPassTallies[selectedWidgetType] = { count: 0 };
