@@ -10,7 +10,7 @@ import {
 } from "remotion";
 
 type Props = {
-  title: string;
+  title?: string;
   subtitle?: string;
 
   // Layout
@@ -57,12 +57,16 @@ export const TitleCardRig: React.FC<Props> = ({
   durationInFrames = 45, 
 }) => {
   const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
+  const { fps, width, height } = useVideoConfig();
+  const safeTitle = typeof title === "string" ? title : "Untitled scene";
+  const layoutScale = Math.min(width / 1920, height / 1080);
+  const responsiveTitleFontSize = titleFontSize * Math.max(0.62, layoutScale);
+  const responsiveSubtitleFontSize = subtitleFontSize * Math.max(0.72, layoutScale);
 
   // Split title into words and assign global character indices for smooth continuous stagger
   const { words, totalChars } = useMemo(() => {
     let globalIndex = 0;
-    const wordList = title.split(" ").map((wordText) => {
+    const wordList = safeTitle.split(" ").map((wordText) => {
       const chars = wordText.split("").map((char) => {
         const index = globalIndex;
         globalIndex += 1;
@@ -77,7 +81,7 @@ export const TitleCardRig: React.FC<Props> = ({
       words: wordList,
       totalChars: Math.max(1, globalIndex - 1),
     };
-  }, [title]);
+  }, [safeTitle]);
 
   // 💡 CENTRAL TIMING CALCULATOR
   const {
@@ -129,7 +133,7 @@ export const TitleCardRig: React.FC<Props> = ({
         flexDirection: "column",
         alignItems: align === "center" ? "center" : "flex-start",
         justifyContent: "center",
-        padding: "0 90px",
+        padding: `0 ${Math.max(32, 90 * layoutScale)}px`,
         fontFamily,
       }}
     >
@@ -161,7 +165,7 @@ export const TitleCardRig: React.FC<Props> = ({
             display: "flex",
             flexWrap: "wrap",
             justifyContent: align === "center" ? "center" : "flex-start",
-            fontSize: titleFontSize,
+            fontSize: responsiveTitleFontSize,
             lineHeight: 1.1,
             fontWeight: 900,
             letterSpacing: "-0.04em",
@@ -233,8 +237,8 @@ export const TitleCardRig: React.FC<Props> = ({
         {subtitle && (
           <div
             style={{
-              maxWidth: 920,
-              fontSize: subtitleFontSize,
+              maxWidth: Math.min(920, width * 0.82),
+              fontSize: responsiveSubtitleFontSize,
               lineHeight: 1.45,
               fontWeight: 500,
               fontFamily,

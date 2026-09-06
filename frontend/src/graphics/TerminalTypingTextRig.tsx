@@ -43,7 +43,9 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
 }) => {
   const frame = useCurrentFrame();
   // const { width, height, durationInFrames: videoConfigDuration } = useVideoConfig();
-  const { durationInFrames: videoConfigDuration } = useVideoConfig();
+  const { durationInFrames: videoConfigDuration, width, height } = useVideoConfig();
+  const layoutScale = Math.min(width / 1920, height / 1080);
+  const responsiveFontSize = fontSize * Math.max(0.7, layoutScale);
   
   // Fallback to video config duration if durationInFrames prop is not passed
   const durationInFrames = customDurationInFrames ?? videoConfigDuration;
@@ -157,22 +159,22 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "40px",
+        padding: `${Math.max(20, 40 * layoutScale)}px`,
         boxSizing: "border-box",
       }}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "1000px",
-          padding: "35px",
+          maxWidth: Math.min(1000, width * 0.9),
+          padding: `${Math.max(20, 35 * layoutScale)}px`,
           backgroundColor, 
           borderRadius: "16px",
           border: `1px solid ${borderColor}`,
           boxShadow: "0 12px 25px rgba(0, 0, 0, 0.65), 0 30px 60px rgba(0, 0, 0, 0.4)",
           
           fontFamily: "ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace", 
-          fontSize: `${fontSize}px`,
+          fontSize: `${responsiveFontSize}px`,
           fontWeight: 700,
           lineHeight: "1.6",
           letterSpacing: "0.5px",
@@ -195,8 +197,8 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
             borderBottom: `1px solid ${borderColor}`, 
             paddingBottom: "18px",
             backgroundColor: headerBgColor === "transparent" ? "transparent" : headerBgColor,
-            margin: "-35px -35px 25px -35px",
-            padding: "18px 35px",
+            margin: `${-Math.max(20, 35 * layoutScale)}px ${-Math.max(20, 35 * layoutScale)}px 25px`,
+            padding: `${Math.max(12, 18 * layoutScale)}px ${Math.max(20, 35 * layoutScale)}px`,
             borderRadius: "16px 16px 0 0"
           }}
         >
@@ -225,8 +227,8 @@ export const TerminalTypingTextRig: React.FC<RigProps> = ({
         <span
           style={{
             display: "inline-block",
-            width: `${fontSize * 0.55}px`,
-            height: `${fontSize * 0.9}px`,
+            width: `${responsiveFontSize * 0.55}px`,
+            height: `${responsiveFontSize * 0.9}px`,
             backgroundColor: cursorColor,
             marginLeft: "6px",
             verticalAlign: "middle",

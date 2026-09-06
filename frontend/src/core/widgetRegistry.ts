@@ -13,6 +13,7 @@ export type WidgetRegistryEntry = {
   purpose: string;
   bestFor: string[];
   avoidFor?: string[];
+  previewFileName?: string;
   defaultProps: Record<string, any>;
   editorFields: WidgetEditorField[];
   buildFallbackProps: (params: {
@@ -46,6 +47,26 @@ const field = (
   defaultValue,
 });
 
+// Keep newly-added charts renderable before the user supplies real data.
+// These shapes mirror the props consumed by the chart rigs.
+const PLACEHOLDER_CATEGORY_DATA = {
+  labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+  values: [42, 68, 55, 84],
+};
+
+const PLACEHOLDER_DISTRIBUTION_DATA = {
+  labels: ['Product', 'Service', 'Other'],
+  values: [45, 30, 25],
+};
+
+const PLACEHOLDER_MULTI_SERIES_DATA = {
+  labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+  series: [
+    { name: 'Revenue', values: [42, 68, 55, 84] },
+    { name: 'Costs', values: [30, 44, 39, 52] },
+  ],
+};
+
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   BAR_CHART: {
     category: 'DATA_REPORTING',
@@ -53,7 +74,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Display comparative categorical numerical data using animated vertical bars.',
     bestFor: ['product comparison', 'monthly revenue', 'categorical benchmarks'],
     avoidFor: ['text heavy narration'],
-    defaultProps: {},
+    previewFileName: 'bar_chart.mp4',
+    defaultProps: { data: PLACEHOLDER_CATEGORY_DATA },
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('barColors', 'Bar Colors', 'array'),
@@ -65,7 +87,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
-      data: extractedData?.data ?? { labels: [], values: [] },
+      data: extractedData?.data ?? PLACEHOLDER_CATEGORY_DATA,
       ...(extractedData?.barColors ? { barColors: extractedData.barColors } : {}),
       ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
       ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
@@ -78,7 +100,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Display sequential metric trends over continuous ranges.',
     bestFor: ['time series', 'growth projections', 'performance history'],
     avoidFor: ['unordered static lists'],
-    defaultProps: {},
+    previewFileName: 'line_chart.mp4',
+    defaultProps: { data: PLACEHOLDER_CATEGORY_DATA },
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('lineColor', 'Line Color', 'color'),
@@ -93,7 +116,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
-      data: extractedData?.data ?? { labels: [], values: [] },
+      data: extractedData?.data ?? PLACEHOLDER_CATEGORY_DATA,
       ...(extractedData?.lineColor ? { lineColor: extractedData.lineColor } : {}),
       ...(extractedData?.pointColors ? { pointColors: extractedData.pointColors } : {}),
       ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
@@ -109,7 +132,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Show proportion splits with an open hollow center ring.',
     bestFor: ['market share', 'budget allocation', 'category composition'],
     avoidFor: ['multi-series time trends'],
-    defaultProps: {},
+    previewFileName: 'donut_chart.mp4',
+    defaultProps: { data: PLACEHOLDER_DISTRIBUTION_DATA },
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
@@ -120,7 +144,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
-      data: extractedData?.data ?? { labels: [], values: [] },
+      data: extractedData?.data ?? PLACEHOLDER_DISTRIBUTION_DATA,
       ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
       ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
@@ -131,7 +155,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Show sector shares of a complete whole.',
     bestFor: ['segment share', 'demographic split', 'percentage distributions'],
     avoidFor: ['negative values'],
-    defaultProps: {},
+    previewFileName: 'pie_chart.mp4',
+    defaultProps: { data: PLACEHOLDER_DISTRIBUTION_DATA },
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('pieColors', 'Pie Colors', 'array'),
@@ -142,7 +167,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
-      data: extractedData?.data ?? { labels: [], values: [] },
+      data: extractedData?.data ?? PLACEHOLDER_DISTRIBUTION_DATA,
       ...(extractedData?.pieColors ? { pieColors: extractedData.pieColors } : {}),
       ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
     }),
@@ -153,7 +178,8 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Compare multiple trend series along a common scale.',
     bestFor: ['revenue vs costs', 'multi-product growth', 'competitor trends'],
     avoidFor: ['single value callouts'],
-    defaultProps: {},
+    previewFileName: 'multiline_chart.mp4',
+    defaultProps: { data: PLACEHOLDER_MULTI_SERIES_DATA },
     editorFields: [
       field('data', 'Chart Data', 'json'),
       field('curveType', 'Curve Type', 'select', ['linear', 'curved']),
@@ -170,7 +196,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       field('backgroundColor', 'Background Color', 'color'),
     ],
     buildFallbackProps: ({ extractedData }) => ({
-      data: extractedData?.data ?? { labels: [], series: [] },
+      data: extractedData?.data ?? PLACEHOLDER_MULTI_SERIES_DATA,
       ...(extractedData?.curveType ? { curveType: extractedData.curveType } : {}),
       ...(extractedData?.maxValue ? { maxValue: extractedData.maxValue } : {}),
       ...(extractedData?.legendPosition ? { legendPosition: extractedData.legendPosition } : {}),
@@ -187,6 +213,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Introduce a section or frame with bold typographic emphasis.',
     bestFor: ['intro', 'opening', 'chapter', 'section header', 'topic shift'],
     avoidFor: ['dense charts'],
+    previewFileName: 'title_card.mp4',
     defaultProps: {},
     editorFields: [
       field('title', 'Title', 'text'),
@@ -214,6 +241,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Reveal text character by character.',
     bestFor: ['typing reveal', 'script style text', 'live narration'],
     avoidFor: ['dense quantitative charts'],
+    previewFileName: 'typewriter.mp4',
     defaultProps: {},
     editorFields: [
       field('text', 'Text', 'text'),
@@ -235,6 +263,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Render simple explanatory copy blocks.',
     bestFor: ['summary text', 'caption details', 'context paragraph', 'explanatory statement'],
     avoidFor: ['complex numeric charting'],
+    previewFileName: 'text.mp4',
     defaultProps: {},
     editorFields: [
       field('text', 'Text', 'text'),
@@ -260,6 +289,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Simulate an IDE developer terminal coding script execution.',
     bestFor: ['code snippets', 'technical walkthroughs', 'developer tools', 'command-line examples'],
     avoidFor: ['creative prose', 'poetry'],
+    previewFileName: 'terminal_typing.mp4',
     defaultProps: {},
     editorFields: [
       field('textToAnimate', 'Text to Animate', 'text'),
@@ -288,6 +318,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Highlight a specific keyword within a sentence structure for targeted readability.',
     bestFor: ['key quotes', 'hook sentences', 'marketing copy emphasis', 'social videos'],
     avoidFor: ['long paragraphs'],
+    previewFileName: 'word_highlight.mp4',
     defaultProps: {},
     editorFields: [
       field('text', 'Text', 'text'),
@@ -312,6 +343,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Draw text characters out seamlessly with paths before filling them solid.',
     bestFor: ['premium intros', 'signature fonts', 'logo typography revealing', 'branding accents'],
     avoidFor: ['dense multi-line descriptions'],
+    previewFileName: 'svg_draw.mp4',
     defaultProps: {},
     editorFields: [
       field('textToAnimate', 'Text to Animate', 'text'),
@@ -331,6 +363,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Animate individual characters sequentially using an elastic, bounce-overshoot spring scale rhythm.',
     bestFor: ['playful titles', 'impactful headers', 'attention-grabbing callouts'],
     avoidFor: ['technical documentation summaries'],
+    previewFileName: 'sequential_elastic.mp4',
     defaultProps: {},
     editorFields: [
       field('textToAnimate', 'Text to Animate', 'text'),
@@ -352,6 +385,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Display a clean layout array list utilizing staggered arrival vectors.',
     bestFor: ['feature lists', 'key takeaways', 'agenda items', 'presentation slides'],
     avoidFor: ['unstructured stories'],
+    previewFileName: 'bullet_points.mp4',
     defaultProps: {},
     editorFields: [
       field('items', 'Items', 'array'),

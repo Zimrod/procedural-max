@@ -4,7 +4,8 @@ import {
   useCurrentFrame, 
   interpolate, 
   AbsoluteFill,
-  Easing
+  Easing,
+  useVideoConfig,
 } from "remotion";
 
 // COMPLETE SYSTEM CHARACTER MATRIX (Normalized on a 100x100 space)
@@ -205,6 +206,9 @@ export const SvgDrawInTextRig: React.FC<RigProps> = ({
   startFrameOffset = 10,
   durationInFrames = 50, // 💡 Changing this now perfectly squishes or stretches all animations
 }) => {
+  const { width, height } = useVideoConfig();
+  const layoutScale = Math.min(width / 1920, height / 1080);
+  const responsiveSize = size * Math.max(0.7, layoutScale);
   const words = useMemo(() => {
     return textToAnimate.split(" ");
   }, [textToAnimate]);
@@ -234,7 +238,7 @@ export const SvgDrawInTextRig: React.FC<RigProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "40px",
+        padding: `${Math.max(20, 40 * layoutScale)}px`,
       }}
     >
       <div
@@ -242,7 +246,7 @@ export const SvgDrawInTextRig: React.FC<RigProps> = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          rowGap: `${size * 0.25}px`,
+          rowGap: `${responsiveSize * 0.25}px`,
           columnGap: "0px",
           flexWrap: "wrap",
           width: "100%",
@@ -255,7 +259,7 @@ export const SvgDrawInTextRig: React.FC<RigProps> = ({
             style={{
               display: "inline-block",
               whiteSpace: "nowrap",
-              marginRight: `${size * 0.45}px`,
+              marginRight: `${responsiveSize * 0.45}px`,
             }}
           >
             {wordData.chars.map(({ char, globalIndex }) => (

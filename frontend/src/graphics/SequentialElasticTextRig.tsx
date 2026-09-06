@@ -4,7 +4,8 @@ import {
   useCurrentFrame, 
   interpolate, 
   AbsoluteFill, 
-  Easing 
+  Easing,
+  useVideoConfig,
 } from "remotion";
 
 type LetterProps = {
@@ -103,6 +104,10 @@ export const SequentialElasticTextRig: React.FC<RigProps> = ({
   startFrameOffset = 10,
   durationInFrames = 45,
 }) => {
+  const { width, height } = useVideoConfig();
+  const layoutScale = Math.min(width / 1920, height / 1080);
+  const responsiveFontSize = fontSize * Math.max(0.7, layoutScale);
+
   // Tokenize string layout into word structures to prevent midway line splits
   const words = useMemo(() => {
     return textToAnimate.split(" ");
@@ -133,14 +138,14 @@ export const SequentialElasticTextRig: React.FC<RigProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "40px",
+        padding: `${Math.max(20, 40 * layoutScale)}px`,
         boxSizing: "border-box",
       }}
     >
       <h1
         style={{
           fontFamily,
-          fontSize: `${fontSize}px`,
+          fontSize: `${responsiveFontSize}px`,
           fontWeight,
           letterSpacing,
           textTransform: "uppercase",
@@ -148,7 +153,7 @@ export const SequentialElasticTextRig: React.FC<RigProps> = ({
           flexWrap: "wrap",
           justifyContent: "center",
           alignItems: "center",
-          rowGap: `${fontSize * 0.25}px`, // Dynamic line breaks padding
+          rowGap: `${responsiveFontSize * 0.25}px`, // Dynamic line breaks padding
           columnGap: "0px",
           width: "100%",
           maxWidth: "1200px",
@@ -162,7 +167,7 @@ export const SequentialElasticTextRig: React.FC<RigProps> = ({
             style={{
               display: "inline-block",
               whiteSpace: "nowrap", // Forces entire word structures to stay intact
-              marginRight: `${fontSize * 0.28}px`, // Word boundary letter spacing offset
+                marginRight: `${responsiveFontSize * 0.28}px`, // Word boundary letter spacing offset
             }}
           >
             {wordData.chars.map(({ char, globalIndex }) => (
@@ -171,7 +176,7 @@ export const SequentialElasticTextRig: React.FC<RigProps> = ({
                 char={char}
                 globalIndex={globalIndex}
                 totalChars={totalChars}
-                size={fontSize}
+                size={responsiveFontSize}
                 baseColor={baseColor}
                 startFrameOffset={startFrameOffset}
                 durationInFrames={durationInFrames}

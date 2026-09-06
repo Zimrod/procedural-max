@@ -45,6 +45,10 @@ export const GeometricQuoteRig: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps, width, height } = useVideoConfig();
+  const layoutScale = Math.min(width / 1920, height / 1080);
+  const responsiveQuoteFontSize = quoteFontSize * Math.max(0.68, layoutScale);
+  const responsiveAuthorFontSize = authorFontSize * Math.max(0.72, layoutScale);
+  const responsiveTitleFontSize = titleFontSize * Math.max(0.76, layoutScale);
 
   // Typography Staggered Reveal via Word Tokenization
   const words = useMemo(() => quoteText.split(" "), [quoteText]);
@@ -105,7 +109,7 @@ export const GeometricQuoteRig: React.FC<Props> = ({
           position: "absolute",
           top: height * 0.12,
           left: width * 0.08,
-          fontSize: "380px",
+          fontSize: `${Math.max(180, 380 * layoutScale)}px`,
           fontWeight: 900,
           lineHeight: 1,
           color: accentColor,
@@ -128,8 +132,8 @@ export const GeometricQuoteRig: React.FC<Props> = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          paddingLeft: "60px",
-          paddingRight: "40px",
+          paddingLeft: `${Math.max(24, 60 * layoutScale)}px`,
+          paddingRight: `${Math.max(20, 40 * layoutScale)}px`,
           opacity: containerSpring,
           transform: `translateX(${interpolate(containerSpring, [0, 1], [-40, 0])}px)`,
         }}
@@ -149,7 +153,7 @@ export const GeometricQuoteRig: React.FC<Props> = ({
         {/* CORE TESTIMONIAL PARAGRAPH BLOCK */}
         <div
           style={{
-            fontSize: `${quoteFontSize}px`, // 💡 Bound to dynamic configuration parameters
+            fontSize: `${responsiveQuoteFontSize}px`, // Bound to the active composition dimensions
             fontWeight: 500,
             lineHeight: 1.45,
             color: textColor,
@@ -192,7 +196,7 @@ export const GeometricQuoteRig: React.FC<Props> = ({
           {/* Author Name */}
           <div
             style={{
-              fontSize: `${authorFontSize}px`, // 💡 Parametric configuration mapping
+              fontSize: `${responsiveAuthorFontSize}px`,
               fontWeight: 700,
               color: textColor,
             }}
@@ -203,7 +207,7 @@ export const GeometricQuoteRig: React.FC<Props> = ({
           {/* Author Corporate Subtitle/Title */}
           <div
             style={{
-              fontSize: `${titleFontSize}px`, // 💡 Parametric configuration mapping
+              fontSize: `${responsiveTitleFontSize}px`,
               fontWeight: 600,
               textTransform: "uppercase",
               letterSpacing: "1.5px",
