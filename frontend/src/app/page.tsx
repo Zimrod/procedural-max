@@ -275,6 +275,7 @@ export default function LandingPage() {
               sceneConfig={previewSceneConfig} inputProps={{ audioUrl: currentActiveAudio, scenes: previewSceneConfig, captions: transcription?.words ?? [], theme: themeConfig }}
               totalDurationInFrames={previewSceneConfig.length ? previewSceneConfig[previewSceneConfig.length - 1].startFrame + previewSceneConfig[previewSceneConfig.length - 1].durationFrames : 300}
               themeConfig={themeConfig}
+              onScenesChange={setLocalConfig}
             />
 
             <div className="w-full xl:w-[380px] bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col max-h-[600px]">

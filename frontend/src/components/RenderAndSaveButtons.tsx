@@ -62,7 +62,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
           width: "100%",
           padding: "14px",
           // background: !isPopulated ? "#f1f5f9" : isRendering ? "#64748b" : "#0f172a",
-          background: "#f1f5f9", // Muted disabled state
+          background: "#326597", // Muted disabled state
           color: isPopulated ? "#ffffff" : "#94a3b8",
           border: isPopulated ? "none" : "1px solid #e2e8f0",
           borderRadius: "12px",
