@@ -166,8 +166,13 @@ export default function LandingPage() {
       });
       const data = await res.json();
       if (data.success) {
-        if (leftTab === "generate") setAiAudioUrl(data.audioUrl);
-        else setCustomAudioUrl(data.audioUrl);
+        if (leftTab === "generate") {
+          setAiAudioUrl(data.audioUrl);
+          setAiAudioVersion((v) => v + 1);
+        } else {
+          setCustomAudioUrl(data.audioUrl);
+          setCustomAudioVersion((v) => v + 1);
+        }
         setCurrentJobId(data.jobId);
         setActiveLoading("assembling_scenes");
         startBackgroundSync(data.jobId);
