@@ -255,7 +255,8 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen w-full bg-[#121212] text-gray-100 antialiased">
-      <Navbar title="Automated Motion Graphics" />
+      {/* <Navbar title="Automated Motion Graphics" /> */}
+      <Navbar />
       <div className="mx-auto max-w-[1700px] px-4 py-2 sm:px-6 lg:px-8 mt-2">
         <div className="w-full">
           <ScriptSidebar
