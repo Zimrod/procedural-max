@@ -6,6 +6,7 @@ import {
   interpolate,
   spring,
 } from 'remotion';
+import { normalizeCategoryChartData } from './chartData';
 
 type Props = {
   data: {
@@ -103,7 +104,7 @@ export const LineChartRig: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  const { labels, values } = data;
+  const { labels, values } = normalizeCategoryChartData(data);
 
   if (!values.length) return null;
 
@@ -114,7 +115,7 @@ export const LineChartRig: React.FC<Props> = ({
   const endX = startX + containerWidth;
   const endY = startY + containerHeight;
 
-  const rawMax = customMaxValue ?? Math.max(...values);
+  const rawMax = customMaxValue ?? Math.max(...values, 0);
   const getNiceMax = (val: number) => {
     if (val === 0) return 10;
     if (val > 30) return Math.ceil(val / 10) * 10;
@@ -137,7 +138,7 @@ export const LineChartRig: React.FC<Props> = ({
   );
 
   const points = values.map((value, i) => ({
-    x: startX + (i / (values.length - 1)) * containerWidth,
+    x: startX + (i / Math.max(1, values.length - 1)) * containerWidth,
     y: endY - (value / maxValue) * containerHeight,
     value,
     label: labels[i],
