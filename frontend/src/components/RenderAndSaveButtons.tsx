@@ -18,8 +18,8 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
   const isPopulated = sceneConfig && sceneConfig.length > 0;
 
   const handleLambdaRender = async () => {
-    if (!isPopulated || !projectId) {
-      console.warn("⚠️ Cannot initiate render: Missing populated scenes or a valid project ID.");
+    if (!isPopulated) {
+      console.warn("⚠️ Cannot initiate render: Missing populated scenes.");
       return;
     }
 
@@ -34,13 +34,23 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
+          id: "MainScene",
           projectId,
           sceneConfig, // Fastify backend intercepts this and updates Supabase
-          rawText
+          rawText,
+          // Always send the edited scenes directly. This is required when the
+          // dashboard created the scene and there is no pipeline project ID.
+          inputProps: {
+            title: rawText || "Parametric Animation",
+            scene_config: sceneConfig,
+          },
         }),
       });
 
-      if (!response.ok) throw new Error("AWS Lambda orchestration hook rejected dispatch request.");
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(message || "AWS Lambda orchestration hook rejected dispatch request.");
+      }
       
       const data = await response.json();
       console.log("🚀 Serverless render kicked off successfully:", data);

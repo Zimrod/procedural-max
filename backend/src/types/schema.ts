@@ -7,6 +7,8 @@ import { CompositionProps } from "./constants.js";
 export const RenderRequest = z.object({
   id: z.string().optional(), // Remotion Composition Name (e.g., "MainScene")
   projectId: z.string().optional(), // 👈 Explicitly for your Supabase row query
+  sceneConfig: z.unknown().optional(),
+  rawText: z.string().optional(),
   inputProps: CompositionProps.optional(),
 });
 
