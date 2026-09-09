@@ -56,8 +56,8 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
   return (
     <div style={{ marginTop: "12px", width: "100%" }}>
       <button
-        // disabled={!isPopulated || isRendering}
-        disabled={true}
+        disabled={!isPopulated || isRendering}
+        // disabled={true}
         style={{
           width: "100%",
           padding: "14px",

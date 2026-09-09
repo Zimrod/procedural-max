@@ -225,9 +225,11 @@ export default function LandingPage() {
   };
 
   const updateWidgetProp = (index: number, propKey: string, value: any) => {
-    const updated = [...localConfig];
-    updated[index] = { ...updated[index], props: { ...updated[index].props, [propKey]: value } };
-    setLocalConfig(updated);
+    setLocalConfig((scenes) => scenes.map((scene, sceneIndex) => (
+      sceneIndex === index
+        ? { ...scene, props: { ...scene.props, [propKey]: value } }
+        : scene
+    )));
   };
 
   const updateThemeProp = <K extends keyof CompositionTheme>(key: K, value: CompositionTheme[K]) => {
@@ -246,11 +248,30 @@ export default function LandingPage() {
 
   const groupedWidgets = useMemo(() => {
     const filtered = DYNAMIC_WIDGET_OPTIONS.filter((w) => w.toLowerCase().includes(widgetSearch.toLowerCase()));
-    return filtered.reduce((acc, w) => {
-      const cat = w.includes("chart") ? "Charts" : "Text";
+    const categoryLabels: Record<string, string> = {
+      TEXT_TYPOGRAPHY: "Typography",
+      DATA_REPORTING: "Data Visualization",
+    };
+
+    const groups = filtered.reduce((acc, w) => {
+      const registryCategory = getWidgetDefinition(w)?.category ?? "TEXT_TYPOGRAPHY";
+      const cat = categoryLabels[registryCategory] ?? "Typography";
       acc[cat] = acc[cat] ? [...acc[cat], w] : [w];
       return acc;
     }, {} as Record<string, string[]>);
+
+    // Keep the marketplace discoverable while domain-specific widgets are being built.
+    if (!widgetSearch.trim()) {
+      Object.assign(groups, {
+        Location: ["Interactive Map", "Route Timeline", "Location Pin"],
+        Finance: ["Stock Ticker", "Portfolio Breakdown", "Financial KPI"],
+        Industrial: ["Production Line", "Machine Gauge", "Process Flow"],
+        Medical: ["Patient Journey", "Health Metric", "Anatomy Callout"],
+        Education: ["Lesson Timeline", "Knowledge Map", "Quiz Progress"],
+      });
+    }
+
+    return groups;
   }, [widgetSearch]);
 
   return (
@@ -258,7 +279,7 @@ export default function LandingPage() {
       {/* <Navbar title="Automated Motion Graphics" /> */}
       <Navbar />
       <div className="mx-auto max-w-[1700px] px-4 py-2 sm:px-6 lg:px-8 mt-2">
-        <div className="w-full">
+        <div className="w-full flow-root min-h-screen">
           <ScriptSidebar
             leftTab={leftTab} setLeftTab={setLeftTab} prompt={prompt} setPrompt={setPrompt}
             aiScript={aiScript} setAiScript={setAiScript} customScript={customScript} setCustomScript={setCustomScript}
@@ -278,7 +299,7 @@ export default function LandingPage() {
               onScenesChange={setLocalConfig}
             />
 
-            <div className="w-full xl:w-[380px] bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col max-h-[600px]">
+            <div className="w-full xl:w-[380px] bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col max-h-[660px]">
               <div className="flex border border-neutral-800 mb-3 p-1 bg-[#141414] rounded-xl">
                 <button
                   onClick={() => setRightPanelTab("scene")}

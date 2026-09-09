@@ -1,7 +1,161 @@
 "use client";
 
+import { useState } from "react";
 import { getWidgetDefinition } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "./RenderAndSaveButtons";
+
+const isChartWidget = (widget = "") => widget.toUpperCase().includes("CHART");
+
+function ChartDataEditor({
+  widget,
+  data,
+  palette,
+  onPaletteChange,
+  onChange,
+}: {
+  widget: string;
+  data: any;
+  palette?: string[];
+  onPaletteChange?: (palette: string[]) => void;
+  onChange: (data: any) => void;
+}) {
+  const DEFAULT_PALETTE = ["#22c55e", "#06b6d4", "#f59e0b", "#f43f5e", "#8b5cf6", "#ec4899"];
+  const multiSeries = widget.toUpperCase() === "MULTI_LINE_CHART";
+  const labels: string[] = Array.isArray(data?.labels) ? data.labels : [];
+  const series = Array.isArray(data?.series) ? data.series : [];
+  const seriesRowCount = series.reduce((max: number, item: any) => Math.max(max, Array.isArray(item.values) ? item.values.length : 0), 0);
+  const rowCount = Math.max(labels.length, multiSeries ? seriesRowCount : Array.isArray(data?.values) ? data.values.length : 0);
+  const chartPalette = Array.from({ length: rowCount }, (_, index) => palette?.[index] ?? DEFAULT_PALETTE[index % DEFAULT_PALETTE.length]);
+
+  const updateRow = (rowIndex: number, label: string, values: number[]) => {
+    if (multiSeries) {
+      onChange({
+        ...data,
+        labels: labels.map((item, index) => index === rowIndex ? label : item),
+        series: series.map((item: any, index: number) => ({
+          ...item,
+          values: item.values.map((value: number, valueIndex: number) => valueIndex === rowIndex ? values[index] : value),
+        })),
+      });
+      return;
+    }
+    onChange({
+      ...data,
+      labels: labels.map((item, index) => index === rowIndex ? label : item),
+      values: (data?.values || []).map((value: number, index: number) => index === rowIndex ? values[0] : value),
+    });
+  };
+
+  const addRow = () => {
+    const nextLabel = `Item ${rowCount + 1}`;
+    const nextPalette = [...chartPalette, DEFAULT_PALETTE[chartPalette.length % DEFAULT_PALETTE.length]];
+    if (multiSeries) {
+      onChange({
+        ...data,
+        labels: [...labels, nextLabel],
+        series: series.map((item: any) => ({ ...item, values: [...(item.values || []), 0] })),
+      });
+    } else {
+      onChange({ ...data, labels: [...labels, nextLabel], values: [...(data?.values || []), 0] });
+    }
+    onPaletteChange?.(nextPalette);
+  };
+
+  const removeRow = (rowIndex: number) => {
+    const nextPalette = chartPalette.filter((_, index) => index !== rowIndex);
+    if (multiSeries) {
+      onChange({
+        ...data,
+        labels: labels.filter((_, index) => index !== rowIndex),
+        series: series.map((item: any) => ({ ...item, values: (item.values || []).filter((_: number, index: number) => index !== rowIndex) })),
+      });
+    } else {
+      onChange({
+        ...data,
+        labels: labels.filter((_, index) => index !== rowIndex),
+        values: (data?.values || []).filter((_: number, index: number) => index !== rowIndex),
+      });
+    }
+    onPaletteChange?.(nextPalette);
+  };
+
+  return (
+    <div className="rounded-lg border border-neutral-800 bg-[#111111] p-2.5 space-y-2">
+      <div className="flex items-center justify-between">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-wider text-cyan-300">Chart Data</span>
+          <p className="text-[9px] text-neutral-500">Edit chart values without entering an object.</p>
+        </div>
+        <button type="button" onClick={addRow} className="rounded bg-emerald-600 px-2 py-1 text-[10px] font-bold text-white hover:bg-emerald-500">+ Add Data Row</button>
+      </div>
+      {multiSeries && series.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 text-[9px] font-bold uppercase text-neutral-500">
+          <span>Label</span>{series.map((item: any, index: number) => <span key={index}>{item.name || `Series ${index + 1}`}</span>)}
+        </div>
+      )}
+      {Array.from({ length: rowCount }).map((_, rowIndex) => {
+        const rowValues: number[] = multiSeries
+          ? series.map((item: any) => Number(item.values?.[rowIndex] ?? 0))
+          : [Number(data?.values?.[rowIndex] ?? 0)];
+        return (
+          <div key={rowIndex} className="space-y-1.5">
+            <div className="grid grid-cols-2 items-center gap-2">
+              <input type="text" value={labels[rowIndex] ?? ""} onChange={(e) => updateRow(rowIndex, e.target.value, rowValues)} placeholder="Label" className="w-full rounded border border-neutral-800 bg-[#1e1e1e] p-1.5 text-xs text-neutral-200" />
+              {rowValues.map((value: number, valueIndex: number) => (
+                <input key={valueIndex} type="number" value={value} onChange={(e) => updateRow(rowIndex, labels[rowIndex] ?? `Item ${rowIndex + 1}`, rowValues.map((item: number, index: number) => index === valueIndex ? Number(e.target.value) : item))} className="w-full rounded border border-neutral-800 bg-[#1e1e1e] p-1.5 text-xs text-neutral-200" />
+              ))}
+            </div>
+            <button type="button" onClick={() => removeRow(rowIndex)} className="rounded border border-rose-500/40 px-2 py-1 text-[10px] font-bold text-rose-300 hover:bg-rose-500/10">Remove</button>
+          </div>
+        );
+      })}
+      {rowCount === 0 && <p className="py-2 text-center text-[10px] text-neutral-500">No data rows yet. Add one to begin.</p>}
+    </div>
+  );
+}
+
+function PropInput({ field, value, onChange }: { field: any; value: any; onChange: (value: any) => void }) {
+  if (field?.kind === "boolean") return <input type="checkbox" checked={Boolean(value)} onChange={(e) => onChange(e.target.checked)} className="rounded bg-black border-neutral-700 text-emerald-500" />;
+  if (field?.kind === "select") return <select value={value ?? field.options?.[0] ?? ""} onChange={(e) => onChange(e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200">{field.options?.map((option: string) => <option key={option} value={option}>{option}</option>)}</select>;
+  return <input type={field?.kind === "number" ? "number" : field?.kind === "color" ? "color" : "text"} value={value ?? ""} onChange={(e) => onChange(field?.kind === "number" ? Number(e.target.value) : e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />;
+}
+
+function ColorInput({ value, onChange }: { value: any; onChange: (value: string) => void }) {
+  const isPalette = Array.isArray(value);
+  const colors = isPalette ? value : [value ?? ""];
+  const colorValue = (color: any) => typeof color === "string" && /^#[0-9a-f]{6}$/i.test(color) ? color : "#000000";
+  const updateColor = (index: number, nextColor: string) => {
+    if (isPalette) {
+      onChange(colors.map((color: string, colorIndex: number) => colorIndex === index ? nextColor : color) as any);
+    } else {
+      onChange(nextColor);
+    }
+  };
+
+  return (
+    <div className={`min-w-0 gap-1.5 ${isPalette ? "flex flex-wrap items-center" : "flex items-center"}`}>
+      <div className={`flex min-w-0 flex-wrap gap-0.5 ${isPalette ? "" : "shrink-0"}`}>
+        {colors.map((color: string, index: number) => (
+          <input
+            key={index}
+            type="color"
+            value={colorValue(color)}
+            onChange={(e) => updateColor(index, e.target.value)}
+            aria-label={`Open colour palette ${index + 1}`}
+            className="h-7 w-6 cursor-pointer rounded border border-neutral-700 bg-[#1e1e1e] p-0.5"
+          />
+        ))}
+      </div>
+      <input
+        type="text"
+        value={isPalette ? colors.join(", ") : value ?? ""}
+        onChange={(e) => onChange(isPalette ? e.target.value.split(",").map((color) => color.trim()).filter(Boolean) as any : e.target.value)}
+        aria-label="Colour value"
+        className={`${isPalette ? "basis-full" : "min-w-0 w-full"} rounded border border-neutral-800 bg-[#1e1e1e] px-2 py-1.5 text-[11px] font-mono text-neutral-200 focus:outline-none focus:ring-1 focus:ring-emerald-500`}
+      />
+    </div>
+  );
+}
 
 interface SceneEditorProps {
   localConfig: any[];
@@ -30,6 +184,8 @@ export function SceneEditor({
   updateSceneMeta, updateWidgetType, updateWidgetProp, handleApplyConfigRefresh,
   widgetOptions, defaultWidgetType, setDashboardOpen,
 }: SceneEditorProps) {
+  const [activePropTab, setActivePropTab] = useState<Record<number, "properties" | "colors">>({});
+
   return (
     <div className="flex-1 flex flex-col justify-between overflow-hidden">
       <div className="flex-1 overflow-y-auto space-y-3 pr-1 mb-3">
@@ -100,7 +256,17 @@ export function SceneEditor({
                       };
 
                       const contentKeys = orderedKeys.filter((key) => isContentProp(key, schemaFieldMap.get(key)));
-                      const compactKeys = orderedKeys.filter((key) => !isContentProp(key, schemaFieldMap.get(key)));
+                      const isColorProp = (key: string, field?: any) => field?.kind === "color" || (field?.kind === "array" && /colors?$/i.test(key));
+                      const colorKeys = orderedKeys.filter((key) => isColorProp(key, schemaFieldMap.get(key)));
+                      const compactKeys = orderedKeys.filter((key) => key !== "data" && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
+                      const activeTab = activePropTab[sceneIdx] ?? "properties";
+                      const chartPaletteKey = scene.widget === "BAR_CHART"
+                        ? "barColors"
+                        : scene.widget === "LINE_CHART"
+                          ? "pointColors"
+                          : scene.widget === "PIE_CHART" || scene.widget === "DONUT_CHART"
+                            ? "pieColors"
+                            : undefined;
 
                       return (
                         <div className="space-y-3">
@@ -127,27 +293,80 @@ export function SceneEditor({
                             </div>
                           )}
 
-                          {/* Scene Layout, Colors & Param Controls - 3 Column Flex Grid */}
-                          {compactKeys.length > 0 && (
-                            <div className="grid grid-cols-3 gap-2">
-                              {compactKeys.map((propKey) => {
-                                const schemaField = schemaFieldMap.get(propKey);
-                                const rawValue = scene.props[propKey];
-                                return (
-                                  <div key={propKey}>
-                                    <label className="block text-[10px] font-medium text-neutral-400 mb-0.5 truncate" title={schemaField?.label ?? propKey}>
-                                      {schemaField?.label ?? propKey}
-                                    </label>
-                                    <input
-                                      type="text"
-                                      value={rawValue ?? ""}
-                                      onChange={(e) => updateWidgetProp(sceneIdx, propKey, e.target.value)}
-                                      className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none"
-                                    />
-                                  </div>
-                                );
-                              })}
-                            </div>
+                          {isChartWidget(scene.widget) && schemaFieldMap.has("data") && (
+                            <ChartDataEditor
+                              widget={scene.widget}
+                              data={scene.props.data ?? registryEntry?.defaultProps?.data}
+                              onChange={(data) => updateWidgetProp(sceneIdx, "data", data)}
+                              palette={chartPaletteKey ? scene.props[chartPaletteKey] : undefined}
+                              onPaletteChange={chartPaletteKey ? (palette) => updateWidgetProp(sceneIdx, chartPaletteKey, palette) : undefined}
+                            />
+                          )}
+
+                          {(compactKeys.length > 0 || colorKeys.length > 0) && (
+                            <>
+                              <div className="flex items-center gap-1 border-b border-neutral-800">
+                                {compactKeys.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setActivePropTab((tabs) => ({ ...tabs, [sceneIdx]: "properties" }))}
+                                    className={`border-b-2 px-2 py-1.5 text-[9px] font-bold uppercase tracking-wider transition-colors ${activeTab === "properties" ? "border-emerald-400 text-emerald-300" : "border-transparent text-neutral-500 hover:text-neutral-300"}`}
+                                  >
+                                    Properties
+                                  </button>
+                                )}
+                                {colorKeys.length > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setActivePropTab((tabs) => ({ ...tabs, [sceneIdx]: "colors" }))}
+                                    className={`border-b-2 px-2 py-1.5 text-[9px] font-bold uppercase tracking-wider transition-colors ${activeTab === "colors" ? "border-emerald-400 text-emerald-300" : "border-transparent text-neutral-500 hover:text-neutral-300"}`}
+                                  >
+                                    Colors <span className="text-neutral-500">({colorKeys.length})</span>
+                                  </button>
+                                )}
+                              </div>
+
+                              {activeTab === "colors" && colorKeys.length > 0 && (
+                                <div className="grid grid-cols-2 gap-2">
+                                  {colorKeys.map((propKey) => {
+                                    const schemaField = schemaFieldMap.get(propKey);
+                                    const isPalette = schemaField?.kind === "array";
+                                    return (
+                                      <div key={propKey} className={`min-w-0 ${isPalette ? "col-span-2" : ""}`}>
+                                        <label className="mb-0.5 block truncate text-[10px] font-medium text-neutral-400" title={schemaField?.label ?? propKey}>
+                                          {schemaField?.label ?? propKey}
+                                        </label>
+                                        <ColorInput
+                                          value={scene.props[propKey]}
+                                          onChange={(value) => updateWidgetProp(sceneIdx, propKey, value)}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+
+                              {activeTab === "properties" && compactKeys.length > 0 && (
+                                <div className="grid grid-cols-3 gap-2">
+                                  {compactKeys.map((propKey) => {
+                                    const schemaField = schemaFieldMap.get(propKey);
+                                    const rawValue = scene.props[propKey];
+                                    return (
+                                      <div key={propKey}>
+                                        <label className="block text-[10px] font-medium text-neutral-400 mb-0.5 truncate" title={schemaField?.label ?? propKey}>
+                                          {schemaField?.label ?? propKey}
+                                        </label>
+                                        <PropInput
+                                          field={schemaField}
+                                          value={rawValue}
+                                          onChange={(value) => updateWidgetProp(sceneIdx, propKey, value)}
+                                        />
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </>
                           )}
                         </div>
                       );

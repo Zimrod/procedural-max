@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   AbsoluteFill,
-  Audio,
   staticFile,
   delayRender,
   continueRender,
@@ -11,6 +10,7 @@ import {
 import { loadFont } from '@remotion/fonts';
 // import { CaptioningDemo } from './CaptioningDemo-primitives';
 import { VoiceoverScene } from './VoiceoverScene';
+import { AudioConfig, AudioLayers } from './AudioLayers';
 
 type Props = {
   captions?: { word: string; start: number; end: number; }[];
@@ -18,6 +18,7 @@ type Props = {
   theme?: any;
   audioUrl?: string;
   audioVersion?: number;
+  audioConfig?: AudioConfig;
 };
 
 export const Main: React.FC<Props> = ({
@@ -26,6 +27,7 @@ export const Main: React.FC<Props> = ({
   theme = {},
   audioUrl = "",
   audioVersion = 0,
+  audioConfig,
 }) => {
   const [fontLoaded, setFontLoaded] = useState(false);
   
@@ -46,14 +48,18 @@ export const Main: React.FC<Props> = ({
 
   if (!fontLoaded) return null;
 
+  const resolvedAudioConfig = audioConfig || (audioUrl ? {
+    voUrl: audioUrl,
+    voVolume: 1,
+    bgmVolume: 0,
+    masterVolume: 1,
+    autoDucking: false,
+  } : undefined);
+
   return (
     <AbsoluteFill style={{ backgroundColor: "#060a12" }}>
-      {audioUrl && (
-        <Audio src={`${audioUrl}?v=${audioVersion}`} volume={1.0} />
-      )}
-
-      {/* Background visual engine spans full layout lifetime */}
       <VoiceoverScene scenes={scenes} theme={theme} />
+      {resolvedAudioConfig && <AudioLayers audioConfig={resolvedAudioConfig} />}
     </AbsoluteFill>
   );
 };

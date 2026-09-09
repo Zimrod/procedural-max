@@ -1,6 +1,6 @@
 export const WIDGET_TAXONOMY = {
   DATA_REPORTING: {
-    label: 'Data & Charts',
+    label: 'Data Visualization',
     types: {
       BAR_CHART: 'bar_chart',
       LINE_CHART: 'line_chart',
@@ -10,7 +10,7 @@ export const WIDGET_TAXONOMY = {
     },
   },
   TEXT_TYPOGRAPHY: {
-    label: 'Text & Typography',
+    label: 'Typography',
     types: {
       TITLE_CARD: 'title_card',
       TYPEWRITER: 'typewriter',

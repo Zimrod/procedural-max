@@ -9,6 +9,9 @@ export type WidgetType = TaxonomyWidgetType;
 
 export type WidgetRegistryEntry = {
   category: WidgetCategory;
+  isSubmission?: boolean;
+  author?: string;
+  description?: string;
   intents: WidgetIntent[];
   purpose: string;
   bestFor: string[];
