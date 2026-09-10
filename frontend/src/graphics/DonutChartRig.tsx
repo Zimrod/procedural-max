@@ -27,6 +27,8 @@ const generateColor = (index: number, saturation: number = 70, lightness: number
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 
+const FALLBACK_DATA = { labels: ['A', 'B'], values: [50, 50] };
+
 const degToRad = (deg: number) => (deg * Math.PI) / 180;
 
 const donutSlice = (cx: number, cy: number, outerR: number, innerR: number, startAngle: number, endAngle: number) => {
@@ -67,11 +69,16 @@ export const DonutChartRig: React.FC<Props> = ({
   const { width, height, fps } = useVideoConfig();
 
   const safeData = useMemo(() => {
-    if (data && Array.isArray(data.labels) && Array.isArray(data.values)) {
-      return normalizeCategoryChartData(data);
+    const normalized = normalizeCategoryChartData(data);
+    const values = normalized.values.map((value) => Math.max(0, value));
+
+    // Lambda input can be present but empty (or contain only zeroes). Keep the
+    // composition visible instead of returning a blank SVG for those payloads.
+    if (!normalized.labels.length || values.every((value) => value === 0)) {
+      return FALLBACK_DATA;
     }
-    // Fallback data if payload is empty or malformed
-    return { labels: ['A', 'B'], values: [50, 50] };
+
+    return { labels: normalized.labels, values };
   }, [data]);
 
   const { labels, values } = safeData;
@@ -126,8 +133,6 @@ export const DonutChartRig: React.FC<Props> = ({
   const legendX = Math.max(centerX + outerRadius + 70, maxPointerX);
   const legendY = centerY - (labels.length * 35) / 2;
   const computedLabelFontSize = labelFontSize ?? outerRadius * 0.1;
-
-  if (total <= 0 || !values.length) return null;
 
   return (
     <svg width={width} height={height} style={{ display: 'block', backgroundColor }}>

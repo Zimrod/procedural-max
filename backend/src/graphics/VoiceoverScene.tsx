@@ -13,7 +13,8 @@ import {
 } from '../core/widgetComponentRegistry.js';
 
 type SceneConfigItem = {
-  widget: string;
+  widget?: string;
+  widgetType?: string;
   startFrame: number;
   durationFrames: number;
   mainDurationInFrames?: number;
@@ -41,9 +42,8 @@ export const VoiceoverScene: React.FC<Props> = ({
       }}
     >
       {scenes.map((item, i) => {
-
-        const WidgetComponent =
-          getWidgetComponent(item.widget);
+        const widget = item.widget || item.widgetType || '';
+        const WidgetComponent = getWidgetComponent(widget);
 
         return (
           <Sequence
@@ -60,4 +60,3 @@ export const VoiceoverScene: React.FC<Props> = ({
     </AbsoluteFill>
   );
 };
-

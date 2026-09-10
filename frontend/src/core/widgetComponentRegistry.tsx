@@ -65,6 +65,6 @@ const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {
-  const normalized = widgetType.toUpperCase() as WidgetType;
+  const normalized = typeof widgetType === 'string' ? widgetType.toUpperCase() as WidgetType : '' as WidgetType;
   return componentMapping[normalized] || (() => <DiagnosticFallbackRig widget={widgetType} />);
 }
