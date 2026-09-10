@@ -123,20 +123,27 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     try {
       console.log("📡 [Stage 3] Initiating renderMediaOnLambda dispatch request wire call...");
 
-      const aspectRatio = finalInputProps?.aspectRatio || 16 / 9;
-      const targetHeight = 1080;
+      // const aspectRatio = finalInputProps?.aspectRatio || 16 / 9;
+      // const targetHeight = 1080;
       // Remotion requires width and height to be even integers
-      const targetWidth = Math.round((targetHeight * aspectRatio) / 2) * 2; 
+      // const targetWidth = Math.round((targetHeight * aspectRatio) / 2) * 2; 
+
+      const finalInputProps = {
+        ...body.inputProps,
+        scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
+        voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
+        aspectRatio: body.inputProps?.aspectRatio ?? 16 / 9,
+      };
 
       const result = await renderMediaOnLambda({
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
-        serveUrl: process.env.REMOTION_SITE_URL || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
-        composition: finalCompositionId, 
-        inputProps: finalInputProps,
-        width: targetWidth,   // Overrides bundle width
-        height: targetHeight, // Overrides bundle height
+        serveUrl:
+          process.env.REMOTION_SITE_URL ||
+          "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
+        composition: finalCompositionId,
+        inputProps: finalInputProps, // Pass aspect ratio here
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
