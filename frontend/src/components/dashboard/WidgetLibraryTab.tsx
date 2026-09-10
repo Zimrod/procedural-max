@@ -41,7 +41,7 @@ export function WidgetLibraryTab({
   //   Education: new Set(["Knowledge Map"]),
   // };
 
-  const premiumByCategory = [];
+  const premiumByCategory = {};
 
   // Fetch sample preview video URLs from Supabase Storage bucket
   useEffect(() => {
