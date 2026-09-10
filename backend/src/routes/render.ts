@@ -130,7 +130,8 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         // Keep this aligned with frontend/config.mjs. Prefer an explicit URL in
         // deployment environments, but use the currently deployed site as the
         // safe default instead of the retired parametric-video bundle.
-        serveUrl: process.env.REMOTION_SITE_URL || process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/my-next-app/index.html",
+        // serveUrl: process.env.REMOTION_SITE_URL || process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/my-next-app/index.html",
+        serveUrl: process.env.REMOTION_SITE_URL || process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
         composition: finalCompositionId, 
         inputProps: finalInputProps,
         framesPerLambda: 10,
