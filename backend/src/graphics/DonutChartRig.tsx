@@ -6,6 +6,7 @@ import {
   spring,
   interpolate,
 } from 'remotion';
+import { normalizeCategoryChartData } from './chartData';
 
 type Props = {
   data: {
@@ -64,10 +65,10 @@ export const DonutChartRig: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  const { labels, values } = data;
+  const { labels, values } = normalizeCategoryChartData(data);
 
   const total = useMemo(() => values.reduce((a, b) => a + b, 0), [values]);
-  if (total === 0) return null;
+  const safeTotal = total > 0 ? total : 1;
 
   const outerRadius = Math.min(width, height) * 0.28;
   const innerRadius = outerRadius * 0.5;
@@ -78,11 +79,11 @@ export const DonutChartRig: React.FC<Props> = ({
     const result = [];
     let currentAngle = -90;
     for (let i = 0; i < values.length; i++) {
-      const percent = values[i] / total;
+      const percent = values[i] / safeTotal;
       const angle = percent * 360;
       const start = currentAngle;
       const end = start + angle;
-      const color = pieColors ? pieColors[i % pieColors.length] : generateColor(i);
+      const color = pieColors?.length ? pieColors[i % pieColors.length] : generateColor(i);
       result.push({
         label: labels[i],
         value: values[i],
@@ -94,7 +95,7 @@ export const DonutChartRig: React.FC<Props> = ({
       currentAngle = end;
     }
     return result;
-  }, [values, labels, total, pieColors]);
+  }, [values, labels, safeTotal, pieColors]);
 
   const outerPointer1 = outerRadius * 1.1;
   const outerPointer2 = outerRadius * 1.25;
@@ -116,6 +117,8 @@ export const DonutChartRig: React.FC<Props> = ({
   const legendX = Math.max(centerX + outerRadius + 70, maxPointerX);
   const legendY = centerY - (labels.length * 35) / 2;
   const computedLabelFontSize = labelFontSize ?? outerRadius * 0.1;
+
+  if (total <= 0 || !values.length) return null;
 
   return (
     <svg width={width} height={height} style={{ display: 'block', backgroundColor }}>

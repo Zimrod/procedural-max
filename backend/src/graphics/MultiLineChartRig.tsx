@@ -6,6 +6,7 @@ import {
   interpolate,
   spring,
 } from 'remotion';
+import { normalizeMultiSeriesChartData } from './chartData';
 
 type Series = {
   name: string;
@@ -114,7 +115,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  const { labels, series } = data;
+  const { labels, series } = normalizeMultiSeriesChartData(data);
 
   if (!labels.length || !series.length) return null;
 
@@ -126,7 +127,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
   const endY = startY + containerHeight;
 
   const allValues = series.flatMap(s => s.values);
-  const rawMax = customMaxValue ?? Math.max(...allValues);
+  const rawMax = customMaxValue ?? Math.max(...allValues, 0);
   const getNiceMax = (val: number) => {
     if (val === 0) return 10;
     if (val > 30) return Math.ceil(val / 10) * 10;
@@ -149,7 +150,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
   const processedSeries = useMemo(() => {
     return series.map((s, sIdx) => {
       const points = s.values.map((value, i) => ({
-        x: startX + (i / (labels.length - 1)) * containerWidth,
+        x: startX + (i / Math.max(1, labels.length - 1)) * containerWidth,
         y: endY - (value / maxValue) * containerHeight,
         value,
       }));
@@ -233,7 +234,7 @@ export const MultiLineChartRig: React.FC<Props> = ({
       })}
 
       {labels.map((label, idx) => {
-        const xPos = startX + (idx / (labels.length - 1)) * containerWidth;
+        const xPos = startX + (idx / Math.max(1, labels.length - 1)) * containerWidth;
         const labelRevealFrame = axisDuration + series.length * seriesDelay;
         const labelProgress = spring({
           frame: frame - labelRevealFrame,
