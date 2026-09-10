@@ -1,4 +1,4 @@
-// src/types/constants.ts
+// backend/src/types/constants.ts
 
 import { z } from "zod";
 

@@ -122,17 +122,21 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
 
     try {
       console.log("📡 [Stage 3] Initiating renderMediaOnLambda dispatch request wire call...");
-      
+
+      const aspectRatio = finalInputProps?.aspectRatio || 16 / 9;
+      const targetHeight = 1080;
+      // Remotion requires width and height to be even integers
+      const targetWidth = Math.round((targetHeight * aspectRatio) / 2) * 2; 
+
       const result = await renderMediaOnLambda({
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
         region: "us-east-1",
-        // Do not fall back to SITE_NAME: older deployments use that variable
-        // for the retired parametric-video site. Keep the Lambda bundle URL
-        // explicit and aligned with frontend/config.mjs.
         serveUrl: process.env.REMOTION_SITE_URL || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
         composition: finalCompositionId, 
         inputProps: finalInputProps,
+        width: targetWidth,   // Overrides bundle width
+        height: targetHeight, // Overrides bundle height
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
