@@ -105,7 +105,17 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       ...body.inputProps,
       scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
       voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
+      aspectRatio: body.inputProps?.aspectRatio ?? 16 / 9,
     };
+
+    // Force the encoded Lambda dimensions as well as exposing aspectRatio to
+    // the composition. This protects renders from an older deployed bundle
+    // whose calculateMetadata() still reports 1920x1080.
+    const renderHeight = 1080;
+    const renderWidth = Math.max(
+      2,
+      Math.round((renderHeight * finalInputProps.aspectRatio) / 2) * 2,
+    );
 
     const predictedFunction = speculateFunctionName({
       diskSizeInMb: DISK,
@@ -123,18 +133,6 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     try {
       console.log("📡 [Stage 3] Initiating renderMediaOnLambda dispatch request wire call...");
 
-      // const aspectRatio = finalInputProps?.aspectRatio || 16 / 9;
-      // const targetHeight = 1080;
-      // Remotion requires width and height to be even integers
-      // const targetWidth = Math.round((targetHeight * aspectRatio) / 2) * 2; 
-
-      const finalInputProps = {
-        ...body.inputProps,
-        scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
-        voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
-        aspectRatio: body.inputProps?.aspectRatio ?? 16 / 9,
-      };
-
       const result = await renderMediaOnLambda({
         codec: "h264",
         functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
@@ -144,6 +142,8 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
           "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
         composition: finalCompositionId,
         inputProps: finalInputProps, // Pass aspect ratio here
+        forceWidth: renderWidth,
+        forceHeight: renderHeight,
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",

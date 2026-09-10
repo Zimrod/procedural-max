@@ -76,7 +76,10 @@ export const POST = executeApi(RenderRequest, async (req, body) => {
         ...body.inputProps,
         scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
         voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
+        aspectRatio: body.inputProps?.aspectRatio ?? 16 / 9,
     };
+    const renderHeight = 1080;
+    const renderWidth = Math.max(2, Math.round((renderHeight * finalInputProps.aspectRatio) / 2) * 2);
     const predictedFunction = speculateFunctionName({
         diskSizeInMb: DISK,
         memorySizeInMb: RAM,
@@ -96,6 +99,8 @@ export const POST = executeApi(RenderRequest, async (req, body) => {
         serveUrl: process.env.REMOTION_SITE_URL || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
             composition: finalCompositionId,
             inputProps: finalInputProps,
+            forceWidth: renderWidth,
+            forceHeight: renderHeight,
             framesPerLambda: 10,
             downloadBehavior: {
                 type: "download",
