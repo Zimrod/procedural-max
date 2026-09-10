@@ -13,8 +13,8 @@ export const defaultMyCompProps: z.infer<typeof CompositionProps> = {
 };
 
 // export const DURATION_IN_FRAMES = CAPTION_FRAMES;
-export const VIDEO_WIDTH = 1920;
-export const VIDEO_HEIGHT = 1080;
+export const VIDEO_WIDTH = 1080;
+export const VIDEO_HEIGHT = 1920;
 export const VIDEO_FPS = 30;
 export const VOICEOVER_DELAY_SECONDS = 2; // Adjustable global start delay
 const LINGER_SECONDS = VOICEOVER_DELAY_SECONDS * 2; // Extra time at the end
