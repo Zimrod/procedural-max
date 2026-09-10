@@ -31,15 +31,17 @@ export function WidgetLibraryTab({
     "Lesson Timeline", "Knowledge Map", "Quiz Progress",
   ]);
 
-  const premiumByCategory: Record<string, Set<string>> = {
-    Typography: new Set(["SVG_DRAW_IN_TEXT", "SEQUENTIAL_ELASTIC_TEXT"]),
-    "Data Visualization": new Set(["LINE_CHART", "MULTI_LINE_CHART"]),
-    Location: new Set(["Route Timeline"]),
-    Finance: new Set(["Portfolio Breakdown"]),
-    Industrial: new Set(["Machine Gauge"]),
-    Medical: new Set(["Patient Journey"]),
-    Education: new Set(["Knowledge Map"]),
-  };
+  // const premiumByCategory: Record<string, Set<string>> = {
+  //   Typography: new Set(["SVG_DRAW_IN_TEXT", "SEQUENTIAL_ELASTIC_TEXT"]),
+  //   "Data Visualization": new Set(["LINE_CHART", "MULTI_LINE_CHART"]),
+  //   Location: new Set(["Route Timeline"]),
+  //   Finance: new Set(["Portfolio Breakdown"]),
+  //   Industrial: new Set(["Machine Gauge"]),
+  //   Medical: new Set(["Patient Journey"]),
+  //   Education: new Set(["Knowledge Map"]),
+  // };
+
+  const premiumByCategory = [];
 
   // Fetch sample preview video URLs from Supabase Storage bucket
   useEffect(() => {
