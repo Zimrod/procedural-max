@@ -93,7 +93,7 @@ export const POST = executeApi(RenderRequest, async (req, body) => {
             codec: "h264",
             functionName: process.env.LAMBDA_FUNCTION_NAME || predictedFunction,
             region: "us-east-1",
-            serveUrl: process.env.SITE_NAME || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/parametric-video/index.html",
+        serveUrl: process.env.REMOTION_SITE_URL || "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
             composition: finalCompositionId,
             inputProps: finalInputProps,
             framesPerLambda: 10,
