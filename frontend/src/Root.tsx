@@ -17,14 +17,6 @@ export const Root: React.FC = () => {
   // Use the dynamic voiceover URL, or a robust public placeholder if completely empty
   const audioUrl = inputProps.voiceover_url || ""; 
 
-  // Match the dimensions used by PreviewPlayer. Lambda validates the
-  // composition using these values before rendering any frames.
-  const aspectRatio = Number.isFinite(inputProps.aspectRatio) && inputProps.aspectRatio! > 0
-    ? inputProps.aspectRatio!
-    : VIDEO_WIDTH / VIDEO_HEIGHT;
-  const compositionHeight = VIDEO_HEIGHT;
-  const compositionWidth = Math.max(1, Math.round(compositionHeight * aspectRatio));
-
   // 2. Safely derive total length from scene durations calculated by your backend pipeline
   let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
 
@@ -48,8 +40,21 @@ export const Root: React.FC = () => {
         component={Main}
         durationInFrames={totalVideoFramesWithBuffer}
         fps={VIDEO_FPS}
-        width={compositionWidth}
-        height={compositionHeight}
+        // These are fallback dimensions for Studio/Player. Lambda applies the
+        // render payload's aspect ratio through calculateMetadata below.
+        width={VIDEO_WIDTH}
+        height={VIDEO_HEIGHT}
+        calculateMetadata={({ props }) => {
+          const renderProps = props as typeof inputProps;
+          const ratio = Number.isFinite(renderProps.aspectRatio) && renderProps.aspectRatio! > 0
+            ? renderProps.aspectRatio!
+            : VIDEO_WIDTH / VIDEO_HEIGHT;
+
+          return {
+            width: Math.max(1, Math.round(VIDEO_HEIGHT * ratio)),
+            height: VIDEO_HEIGHT,
+          };
+        }}
         defaultProps={{
           scenes: scenes,
           audioUrl: audioUrl,
