@@ -65,7 +65,16 @@ export const DonutChartRig: React.FC<Props> = ({
 }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
-  const { labels, values } = normalizeCategoryChartData(data);
+  
+  const safeData = useMemo(() => {
+    if (data && Array.isArray(data.labels) && Array.isArray(data.values)) {
+      return normalizeCategoryChartData(data);
+    }
+    // Fallback data if payload is empty or malformed
+    return { labels: ['A', 'B'], values: [50, 50] };
+  }, [data]);
+
+  const { labels, values } = safeData;
 
   const total = useMemo(() => values.reduce((a, b) => a + b, 0), [values]);
   const safeTotal = total > 0 ? total : 1;
