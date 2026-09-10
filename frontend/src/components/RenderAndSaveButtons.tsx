@@ -5,12 +5,14 @@ type RenderAndSaveButtonsProps = {
   readonly rawText: string;
   readonly sceneConfig: any[];
   readonly projectId?: string; 
+  readonly aspectRatio?: number;
 };
 
 export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ 
   rawText, 
   sceneConfig,
-  projectId 
+  projectId,
+  aspectRatio = 16 / 9,
 }) => {
   const [isRendering, setIsRendering] = useState(false); 
   const [renderStatus, setRenderStatus] = useState<"idle" | "rendering" | "success" | "error">("idle");
@@ -43,6 +45,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
           inputProps: {
             title: rawText || "Parametric Animation",
             scene_config: sceneConfig,
+            aspectRatio,
           },
         }),
       });

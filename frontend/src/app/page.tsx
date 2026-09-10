@@ -329,7 +329,7 @@ export default function LandingPage() {
                   addSceneAfter={(i) => setLocalConfig((c) => { const n = [...c]; n.splice(i + 1, 0, { widget: DEFAULT_WIDGET_TYPE, startFrame: 0, durationFrames: 90, props: {} }); return n; })}
                   deleteScene={(i) => setLocalConfig((c) => c.filter((_, idx) => idx !== i))} updateSceneMeta={updateSceneMeta} updateWidgetType={updateWidgetType}
                   updateWidgetProp={updateWidgetProp} handleApplyConfigRefresh={handleApplyConfigRefresh} widgetOptions={DYNAMIC_WIDGET_OPTIONS}
-                  defaultWidgetType={DEFAULT_WIDGET_TYPE} setDashboardOpen={setDashboardOpen}
+                  defaultWidgetType={DEFAULT_WIDGET_TYPE} setDashboardOpen={setDashboardOpen} aspectRatio={selectedAspect.value}
                 />
               ) : (
                 <ThemeEditor themePresetId={themePresetId} themeConfig={themeConfig} selectThemePreset={selectThemePreset} updateThemeProp={updateThemeProp} />

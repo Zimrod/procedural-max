@@ -5,6 +5,7 @@ export const COMP_NAME = "vidWithCaptions";
 
 export const CompositionProps = z.object({
   title: z.string(),
+  aspectRatio: z.number().positive().optional(),
 });
 
 export const defaultMyCompProps: z.infer<typeof CompositionProps> = {

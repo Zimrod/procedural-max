@@ -164,6 +164,7 @@ interface SceneEditorProps {
   isDirty: boolean;
   rawText: string;
   currentJobId: string | null;
+  aspectRatio?: number;
   toggleSceneCollapse: (index: number) => void;
   moveSceneUp: (index: number) => void;
   moveSceneDown: (index: number) => void;
@@ -180,6 +181,7 @@ interface SceneEditorProps {
 
 export function SceneEditor({
   localConfig, sceneConfig, collapsedScenes, isDirty, rawText, currentJobId,
+  aspectRatio,
   toggleSceneCollapse, moveSceneUp, moveSceneDown, addSceneAfter, deleteScene,
   updateSceneMeta, updateWidgetType, updateWidgetProp, handleApplyConfigRefresh,
   widgetOptions, defaultWidgetType, setDashboardOpen,
@@ -405,6 +407,7 @@ export function SceneEditor({
           rawText={rawText}
           sceneConfig={sceneConfig}
           projectId={currentJobId || undefined}
+          aspectRatio={aspectRatio}
         />
       </div>
     </div>

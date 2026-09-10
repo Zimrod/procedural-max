@@ -6,6 +6,7 @@ export const CompositionProps = z.object({
     id: z.string().optional(),
     scene_config: z.unknown().optional(),
     voiceover_url: z.string().optional(),
+    aspectRatio: z.number().positive().optional(),
 });
 export const defaultMyCompProps = {
     title: "Dynamic Captions Demo",

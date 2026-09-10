@@ -8,6 +8,7 @@ export const Root: React.FC = () => {
   const inputProps = getInputProps() as {
     scene_config?: any[];
     voiceover_url?: string;
+    aspectRatio?: number;
   };
 
   // Map to your local React variables
@@ -15,6 +16,14 @@ export const Root: React.FC = () => {
   
   // Use the dynamic voiceover URL, or a robust public placeholder if completely empty
   const audioUrl = inputProps.voiceover_url || ""; 
+
+  // Match the dimensions used by PreviewPlayer. Lambda validates the
+  // composition using these values before rendering any frames.
+  const aspectRatio = Number.isFinite(inputProps.aspectRatio) && inputProps.aspectRatio! > 0
+    ? inputProps.aspectRatio!
+    : VIDEO_WIDTH / VIDEO_HEIGHT;
+  const compositionHeight = VIDEO_HEIGHT;
+  const compositionWidth = Math.max(1, Math.round(compositionHeight * aspectRatio));
 
   // 2. Safely derive total length from scene durations calculated by your backend pipeline
   let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
@@ -39,8 +48,8 @@ export const Root: React.FC = () => {
         component={Main}
         durationInFrames={totalVideoFramesWithBuffer}
         fps={VIDEO_FPS}
-        width={VIDEO_WIDTH}
-        height={VIDEO_HEIGHT}
+        width={compositionWidth}
+        height={compositionHeight}
         defaultProps={{
           scenes: scenes,
           audioUrl: audioUrl,
