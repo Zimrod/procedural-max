@@ -1,4 +1,4 @@
-// src/remotion.index.ts
+// frontend/src/index.ts
 import { registerRoot } from "remotion";
 import { Root } from "./Root";
 

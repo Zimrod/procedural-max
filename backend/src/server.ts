@@ -1,4 +1,4 @@
-// backend/src/index.ts
+// backend/src/server.ts
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyMultipart from '@fastify/multipart';

@@ -1,4 +1,4 @@
-// src/remotion/MyComp/Main.tsx
+// src/graphics/Main.tsx
 import React, { useEffect, useState } from 'react';
 import {
   AbsoluteFill,
@@ -15,24 +15,29 @@ import { AudioConfig, AudioLayers } from './AudioLayers';
 type Props = {
   captions?: { word: string; start: number; end: number; }[];
   scenes?: any[];
+  scene_config?: any[]; // <-- Add backend key
   theme?: any;
   audioUrl?: string;
+  voiceover_url?: string; // <-- Add backend key
   audioVersion?: number;
   audioConfig?: AudioConfig;
 };
 
 export const Main: React.FC<Props> = ({
   captions = [],
-  scenes = [],
+  scenes: scenesProp,
+  scene_config,
   theme = {},
-  audioUrl = "",
+  audioUrl: audioUrlProp = "",
+  voiceover_url = "",
   audioVersion = 0,
   audioConfig,
 }) => {
+  // Normalize incoming backend keys with frontend fallbacks
+  const scenes = scenesProp || scene_config || [];
+  const resolvedAudioUrl = audioUrlProp || voiceover_url || "";
+
   const [fontLoaded, setFontLoaded] = useState(false);
-  
-  // 💡 READ THE NEW EXTENDED COMPOSITION DURATION AUTOMATICALLY
-  // const { durationInFrames } = useVideoConfig(); 
 
   useEffect(() => {
     const handle = delayRender('Loading Font');
@@ -48,8 +53,8 @@ export const Main: React.FC<Props> = ({
 
   if (!fontLoaded) return null;
 
-  const resolvedAudioConfig = audioConfig || (audioUrl ? {
-    voUrl: audioUrl,
+  const resolvedAudioConfig = audioConfig || (resolvedAudioUrl ? {
+    voUrl: resolvedAudioUrl,
     voVolume: 1,
     bgmVolume: 0,
     masterVolume: 1,

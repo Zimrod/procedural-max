@@ -1,4 +1,4 @@
-// src/routes/render.ts
+// backend/src/routes/render.ts
 import { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
@@ -136,7 +136,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
-          fileName: "video.mp4",
+          fileName: "out.mp4",
         },
       });
 

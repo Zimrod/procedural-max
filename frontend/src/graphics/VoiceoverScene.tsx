@@ -12,10 +12,10 @@ import {
 import {
   getWidgetComponent,
 } from '../core/widgetComponentRegistry';
-// import { Watermark } from './Watermark';
 
 type SceneConfigItem = {
-  widget: string;
+  widget?: string;
+  widgetType?: string; // Fallback field support
   startFrame: number;
   durationFrames: number;
   mainDurationInFrames?: number;
@@ -71,7 +71,7 @@ export const VoiceoverScene: React.FC<Props> = ({
     ...DEFAULT_COMPOSITION_THEME,
     ...theme,
   };
-  // Very small compositions need a final containment pass for rigs with fixed design dimensions.
+
   const containmentScale = Math.min(
     1,
     width < 500 ? width / 1400 : 1,
@@ -86,13 +86,16 @@ export const VoiceoverScene: React.FC<Props> = ({
       }}
     >
       {scenes.map((item, i) => {
+        // Resolve key supporting both naming conventions & upper-case normalization
+        const rawWidgetKey = item.widget || item.widgetType || '';
+        const normalizedWidgetKey = rawWidgetKey.toUpperCase();
 
         const WidgetComponent =
-          getWidgetComponent(item.widget);
+          getWidgetComponent(normalizedWidgetKey) || getWidgetComponent(rawWidgetKey);
 
         return (
           <Sequence
-            key={`${item.widget}_${i}`}
+            key={`${normalizedWidgetKey || 'WIDGET'}_${i}`}
             from={item.startFrame}
             durationInFrames={item.mainDurationInFrames ?? item.durationFrames}
           >
@@ -107,11 +110,10 @@ export const VoiceoverScene: React.FC<Props> = ({
                 }}
               >
                 <WidgetComponent
-                  {...getSafeProps(item.widget, item.props)}
+                  {...getSafeProps(normalizedWidgetKey, item.props)}
                 />
               </div>
             </AbsoluteFill>
-            {/* <Watermark /> */}
           </Sequence>
         );
       })}
