@@ -12,7 +12,6 @@ import {
   Film,
   Clock,
   HardDrive,
-  CheckCircle2,
   Loader2,
 } from "lucide-react";
 import { useAuth } from "./AuthContext";
