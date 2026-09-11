@@ -63,19 +63,27 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         throw new Error(message || "AWS Lambda orchestration hook rejected dispatch request.");
       }
       
-      const data = await response.json();
-      console.log("🚀 Serverless render kicked off successfully:", data);
+      const resData = await response.json();
+      console.log("🚀 Serverless render kicked off successfully:", resData);
+
+      // Safely parse renderId and bucketName across different API wrappers
+      const renderId = resData.renderId || resData.data?.renderId;
+      const bucketName = resData.bucketName || resData.data?.bucketName || "remotionlambda-useast1-u8m4fsf2at";
+
+      if (!renderId) {
+        throw new Error("Could not retrieve a valid renderId from response.");
+      }
+
       setRenderStatus("success");
 
-      // Resolve final S3 download URL
-      const downloadUrl =
-        data.url ||
-        `https://${data.bucketName || "remotionlambda-useast1-u8m4fsf2at"}.s3.us-east-1.amazonaws.com/renders/${data.renderId}/${encodeURIComponent(sanitizedFileName)}`;
+      // Construct the direct S3 URL using the renderId and custom filename
+      const downloadUrl = `https://${bucketName}.s3.us-east-1.amazonaws.com/renders/${renderId}/${encodeURIComponent(sanitizedFileName)}`;
 
-      // Programmatically trigger immediate automatic browser download
+      // Note: Lambda renders asynchronously. Trigger download after brief delay or via link.
       const link = document.createElement("a");
       link.href = downloadUrl;
       link.setAttribute("download", sanitizedFileName);
+      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

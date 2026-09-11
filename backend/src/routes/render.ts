@@ -149,6 +149,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         forceWidth: renderWidth,
         forceHeight: renderHeight,
         framesPerLambda: 10,
+        outName: sanitizedFileName, // 👈 Fixes out.mp4 -> custom name (e.g. verbatim.mp4)
         downloadBehavior: {
           type: "download",
           fileName: sanitizedFileName,
