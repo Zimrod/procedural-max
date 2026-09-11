@@ -13,7 +13,6 @@ import {
   Settings,
   Coins,
   Clapperboard,
-  ShieldCheck,
   Copy,
   Check,
 } from "lucide-react";
