@@ -49,42 +49,43 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     const targetId = body.projectId || body.inputProps?.id;
     
     // Extract incoming workspace configurations sent directly from RenderAndSaveButtons.tsx
-    // (Ensure your 'RenderRequest' schema validation allows these optional fields)
     const incomingSceneConfig = (body as any).sceneConfig; 
     const incomingRawText = (body as any).rawText;
+    const incomingVideoName = (body as any).title || body.inputProps?.title || (body as any).video_name;
 
     let fetchedSceneConfig = incomingSceneConfig || null;
     let fetchedVoiceoverUrl = null;
+    let fetchedVideoName = incomingVideoName || null;
 
     // ------------------------------------------------------------
     // 🛠️ SAVE TO & SYNC WITH SUPABASE
     // ------------------------------------------------------------
     if (targetId) {
-      // 1. If the client sent updated workspace configurations, save them to the database first!
-      if (incomingSceneConfig) {
-        console.log(`💾 [Supabase Write] Auto-persisting latest scene_config for ID: "${targetId}" before render...`);
+      // 1. Save updated workspace configurations and video_name to Supabase
+      if (incomingSceneConfig || incomingVideoName) {
+        console.log(`💾 [Supabase Write] Auto-persisting latest data for ID: "${targetId}" before render...`);
         
         const { error: saveError } = await supabase
           .from("parametric_projects")
           .update({
-            scene_config: incomingSceneConfig,
-            ...(incomingRawText ? { raw_text: incomingRawText } : {})
+            ...(incomingSceneConfig ? { scene_config: incomingSceneConfig } : {}),
+            ...(incomingRawText ? { raw_text: incomingRawText } : {}),
+            ...(incomingVideoName ? { video_name: incomingVideoName } : {}),
           })
           .eq("id", targetId);
 
         if (saveError) {
           console.error("❌ [Supabase Save Error] Failed to auto-persist layout:", saveError.message);
-          // We continue anyway so the user doesn't experience a broken render if the DB save fails but we still have the layout in-memory.
         } else {
-          console.log("✅ [Supabase Write] Workspace configurations auto-saved successfully.");
+          console.log("✅ [Supabase Write] Workspace configurations and video_name auto-saved successfully.");
         }
       }
 
-      // 2. Query remaining metadata (like voiceover_url) to finalize input parameters
+      // 2. Query remaining metadata (like voiceover_url and video_name) to finalize parameters
       console.log(`🛰️ [Supabase Sync] Querying remaining metadata for ID: "${targetId}"...`);
       const { data, error } = await supabase
         .from("parametric_projects") 
-        .select("scene_config, voiceover_url")
+        .select("scene_config, voiceover_url, video_name")
         .eq("id", targetId)
         .single();
 
@@ -92,25 +93,27 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         console.error("❌ [Supabase Read Error] Query failed actively:", error.message);
       } else if (data) {
         console.log("✅ [Supabase Sync] Project metadata synced successfully.");
-        // Fall back to DB state if nothing was passed in memory
         fetchedSceneConfig = fetchedSceneConfig || data.scene_config;
         fetchedVoiceoverUrl = data.voiceover_url;
+        fetchedVideoName = fetchedVideoName || data.video_name;
       }
     } else {
       console.log("⚠️ [Supabase Skip] No lookup ID found in payload. Proceeding with default inputs.");
     }
 
+    // Resolve final video name and format sanitized MP4 filename
+    const resolvedTitle = fetchedVideoName || body.inputProps?.title || "render";
+    const sanitizedFileName = `${resolvedTitle.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.mp4`;
+
     // Prepare inputProps for Remotion
     const finalInputProps = {
       ...body.inputProps,
+      title: resolvedTitle,
       scene_config: fetchedSceneConfig || body.inputProps?.scene_config,
       voiceover_url: fetchedVoiceoverUrl || body.inputProps?.voiceover_url,
       aspectRatio: body.inputProps?.aspectRatio ?? 16 / 9,
     };
 
-    // Force the encoded Lambda dimensions as well as exposing aspectRatio to
-    // the composition. This protects renders from an older deployed bundle
-    // whose calculateMetadata() still reports 1920x1080.
     const renderHeight = 1080;
     const renderWidth = Math.max(
       2,
@@ -128,6 +131,7 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
     console.log("🔍 [Stage 2] Extracted Configurations Context Matrix:");
     console.log(`  -> Speculated Target Lambda Function Name: "${predictedFunction}"`);
     console.log(`  -> Target Composition ID: "${finalCompositionId}"`);
+    console.log(`  -> Download Output File Name: "${sanitizedFileName}"`);
     console.log(`  -> Resolved Input Props Matrix Payload:`, JSON.stringify(finalInputProps, null, 2));
 
     try {
@@ -141,13 +145,13 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
           process.env.REMOTION_SITE_URL ||
           "https://remotionlambda-useast1-u8m4fsf2at.s3.us-east-1.amazonaws.com/sites/procedural-max-studio/index.html",
         composition: finalCompositionId,
-        inputProps: finalInputProps, // Pass aspect ratio here
+        inputProps: finalInputProps,
         forceWidth: renderWidth,
         forceHeight: renderHeight,
         framesPerLambda: 10,
         downloadBehavior: {
           type: "download",
-          fileName: "out.mp4",
+          fileName: sanitizedFileName,
         },
       });
 
