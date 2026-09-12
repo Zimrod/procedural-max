@@ -17,17 +17,17 @@ export const Root: React.FC = () => {
   // Use the dynamic voiceover URL, or a robust public placeholder if completely empty
   const audioUrl = inputProps.voiceover_url || ""; 
 
-  // 2. Safely derive total length from scene durations calculated by your backend pipeline
+  // 2. Safely derive total length from all independent widget timeline windows.
   let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
 
   if (scenes && scenes.length > 0) {
-    const lastScene = scenes[scenes.length - 1];
-    // Adjusting this check to use whichever frame naming convention you have (e.g., durationFrames or endFrame)
-    const endingFrame = typeof lastScene.endFrame === "number" 
-      ? lastScene.endFrame 
-      : (lastScene.startFrame + lastScene.durationFrames);
+    const endingFrame = Math.max(...scenes.map((scene) => {
+      const start = Number(scene.startFrame ?? scene.start ?? 0);
+      const duration = Number(scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? 0);
+      return Number(scene.endFrame ?? scene.end ?? start + duration);
+    }));
 
-    if (typeof endingFrame === "number") {
+    if (Number.isFinite(endingFrame)) {
       // Append a 3-second (90 frames at 30fps) post-roll buffer onto the final scene frame index
       totalVideoFramesWithBuffer = endingFrame + (VIDEO_FPS * 3);
     }

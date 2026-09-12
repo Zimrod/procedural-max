@@ -111,6 +111,7 @@ export const VoiceoverScene: React.FC<Props> = ({
               >
                 <WidgetComponent
                   {...getSafeProps(normalizedWidgetKey, item.props)}
+                  timelineStartFrame={item.startFrame}
                 />
               </div>
             </AbsoluteFill>

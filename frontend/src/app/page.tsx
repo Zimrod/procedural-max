@@ -22,6 +22,29 @@ const ASPECT_RATIOS = [
   { label: "3:2", value: 3 / 2 },
 ];
 
+function normalizeSceneTiming(scene: any) {
+  const startFrame = Math.max(0, Number(scene.startFrame ?? scene.start ?? 0));
+  const endValue = scene.endFrame ?? scene.end;
+  const durationFrames = Math.max(
+    1,
+    Number(scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? (
+      endValue === undefined ? 90 : Number(endValue) - startFrame
+    ))
+  );
+  const endFrame = Number(endValue ?? startFrame + durationFrames);
+
+  return {
+    ...scene,
+    startFrame,
+    start: startFrame,
+    durationFrames,
+    durationInFrames: durationFrames,
+    duration: durationFrames,
+    endFrame,
+    end: endFrame,
+  };
+}
+
 export default function LandingPage() {
   const [prompt, setPrompt] = useState("");
   const [aiScript, setAiScript] = useState("");
@@ -64,21 +87,10 @@ export default function LandingPage() {
   }, [sceneConfig, localConfig]);
 
   // The editor is a draft, but the preview should still respond while it is being edited.
-  // Recalculate offsets here so inserted, removed, or reordered scenes remain contiguous.
+  // Each widget owns its own timeline window. Never derive one widget's start from another.
   const previewSceneConfig = useMemo(() => {
     const source = localConfig.length > 0 ? localConfig : sceneConfig;
-    let trackingFrame = 0;
-
-    return source.map((scene) => {
-      const durationFrames = Number(scene.durationFrames || 30);
-      const previewScene = {
-        ...scene,
-        startFrame: trackingFrame,
-        durationFrames,
-      };
-      trackingFrame += durationFrames;
-      return previewScene;
-    });
+    return source.map(normalizeSceneTiming);
   }, [localConfig, sceneConfig]);
 
   useEffect(() => {
@@ -101,18 +113,7 @@ export default function LandingPage() {
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, uploadedAudioUrl, uploadedAudioVersion, API]);
 
   const handleApplyConfigRefresh = () => {
-    let trackingFrame = 0;
-    const computedConfig = localConfig.map((scene) => {
-      const start = trackingFrame;
-      trackingFrame += Number(scene.durationFrames || 30);
-      return {
-        ...scene,
-        startFrame: start,
-        durationFrames: Number(scene.durationFrames || 30),
-      };
-    });
-
-    setSceneConfig(JSON.parse(JSON.stringify(computedConfig)));
+    setSceneConfig(JSON.parse(JSON.stringify(localConfig.map(normalizeSceneTiming))));
     
     if (playerRef.current) {
       playerRef.current.seekTo(0);
@@ -209,9 +210,9 @@ export default function LandingPage() {
   };
 
   const updateSceneMeta = (index: number, key: string, value: any) => {
-    const updated = [...localConfig];
-    updated[index] = { ...updated[index], [key]: value };
-    setLocalConfig(updated);
+    setLocalConfig((scenes) => scenes.map((scene, sceneIndex) => (
+      sceneIndex === index ? { ...scene, [key]: value } : scene
+    )));
   };
 
   const updateWidgetType = (index: number, newType: string) => {
@@ -299,7 +300,9 @@ export default function LandingPage() {
             <PreviewPlayer
               playerRef={playerRef} selectedAspect={selectedAspect} setSelectedAspect={setSelectedAspect} aspectRatios={ASPECT_RATIOS}
               sceneConfig={previewSceneConfig} inputProps={{ audioUrl: currentActiveAudio, scenes: previewSceneConfig, captions: transcription?.words ?? [], theme: themeConfig }}
-              totalDurationInFrames={previewSceneConfig.length ? previewSceneConfig[previewSceneConfig.length - 1].startFrame + previewSceneConfig[previewSceneConfig.length - 1].durationFrames : 300}
+              totalDurationInFrames={previewSceneConfig.length
+                ? Math.max(...previewSceneConfig.map((scene) => scene.endFrame))
+                : 300}
               themeConfig={themeConfig}
               onScenesChange={setLocalConfig}
             />

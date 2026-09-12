@@ -44,14 +44,25 @@ export function PreviewPlayer({
   const trackRef = useRef<HTMLDivElement>(null);
 
   const [currentFrame, setCurrentFrame] = useState(0);
-  const [draggingJunctionIndex, setDraggingJunctionIndex] = useState<number | null>(null);
-  const [isDraggingEnd, setIsDraggingEnd] = useState(false);
+  const [draggingSceneIndex, setDraggingSceneIndex] = useState<number | null>(null);
   const [activeEditorTab, setActiveEditorTab] = useState<"timeline" | "audio">("timeline");
   const [draggingAudioTrack, setDraggingAudioTrack] = useState<"vo" | "bgm" | null>(null);
   const currentFrameRef = useRef(0);
 
-  const endDragRef = useRef<{ startX: number; initialDur: number; pxPerFrame: number } | null>(null);
-  const audioDragRef = useRef<{ startX: number; initialStart: number; duration: number; pxPerFrame: number } | null>(null);
+  const sceneDragRef = useRef<{
+    startX: number;
+    initialStart: number;
+    initialDuration: number;
+    pxPerFrame: number;
+    dragType: "move" | "resize-start" | "resize-end";
+  } | null>(null);
+
+  const audioDragRef = useRef<{
+    startX: number;
+    initialStart: number;
+    duration: number;
+    pxPerFrame: number;
+  } | null>(null);
 
   // Fallback state if parent does not manage audioConfig directly
   const [internalAudioConfig, setInternalAudioConfig] = useState<AudioConfig>({
@@ -93,21 +104,24 @@ export function PreviewPlayer({
     };
   }, [selectedAspect.value]);
 
-  // Calculate total widget frames dynamically across property variations
+  // Calculate total composition duration based on the highest end frame across all independent widgets
   const computedTotalFrames = useMemo(() => {
-    const sum = sceneConfig.reduce((acc, scene) => {
-      const duration =
-        scene.durationFrames ??
-        scene.durationInFrames ??
-        scene.duration ??
-        90;
-      return acc + duration;
-    }, 0);
+    let maxFrame = 0;
+    sceneConfig.forEach((scene) => {
+      const start = scene.startFrame ?? scene.start ?? 0;
+      const duration = scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? 90;
+      const end = scene.endFrame ?? scene.end ?? start + duration;
+      if (end > maxFrame) maxFrame = end;
+    });
 
-    return sum > 0 ? sum : totalDurationInFrames || 1;
+    if (totalDurationInFrames && totalDurationInFrames > maxFrame) {
+      maxFrame = totalDurationInFrames;
+    }
+
+    return maxFrame > 0 ? maxFrame : 150;
   }, [sceneConfig, totalDurationInFrames]);
 
-  // Check if voiceover audio exceeds current visual widget duration
+  // Check if voiceover audio extends beyond overall visual workspace
   const isAudioOverflowing = useMemo(() => {
     if (!activeAudioConfig.voUrl || !activeAudioConfig.voDurationFrames) return false;
     const voEnd = (activeAudioConfig.voStartFrame || 0) + activeAudioConfig.voDurationFrames;
@@ -148,34 +162,94 @@ export function PreviewPlayer({
     return Number.isInteger(sec) ? `${sec}s` : `${sec.toFixed(1)}s`;
   };
 
-  // Dragging Junctions (Resizing adjacent scene durations)
-  const handleJunctionMouseDown = (e: React.MouseEvent, junctionIdx: number) => {
+  // Independent Widget Mouse Down Handler (Move / Resize Start / Resize End)
+  const handleWidgetMouseDown = (
+    e: React.MouseEvent,
+    index: number,
+    dragType: "move" | "resize-start" | "resize-end"
+  ) => {
     e.stopPropagation();
     e.preventDefault();
-    setDraggingJunctionIndex(junctionIdx);
-  };
-
-  // Dragging Final Boundary (Resizing total duration via final scene)
-  const handleEndMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!trackRef.current || sceneConfig.length === 0) return;
+    if (!trackRef.current) return;
 
     const rect = trackRef.current.getBoundingClientRect();
-    const trackPadding = 8;
-    const timelineWidth = Math.max(1, rect.width - trackPadding * 2);
+    const trackPadding = 16;
+    const timelineWidth = Math.max(1, rect.width - trackPadding);
     const pxPerFrame = timelineWidth / computedTotalFrames;
 
-    const lastScene = sceneConfig[sceneConfig.length - 1];
-    const initialDur = lastScene.durationFrames ?? lastScene.durationInFrames ?? lastScene.duration ?? 90;
+    const scene = sceneConfig[index];
+    const initialStart = scene.startFrame ?? scene.start ?? 0;
+    const initialDuration = scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? 90;
 
-    endDragRef.current = {
+    sceneDragRef.current = {
       startX: e.clientX,
-      initialDur,
+      initialStart,
+      initialDuration,
       pxPerFrame: pxPerFrame > 0 ? pxPerFrame : 1,
+      dragType,
     };
-    setIsDraggingEnd(true);
+    setDraggingSceneIndex(index);
   };
+
+  // Fully Decoupled Drag / Resize Event Listener
+  useEffect(() => {
+    if (draggingSceneIndex === null || !onScenesChange) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const drag = sceneDragRef.current;
+      if (!drag || !trackRef.current) return;
+
+      const deltaFrames = Math.round((e.clientX - drag.startX) / drag.pxPerFrame);
+      const sceneIndex = draggingSceneIndex;
+      const minFrames = 15;
+
+      const updated = sceneConfig.map((s, idx) => {
+        // Only modify the explicitly targeted scene; adjacent scenes remain strictly untouched
+        if (idx !== sceneIndex) return s;
+
+        let newStart = s.startFrame ?? s.start ?? 0;
+        let newDuration = s.durationFrames ?? s.durationInFrames ?? s.duration ?? 90;
+
+        if (drag.dragType === "move") {
+          newStart = Math.max(0, drag.initialStart + deltaFrames);
+        } else if (drag.dragType === "resize-start") {
+          const proposedStart = Math.max(0, drag.initialStart + deltaFrames);
+          const maxStart = drag.initialStart + drag.initialDuration - minFrames;
+          newStart = Math.min(proposedStart, maxStart);
+          newDuration = drag.initialDuration + (drag.initialStart - newStart);
+        } else if (drag.dragType === "resize-end") {
+          newDuration = Math.max(minFrames, drag.initialDuration + deltaFrames);
+        }
+
+        const newEnd = newStart + newDuration;
+
+        return {
+          ...s,
+          startFrame: newStart,
+          start: newStart,
+          durationFrames: newDuration,
+          durationInFrames: newDuration,
+          duration: newDuration,
+          endFrame: newEnd,
+          end: newEnd,
+        };
+      });
+
+      onScenesChange(updated);
+    };
+
+    const handleMouseUp = () => {
+      setDraggingSceneIndex(null);
+      sceneDragRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [draggingSceneIndex, sceneConfig, computedTotalFrames, onScenesChange]);
 
   const handleAudioMouseDown = (e: React.MouseEvent, track: "vo" | "bgm") => {
     e.preventDefault();
@@ -221,100 +295,6 @@ export function PreviewPlayer({
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [draggingAudioTrack, computedTotalFrames]);
-
-  // Internal Junction Drag Effect
-  useEffect(() => {
-    if (draggingJunctionIndex === null || !onScenesChange) return;
-
-    const initialScenes = [...sceneConfig];
-    const junctionIdx = draggingJunctionIndex;
-    const sceneA = initialScenes[junctionIdx];
-    const sceneB = initialScenes[junctionIdx + 1];
-
-    const initialDurA = sceneA.durationFrames ?? sceneA.durationInFrames ?? sceneA.duration ?? 90;
-    const initialDurB = sceneB.durationFrames ?? sceneB.durationInFrames ?? sceneB.duration ?? 90;
-    const combinedDuration = initialDurA + initialDurB;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!trackRef.current) return;
-      const rect = trackRef.current.getBoundingClientRect();
-
-      let startFrameA = 0;
-      for (let i = 0; i < junctionIdx; i++) {
-        const s = initialScenes[i];
-        startFrameA += s.durationFrames ?? s.durationInFrames ?? s.duration ?? 90;
-      }
-
-      const trackPadding = 8;
-      const timelineWidth = Math.max(1, rect.width - trackPadding * 2);
-      const mouseX = Math.max(0, Math.min(e.clientX - rect.left - trackPadding, timelineWidth));
-      const currentJunctionFrame = Math.round((mouseX / timelineWidth) * computedTotalFrames);
-      let newDurA = currentJunctionFrame - startFrameA;
-
-      const minFrames = 15;
-      newDurA = Math.max(minFrames, Math.min(combinedDuration - minFrames, newDurA));
-      const newDurB = combinedDuration - newDurA;
-
-      const updated = initialScenes.map((s, idx) => {
-        if (idx === junctionIdx) {
-          return { ...s, durationFrames: newDurA, durationInFrames: newDurA, duration: newDurA };
-        }
-        if (idx === junctionIdx + 1) {
-          return { ...s, durationFrames: newDurB, durationInFrames: newDurB, duration: newDurB };
-        }
-        return s;
-      });
-
-      onScenesChange(updated);
-    };
-
-    const handleMouseUp = () => {
-      setDraggingJunctionIndex(null);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [draggingJunctionIndex, sceneConfig, computedTotalFrames, onScenesChange]);
-
-  // Final Boundary Drag Effect
-  useEffect(() => {
-    if (!isDraggingEnd || !onScenesChange) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!endDragRef.current) return;
-      const { startX, initialDur, pxPerFrame } = endDragRef.current;
-      const deltaX = e.clientX - startX;
-      const deltaFrames = Math.round(deltaX / pxPerFrame);
-
-      const minFrames = 15;
-      const newDur = Math.max(minFrames, initialDur + deltaFrames);
-
-      const updated = sceneConfig.map((s, idx) => {
-        if (idx === sceneConfig.length - 1) {
-          return { ...s, durationFrames: newDur, durationInFrames: newDur, duration: newDur };
-        }
-        return s;
-      });
-
-      onScenesChange(updated);
-    };
-
-    const handleMouseUp = () => {
-      setIsDraggingEnd(false);
-      endDragRef.current = null;
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isDraggingEnd, sceneConfig, onScenesChange]);
 
   const playheadPercent = Math.min(100, Math.max(0, (currentFrame / computedTotalFrames) * 100));
 
@@ -387,7 +367,7 @@ export function PreviewPlayer({
             onClick={() => setActiveEditorTab("timeline")}
             className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${activeEditorTab === "timeline" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
           >
-            Timeline Tracks
+            Stacked Tracks
           </button>
           <button
             type="button"
@@ -407,258 +387,148 @@ export function PreviewPlayer({
           />
         )}
 
-        {false && (
-        <div className="bg-[#18181b] border border-neutral-800 rounded-xl p-3.5 space-y-3 text-xs select-none">
-          <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
-            <span className="font-bold text-neutral-300 uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
-              Audio Master Controls
-            </span>
-            {isAudioOverflowing && (
-              <span className="text-[9px] bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2 py-0.5 rounded font-mono animate-pulse">
-                ⚠️ Audio extends past visual duration — drag visual timeline end to extend
+        {/* Stacked Multi-Track Concurrent Timeline */}
+        {activeEditorTab === "timeline" && (
+          <div className="pt-2 border-t border-neutral-800/80 space-y-2 select-none">
+            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                Independent Widget Tracks
               </span>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {/* Voiceover Track Controls */}
-            <div className="bg-neutral-900/70 p-2.5 rounded-lg border border-neutral-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-emerald-400 text-[11px]">🎙️ Voiceover Track</span>
-                <span className="font-mono text-neutral-400 text-[10px]">
-                  {Math.round(activeAudioConfig.voVolume * 100)}%
-                </span>
-              </div>
-              <input
-                type="text"
-                placeholder="Voiceover Audio URL (.mp3 / .wav)"
-                value={activeAudioConfig.voUrl || ""}
-                onChange={(e) => handleAudioChange({ ...activeAudioConfig, voUrl: e.target.value })}
-                className="w-full bg-black/60 border border-neutral-800 rounded px-2 py-1 text-neutral-200 text-[10px] focus:outline-none focus:border-emerald-500 font-mono"
-              />
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] text-neutral-500 uppercase font-mono">Vol</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={activeAudioConfig.voVolume}
-                  onChange={(e) => handleAudioChange({ ...activeAudioConfig, voVolume: parseFloat(e.target.value) })}
-                  className="w-full accent-emerald-500 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
+              <span className="font-mono text-emerald-400">
+                {formatSeconds(currentFrame)} / {formatSeconds(computedTotalFrames)} ({computedTotalFrames} Frames)
+              </span>
             </div>
 
-            {/* Background Music Controls */}
-            <div className="bg-neutral-900/70 p-2.5 rounded-lg border border-neutral-800 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-cyan-400 text-[11px]">🎵 Background Music</span>
-                <span className="font-mono text-neutral-400 text-[10px]">
-                  {Math.round(activeAudioConfig.bgmVolume * 100)}%
-                </span>
-              </div>
-              <input
-                type="text"
-                placeholder="BGM Audio URL (.mp3 / .wav)"
-                value={activeAudioConfig.bgmUrl || ""}
-                onChange={(e) => handleAudioChange({ ...activeAudioConfig, bgmUrl: e.target.value })}
-                className="w-full bg-black/60 border border-neutral-800 rounded px-2 py-1 text-neutral-200 text-[10px] focus:outline-none focus:border-cyan-500 font-mono"
-              />
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] text-neutral-500 uppercase font-mono">Vol</span>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={activeAudioConfig.bgmVolume}
-                  onChange={(e) => handleAudioChange({ ...activeAudioConfig, bgmVolume: parseFloat(e.target.value) })}
-                  className="w-full accent-cyan-500 h-1.5 bg-neutral-800 rounded-lg appearance-none cursor-pointer"
-                />
-              </div>
-              <label className="flex items-center gap-2 text-[10px] text-neutral-400 cursor-pointer pt-0.5">
-                <input
-                  type="checkbox"
-                  checked={activeAudioConfig.autoDucking}
-                  onChange={(e) => handleAudioChange({ ...activeAudioConfig, autoDucking: e.target.checked })}
-                  className="rounded bg-black border-neutral-700 text-emerald-500 focus:ring-0 w-3 h-3"
-                />
-                Auto-duck BGM volume during voiceover speech
-              </label>
-            </div>
-          </div>
-        </div>
-        )}
-
-        {/* Stacked Multi-Track Timeline */}
-        {activeEditorTab === "timeline" && <div className="pt-2 border-t border-neutral-800/80 space-y-2 select-none">
-          <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-400">
-            <span className="flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Timeline Tracks
-            </span>
-            <span className="font-mono text-emerald-400">
-              {formatSeconds(currentFrame)} / {formatSeconds(computedTotalFrames)} ({computedTotalFrames} Frames)
-            </span>
-          </div>
-
-          <div
-            ref={trackRef}
-            className="w-full bg-black/80 rounded-xl p-2 pb-8 border border-neutral-800 flex flex-col gap-2 relative cursor-default"
-          >
-            {/* Master Playhead Line (Spans across all stacked tracks) */}
             <div
-              style={{ left: `${playheadPercent}%` }}
-              className="pointer-events-none absolute top-0 bottom-0 z-40 flex flex-col items-center"
+              ref={trackRef}
+              className="w-full bg-black/80 rounded-xl p-2.5 border border-neutral-800 flex flex-col gap-2 relative cursor-default"
             >
-              <div className="w-3 h-3 bg-amber-400 border-2 border-neutral-900 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.9)] -mt-1" />
-              <div className="w-[2px] h-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
-            </div>
-
-            {/* Fixed Start Boundary Marker (0s) */}
-            <div className="absolute left-0 top-0 bottom-0 z-20 flex flex-col items-center pointer-events-none">
-              <div className="w-[2px] h-full bg-emerald-500/80" />
-              <div className="absolute top-full mt-1 bg-neutral-900 border border-emerald-500/60 text-emerald-400 font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow-md transform -translate-x-1/2 whitespace-nowrap">
-                0s
+              {/* Playhead Line */}
+              <div
+                style={{ left: `${playheadPercent}%` }}
+                className="pointer-events-none absolute top-0 bottom-0 z-40 flex flex-col items-center"
+              >
+                <div className="w-3 h-3 bg-amber-400 border-2 border-neutral-900 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.9)] -mt-1" />
+                <div className="w-[2px] h-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
               </div>
-            </div>
 
-            {/* TRACK 1: Visual Scene Sequence */}
-            <div className="w-full flex gap-0 items-center min-h-[40px] relative">
-              {sceneConfig.length > 0 ? (
-                (() => {
-                  let accumulatedFrames = 0;
-                  return sceneConfig.map((scene, idx) => {
-                    const duration =
-                      scene.durationFrames ??
-                      scene.durationInFrames ??
-                      scene.duration ??
-                      90;
+              {/* Start Boundary Marker (0s) */}
+              <div className="absolute left-0 top-0 bottom-0 z-20 flex flex-col items-center pointer-events-none">
+                <div className="w-[2px] h-full bg-emerald-500/80" />
+              </div>
 
-                    accumulatedFrames += duration;
-                    const endFrame = accumulatedFrames;
+              {/* INDEPENDENT WIDGET TRACKS (Parallel / Decoupled Layers) */}
+              <div className="w-full flex flex-col gap-1.5 relative min-h-[60px]">
+                {sceneConfig.length > 0 ? (
+                  sceneConfig.map((scene, idx) => {
+                    const startFrame = scene.startFrame ?? scene.start ?? 0;
+                    const duration = scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? 90;
+                    const endFrame = scene.endFrame ?? scene.end ?? startFrame + duration;
 
+                    const leftPercent = (startFrame / computedTotalFrames) * 100;
                     const widthPercent = (duration / computedTotalFrames) * 100;
-                    const widgetName = scene.widget || scene.type || `Scene #${idx + 1}`;
-                    const endSec = formatSeconds(endFrame);
+                    const widgetName = scene.widget || scene.type || `Widget #${idx + 1}`;
                     const durationSec = formatSeconds(duration);
-                    const isLast = idx === sceneConfig.length - 1;
 
                     return (
                       <div
                         key={scene.id || idx}
-                        style={{ width: `${widthPercent}%` }}
-                        className="group relative h-10 bg-neutral-900 hover:bg-emerald-950/40 border-y border-neutral-800 hover:border-emerald-500/60 p-1.5 flex flex-col justify-between transition-colors flex-shrink-0"
-                        title={`Scene #${idx + 1}: ${widgetName} (${durationSec})`}
+                        className="w-full h-9 bg-neutral-900/60 rounded-lg relative overflow-hidden border border-neutral-800/80 flex items-center"
                       >
-                        <div className="flex items-center justify-between gap-1 w-full text-[9px] truncate">
-                          <span className="font-bold text-neutral-300 group-hover:text-emerald-300 truncate">
-                            #{idx + 1} {widgetName}
-                          </span>
-                          <span className="font-mono text-neutral-500 group-hover:text-emerald-400 text-[8px] flex-shrink-0">
-                            {durationSec}
-                          </span>
-                        </div>
-
-                        <div className="w-full h-1 bg-neutral-800 group-hover:bg-neutral-700 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500 w-full opacity-80 group-hover:opacity-100 transition-opacity" />
-                        </div>
-
-                        {/* Junction Handle (Draggable between meeting bars) */}
-                        {!isLast && (
+                        <div
+                          style={{
+                            left: `${leftPercent}%`,
+                            width: `${widthPercent}%`,
+                          }}
+                          onMouseDown={(e) => handleWidgetMouseDown(e, idx, "move")}
+                          className="group absolute h-7 bg-neutral-800 hover:bg-emerald-950/70 border border-neutral-700 hover:border-emerald-500/80 rounded-md px-2 flex items-center justify-between text-[9px] cursor-grab active:cursor-grabbing transition-colors"
+                        >
+                          {/* Left Resize Handle */}
                           <div
-                            onMouseDown={(e) => handleJunctionMouseDown(e, idx)}
-                            className="absolute -right-[4px] top-0 bottom-0 w-2 z-30 flex flex-col items-center cursor-col-resize group/junction"
-                          >
-                            <div className="w-[2px] h-full bg-emerald-500 group-hover/junction:bg-cyan-400 group-hover/junction:w-[3px] shadow-[0_0_6px_rgba(16,185,129,0.8)] transition-all" />
-                            <div className="absolute top-full mt-1 bg-neutral-900 border border-emerald-500/60 group-hover/junction:border-cyan-400 text-emerald-400 group-hover/junction:text-cyan-300 font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow-md transform -translate-x-1/2 whitespace-nowrap">
-                              {endSec}
-                            </div>
+                            onMouseDown={(e) => handleWidgetMouseDown(e, idx, "resize-start")}
+                            className="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-emerald-400/80 rounded-l-md"
+                          />
+
+                          <div className="flex items-center gap-1.5 truncate pointer-events-none">
+                            <span className="font-bold text-neutral-200 group-hover:text-emerald-300 truncate">
+                              #{idx + 1} {widgetName}
+                            </span>
                           </div>
-                        )}
+
+                          <span className="font-mono text-neutral-400 group-hover:text-emerald-400 text-[8px] flex-shrink-0 pointer-events-none">
+                            f:{startFrame}–{endFrame} ({durationSec})
+                          </span>
+
+                          {/* Right Resize Handle */}
+                          <div
+                            onMouseDown={(e) => handleWidgetMouseDown(e, idx, "resize-end")}
+                            className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-emerald-400/80 rounded-r-md"
+                          />
+                        </div>
                       </div>
                     );
-                  });
-                })()
-              ) : (
-                <div className="w-full h-10 bg-neutral-900/30 border border-dashed border-neutral-800/80 rounded-lg flex items-center justify-center text-[10px] text-neutral-600 font-medium">
-                  Empty Timeline — Add scenes to populate tracks
-                </div>
-              )}
-            </div>
-
-            {/* TRACK 2: Voiceover Track Sub-layer */}
-            <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
-              {activeAudioConfig.voUrl ? (
-                (() => {
-                  const voStart = activeAudioConfig.voStartFrame || 0;
-                  const voDur = activeAudioConfig.voDurationFrames || computedTotalFrames;
-                  const startPercent = (voStart / computedTotalFrames) * 100;
-                  const widthPercent = Math.min(100 - startPercent, (voDur / computedTotalFrames) * 100);
-
-                  return (
-                    <div
-                      style={{
-                        left: `${startPercent}%`,
-                        width: `${widthPercent}%`,
-                      }}
-                      onMouseDown={(e) => handleAudioMouseDown(e, "vo")}
-                      className={`absolute h-4 border rounded flex items-center justify-between px-2 text-[8px] font-mono transition-colors cursor-grab active:cursor-grabbing ${
-                        isAudioOverflowing
-                          ? "bg-amber-500/20 border-amber-500/80 text-amber-300"
-                          : "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
-                      }`}
-                    >
-                      <span className="truncate">🎙️ Voiceover</span>
-                      <span className="flex-shrink-0 opacity-80">{formatSeconds(voDur)}</span>
-                    </div>
-                  );
-                })()
-              ) : (
-                <span className="text-[8px] font-mono text-neutral-600 px-2">🎙️ Voiceover (No Track Loaded)</span>
-              )}
-            </div>
-
-            {/* TRACK 3: Background Music Track Sub-layer */}
-            <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
-              {activeAudioConfig.bgmUrl ? (
-                <div
-                  onMouseDown={(e) => handleAudioMouseDown(e, "bgm")}
-                  style={{
-                    left: `${((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100}%`,
-                    width: `${Math.min(100 - ((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100, ((activeAudioConfig.bgmDurationFrames || computedTotalFrames) / computedTotalFrames) * 100)}%`,
-                  }}
-                  className="absolute h-4 bg-cyan-500/20 border border-cyan-500/60 rounded flex items-center justify-between px-2 text-[8px] font-mono text-cyan-300 cursor-grab active:cursor-grabbing"
-                >
-                  <span className="truncate">🎵 Background Music</span>
-                  {activeAudioConfig.autoDucking && (
-                    <span className="text-amber-400/90 text-[7px] uppercase tracking-wider bg-amber-400/10 px-1 rounded border border-amber-400/20">
-                      Auto-Ducked
-                    </span>
-                  )}
-                  <span className="opacity-80">Full Length</span>
-                </div>
-              ) : (
-                <span className="text-[8px] font-mono text-neutral-600 px-2">🎵 Background Music (No Track Loaded)</span>
-              )}
-            </div>
-
-            {/* Draggable End Boundary (Resizes final scene & total composition duration) */}
-            {sceneConfig.length > 0 && (
-              <div
-                onMouseDown={handleEndMouseDown}
-                className="absolute right-0 top-0 bottom-0 w-3 z-30 flex flex-col items-center cursor-col-resize group/end translate-x-1/2"
-              >
-                <div className="w-[2px] h-full bg-emerald-500 group-hover/end:bg-cyan-400 group-hover/end:w-[3px] shadow-[0_0_6px_rgba(16,185,129,0.8)] transition-all" />
-                <div className="absolute top-full mt-1 bg-neutral-900 border border-emerald-500/60 group-hover/end:border-cyan-400 text-emerald-400 group-hover/end:text-cyan-300 font-mono text-[9px] font-bold px-1.5 py-0.5 rounded shadow-md whitespace-nowrap">
-                  {formatSeconds(computedTotalFrames)}
-                </div>
+                  })
+                ) : (
+                  <div className="w-full h-10 bg-neutral-900/30 border border-dashed border-neutral-800/80 rounded-lg flex items-center justify-center text-[10px] text-neutral-600 font-medium">
+                    Empty Timeline — Add scenes to populate tracks
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* VOICE OVER TRACK */}
+              <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
+                {activeAudioConfig.voUrl ? (
+                  (() => {
+                    const voStart = activeAudioConfig.voStartFrame || 0;
+                    const voDur = activeAudioConfig.voDurationFrames || computedTotalFrames;
+                    const startPercent = (voStart / computedTotalFrames) * 100;
+                    const widthPercent = Math.min(100 - startPercent, (voDur / computedTotalFrames) * 100);
+
+                    return (
+                      <div
+                        style={{
+                          left: `${startPercent}%`,
+                          width: `${widthPercent}%`,
+                        }}
+                        onMouseDown={(e) => handleAudioMouseDown(e, "vo")}
+                        className={`absolute h-4 border rounded flex items-center justify-between px-2 text-[8px] font-mono transition-colors cursor-grab active:cursor-grabbing ${
+                          isAudioOverflowing
+                            ? "bg-amber-500/20 border-amber-500/80 text-amber-300"
+                            : "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
+                        }`}
+                      >
+                        <span className="truncate">🎙️ Voiceover</span>
+                        <span className="flex-shrink-0 opacity-80">{formatSeconds(voDur)}</span>
+                      </div>
+                    );
+                  })()
+                ) : (
+                  <span className="text-[8px] font-mono text-neutral-600 px-2">🎙️ Voiceover (No Track Loaded)</span>
+                )}
+              </div>
+
+              {/* BACKGROUND MUSIC TRACK */}
+              <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
+                {activeAudioConfig.bgmUrl ? (
+                  <div
+                    onMouseDown={(e) => handleAudioMouseDown(e, "bgm")}
+                    style={{
+                      left: `${((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100}%`,
+                      width: `${Math.min(100 - ((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100, ((activeAudioConfig.bgmDurationFrames || computedTotalFrames) / computedTotalFrames) * 100)}%`,
+                    }}
+                    className="absolute h-4 bg-cyan-500/20 border border-cyan-500/60 rounded flex items-center justify-between px-2 text-[8px] font-mono text-cyan-300 cursor-grab active:cursor-grabbing"
+                  >
+                    <span className="truncate">🎵 Background Music</span>
+                    <span className="opacity-80">Full Length</span>
+                  </div>
+                ) : (
+                  <span className="text-[8px] font-mono text-neutral-600 px-2">🎵 Background Music (No Track Loaded)</span>
+                )}
+              </div>
+            </div>
           </div>
-        </div>}
+        )}
       </div>
     </div>
   );
