@@ -4,6 +4,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
   interpolate,
+  interpolateColors,
   spring,
 } from 'remotion';
 import { normalizeCategoryChartData } from './chartData';
@@ -14,6 +15,9 @@ type Props = {
     values: number[];
   };
   barColors?: string[];
+  barColorKeyframes?: Array<{ frame: number; colors: string[] }>;
+  barTransformKeyframes?: Array<{ frame: number; scaleX?: number; scaleY?: number; x?: number; y?: number; opacity?: number }>;
+  timelineStartFrame?: number;
   strokeColor?: string;
   strokeWidth?: number;
   borderRadius?: number;
@@ -30,6 +34,9 @@ const DEFAULT_COLORS = ['#FFB3BA', '#B5EAD7', '#FFDAC1', '#E2F0CB', '#B5E3FF', '
 export const BarChartRig: React.FC<Props> = ({
   data,
   barColors = DEFAULT_COLORS,
+  barColorKeyframes = [],
+  barTransformKeyframes = [],
+  timelineStartFrame = 0,
   strokeColor = '#ffffff',
   strokeWidth = 1,
   borderRadius = 6,
@@ -43,6 +50,50 @@ export const BarChartRig: React.FC<Props> = ({
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
   const { labels, values } = normalizeCategoryChartData(data);
+  const baseBarColors = barColors.length ? barColors : DEFAULT_COLORS;
+
+  const resolvedBarColors = React.useMemo(() => {
+    if (!barColorKeyframes.length) return baseBarColors;
+
+    const keyframes = [...barColorKeyframes]
+      .filter((keyframe) => Number.isFinite(keyframe.frame) && Array.isArray(keyframe.colors) && keyframe.colors.length > 0)
+      .sort((a, b) => a.frame - b.frame);
+    if (!keyframes.length) return baseBarColors;
+
+    const absoluteFrame = frame + timelineStartFrame;
+    const inputRange = keyframes.map((keyframe) => keyframe.frame);
+    const clampedFrame = Math.min(inputRange[inputRange.length - 1], Math.max(inputRange[0], absoluteFrame));
+    return baseBarColors.map((fallbackColor, colorIndex) => {
+      const outputRange = keyframes.map((keyframe) => keyframe.colors[colorIndex] ?? fallbackColor);
+      return interpolateColors(clampedFrame, inputRange, outputRange);
+    });
+  }, [baseBarColors, barColorKeyframes, frame, timelineStartFrame]);
+
+  const resolvedBarTransform = React.useMemo(() => {
+    const keyframes = [...barTransformKeyframes]
+      .filter((keyframe) => Number.isFinite(keyframe.frame))
+      .sort((a, b) => a.frame - b.frame);
+    const defaults = { scaleX: 1, scaleY: 1, x: 0, y: 0, opacity: 1 };
+    if (!keyframes.length) return defaults;
+
+    const absoluteFrame = frame + timelineStartFrame;
+    const inputRange = keyframes.map((keyframe) => keyframe.frame);
+    const clampedFrame = Math.min(inputRange[inputRange.length - 1], Math.max(inputRange[0], absoluteFrame));
+    const resolve = (property: 'scaleX' | 'scaleY' | 'x' | 'y' | 'opacity') => interpolate(
+      clampedFrame,
+      inputRange,
+      keyframes.map((keyframe) => Number(keyframe[property] ?? defaults[property])),
+      { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
+    );
+
+    return {
+      scaleX: resolve('scaleX'),
+      scaleY: resolve('scaleY'),
+      x: resolve('x'),
+      y: resolve('y'),
+      opacity: resolve('opacity'),
+    };
+  }, [barTransformKeyframes, frame, timelineStartFrame]);
 
   if (!values.length) return null;
 
@@ -67,6 +118,8 @@ export const BarChartRig: React.FC<Props> = ({
   const maxValue = getNiceMax(rawMax);
   const barWidth = containerWidth / values.length;
   const formatValue = (v: number) => (Number.isInteger(v) ? v.toString() : v.toFixed(1));
+  const textTransform = (x: number, y: number) =>
+    `translate(${x} ${y}) scale(${1 / resolvedBarTransform.scaleX} ${1 / resolvedBarTransform.scaleY}) translate(${-x} ${-y})`;
 
   const introDuration = fps * 1.5;
   const axisDrawDuration = fps * 2;
@@ -90,6 +143,10 @@ export const BarChartRig: React.FC<Props> = ({
 
   return (
     <svg width={width} height={height} style={{ backgroundColor }}>
+      <g
+        transform={`translate(${resolvedBarTransform.x} ${resolvedBarTransform.y}) translate(${width / 2} ${height / 2}) scale(${resolvedBarTransform.scaleX} ${resolvedBarTransform.scaleY}) translate(${-width / 2} ${-height / 2})`}
+        opacity={resolvedBarTransform.opacity}
+      >
       <path
         d={`M ${startX} ${startY} L ${startX} ${endY} L ${endX} ${endY}`}
         fill="none"
@@ -98,6 +155,7 @@ export const BarChartRig: React.FC<Props> = ({
         strokeDasharray={totalPathLength}
         strokeDashoffset={lineProgress}
         strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
       />
 
       {[maxValue / 2, maxValue].map((tickValue, i) => {
@@ -124,6 +182,7 @@ export const BarChartRig: React.FC<Props> = ({
             stroke={gridColor}
             strokeWidth={1}
             strokeDasharray="15,5"
+            vectorEffect="non-scaling-stroke"
             style={{ opacity: lineOpacity * 0.5 }}
           />
         );
@@ -141,11 +200,12 @@ export const BarChartRig: React.FC<Props> = ({
         });
 
         return (
-          <g key={`y-${i}`} style={{ opacity: pop, transform: `scale(${pop})`, transformOrigin: `${startX}px ${yPos}px` }}>
-            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} />
+          <g key={`y-${i}`} style={{ opacity: pop }}>
+            <line x1={startX - 10} y1={yPos} x2={startX} y2={yPos} stroke={axisColor} strokeWidth={2} vectorEffect="non-scaling-stroke" />
             <text
               x={startX - 20}
               y={yPos + 5}
+              transform={textTransform(startX - 20, yPos + 5)}
               textAnchor="end"
               fontSize={labelFontSize}
               fill={labelColor}
@@ -179,25 +239,28 @@ export const BarChartRig: React.FC<Props> = ({
               y={endY - animatedHeight}
               width={barWidth * 0.7}
               height={animatedHeight}
-              fill={barColors[i % barColors.length]}
+              fill={resolvedBarColors[i % resolvedBarColors.length]}
               rx={borderRadius}
               stroke={strokeColor}
               strokeWidth={strokeWidth}
+              vectorEffect="non-scaling-stroke"
             />
             <text
               x={labelX}
               y={endY + 35}
+              transform={textTransform(labelX, endY + 35)}
               textAnchor="middle"
               fontSize={labelFontSize}
               fill={labelColor}
               fontFamily={fontFamily}
-              style={{ opacity: labelPop, transform: `translateY(${(1 - labelPop) * 10}px)` }}
+              style={{ opacity: labelPop }}
             >
               {labels[i]}
             </text>
           </g>
         );
       })}
+      </g>
     </svg>
   );
 };
