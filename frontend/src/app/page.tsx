@@ -347,7 +347,7 @@ export default function LandingPage() {
 
       <Dashboard
         dashboardOpen={dashboardOpen} setDashboardOpen={setDashboardOpen} widgetSearch={widgetSearch} setWidgetSearch={setWidgetSearch}
-        groupedWidgets={groupedWidgets} filteredWidgets={DYNAMIC_WIDGET_OPTIONS} themeConfig={themeConfig} setLocalConfig={setLocalConfig}
+        groupedWidgets={groupedWidgets} filteredWidgets={DYNAMIC_WIDGET_OPTIONS} themeConfig={themeConfig} setLocalConfig={setLocalConfig} renders={renders}
       />
     </main>
   );

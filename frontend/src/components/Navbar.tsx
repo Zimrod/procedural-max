@@ -24,6 +24,7 @@ export interface RenderedVideoItem {
   downloadUrl: string;
   createdAt: string;
   fileSize?: string;
+  aspectRatio?: number;
   status: "completed" | "rendering" | "failed";
 }
 

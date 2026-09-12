@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar,
   HardDrive,
@@ -25,40 +25,14 @@ export interface VideoItem {
   date: string;
   size: string;
   videoUrl: string;
+  aspectRatio?: number;
 }
-
-const PLACEHOLDER_VIDEOS: VideoItem[] = [
-  {
-    id: "vid-01",
-    title: "AI Explainer - Product Architecture (16:9)",
-    date: "2026-09-11 16:40",
-    size: "18.4 MB",
-    videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-  },
-  {
-    id: "vid-02",
-    title: "SaaS Workflow Teaser - Mobile Vertical (9:16)",
-    date: "2026-09-09 11:15",
-    size: "12.1 MB",
-    videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
-  },
-  {
-    id: "vid-03",
-    title: "Parametric Motion Graphic Reel",
-    date: "2026-09-05 08:30",
-    size: "24.8 MB",
-    videoUrl:
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-  },
-];
 
 interface UserAccountTabProps {
   videos?: VideoItem[];
 }
 
-export function UserAccountTab({ videos = PLACEHOLDER_VIDEOS }: UserAccountTabProps) {
+export function UserAccountTab({ videos = [] }: UserAccountTabProps) {
   const [activeSubTab, setActiveSubTab] = useState<UserAccountSubTab>("videos");
   const [selectedVideoId, setSelectedVideoId] = useState<string>(
     videos.length > 0 ? videos[0].id : ""
@@ -66,6 +40,12 @@ export function UserAccountTab({ videos = PLACEHOLDER_VIDEOS }: UserAccountTabPr
   const [copiedKey, setCopiedKey] = useState(false);
 
   const selectedVideo = videos.find((v) => v.id === selectedVideoId) || videos[0];
+
+  useEffect(() => {
+    if (!videos.some((video) => video.id === selectedVideoId)) {
+      setSelectedVideoId(videos[0]?.id || "");
+    }
+  }, [videos, selectedVideoId]);
 
   const handleCopyKey = () => {
     navigator.clipboard.writeText("sk_live_proc_998234a812bcef00192");
@@ -253,14 +233,17 @@ export function UserAccountTab({ videos = PLACEHOLDER_VIDEOS }: UserAccountTabPr
                   </span>
                 </div>
 
-                <div className="relative w-full h-[250px] max-h-[300px] bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner">
+                <div
+                  className="relative w-full max-h-[360px] bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center border border-slate-800 shadow-inner"
+                  style={{ aspectRatio: selectedVideo?.aspectRatio || 16 / 9 }}
+                >
                   {selectedVideo?.videoUrl ? (
                     <video
                       key={selectedVideo.id}
                       src={selectedVideo.videoUrl}
                       controls
                       autoPlay
-                      className="w-full h-full object-contain max-h-[300px]"
+                      className="w-full h-full object-contain"
                     />
                   ) : (
                     <span className="text-xs text-slate-400">Select a video to preview</span>

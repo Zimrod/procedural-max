@@ -8,6 +8,8 @@ import { CreatorsHubTab, CreatorsHubSubTab } from "./CreatorsHubTab";
 import { applyThemeToWidgetProps } from "../../types/theme";
 import { getWidgetDefinition } from "../../core/widgetRegistry";
 import { SuggestionsTab } from "./SuggestionsTab";
+import type { RenderedVideoItem } from "../Navbar";
+import type { VideoItem } from "./UserAccountTab";
 
 interface DashboardProps {
   dashboardOpen: boolean;
@@ -18,6 +20,7 @@ interface DashboardProps {
   filteredWidgets: string[];
   themeConfig: any;
   setLocalConfig: React.Dispatch<React.SetStateAction<any[]>>;
+  renders: RenderedVideoItem[];
 }
 
 export function Dashboard({
@@ -29,6 +32,7 @@ export function Dashboard({
   filteredWidgets,
   themeConfig,
   setLocalConfig,
+  renders,
 }: DashboardProps) {
   const [activeTab, setActiveTab] = useState<"widgets" | "creators_hub" | "specs" | "account" | "suggestions">("widgets");
   const [creatorsHubSubTab, setCreatorsHubSubTab] = useState<CreatorsHubSubTab>("submissions");
@@ -272,7 +276,18 @@ export function Dashboard({
                 {activeTab === "specs" && (
                   <WidgetSpecsTab filteredWidgets={filteredWidgets} />
                 )}
-                {activeTab === "account" && <UserAccountTab />}
+                {activeTab === "account" && (
+                  <UserAccountTab
+                    videos={renders.map<VideoItem>((render) => ({
+                      id: render.id,
+                      title: render.title,
+                      date: render.createdAt,
+                      size: render.fileSize || "Unknown size",
+                      videoUrl: render.downloadUrl,
+                      aspectRatio: render.aspectRatio,
+                    }))}
+                  />
+                )}
                 {activeTab === "suggestions" && <SuggestionsTab />}
               </div>
             </div>

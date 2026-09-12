@@ -106,6 +106,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         downloadUrl,
         createdAt: new Date().toLocaleString(),
         fileSize: `${(renderResult.size / (1024 * 1024)).toFixed(1)} MB`,
+        aspectRatio,
         status: "completed",
       });
 
