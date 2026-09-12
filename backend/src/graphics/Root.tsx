@@ -17,7 +17,7 @@ export const Root: React.FC = () => {
   const audioUrl = inputProps.voiceover_url || ""; 
 
   // 2. Derive total length from every independent widget timeline window.
-  let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
+  let totalVideoFrames = VIDEO_FPS * 10; // Default 10 second fallback
 
   if (scenes && scenes.length > 0) {
     const endingFrame = Math.max(...scenes.map((scene) => {
@@ -27,8 +27,7 @@ export const Root: React.FC = () => {
     }));
 
     if (Number.isFinite(endingFrame)) {
-      // Append a 3-second (90 frames at 30fps) post-roll buffer onto the final scene frame index
-      totalVideoFramesWithBuffer = endingFrame + (VIDEO_FPS * 3);
+      totalVideoFrames = Math.max(1, endingFrame);
     }
   }
 
@@ -37,7 +36,7 @@ export const Root: React.FC = () => {
       <Composition
         id="MainScene"
         component={Main}
-        durationInFrames={totalVideoFramesWithBuffer}
+        durationInFrames={totalVideoFrames}
         fps={VIDEO_FPS}
         width={VIDEO_WIDTH}
         height={VIDEO_HEIGHT}

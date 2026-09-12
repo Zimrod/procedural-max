@@ -18,7 +18,7 @@ export const Root: React.FC = () => {
   const audioUrl = inputProps.voiceover_url || ""; 
 
   // 2. Safely derive total length from all independent widget timeline windows.
-  let totalVideoFramesWithBuffer = VIDEO_FPS * 10; // Default 10 second fallback
+  let totalVideoFrames = VIDEO_FPS * 10; // Default 10 second fallback
 
   if (scenes && scenes.length > 0) {
     const endingFrame = Math.max(...scenes.map((scene) => {
@@ -28,8 +28,7 @@ export const Root: React.FC = () => {
     }));
 
     if (Number.isFinite(endingFrame)) {
-      // Append a 3-second (90 frames at 30fps) post-roll buffer onto the final scene frame index
-      totalVideoFramesWithBuffer = endingFrame + (VIDEO_FPS * 3);
+      totalVideoFrames = Math.max(1, endingFrame);
     }
   }
 
@@ -38,7 +37,7 @@ export const Root: React.FC = () => {
       <Composition
         id="MainScene"
         component={Main}
-        durationInFrames={totalVideoFramesWithBuffer}
+        durationInFrames={totalVideoFrames}
         fps={VIDEO_FPS}
         // These are fallback dimensions for Studio/Player. Lambda applies the
         // render payload's aspect ratio through calculateMetadata below.
