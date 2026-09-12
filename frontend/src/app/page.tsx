@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect, ChangeEvent } from "react";
 import { PlayerRef } from "@remotion/player";
 import { DEFAULT_COMPOSITION_THEME, COMPOSITION_THEME_PRESETS, applyThemeToScenes, applyThemeToWidgetProps, mergeTheme, CompositionTheme } from "../types/theme";
 import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
-import { Navbar } from "../components/Navbar";
+import { Navbar, RenderedVideoItem } from "../components/Navbar";
 
 import { ScriptSidebar } from "../components/ScriptSidebar";
 import { PreviewPlayer } from "../components/PreviewPlayer";
@@ -38,6 +38,7 @@ export default function LandingPage() {
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
+  const [renders, setRenders] = useState<RenderedVideoItem[]>([]);
 
   const [leftTab, setLeftTab] = useState<"generate" | "custom-script" | "upload-voiceover">("generate");
   const playerRef = useRef<PlayerRef>(null);
@@ -246,6 +247,10 @@ export default function LandingPage() {
     updateThemeProp("backgroundColor", preset.theme.backgroundColor);
   };
 
+  const handleRenderComplete = (render: RenderedVideoItem) => {
+    setRenders((current) => [render, ...current.filter((item) => item.id !== render.id)]);
+  };
+
   const groupedWidgets = useMemo(() => {
     const filtered = DYNAMIC_WIDGET_OPTIONS.filter((w) => w.toLowerCase().includes(widgetSearch.toLowerCase()));
     const categoryLabels: Record<string, string> = {
@@ -277,7 +282,7 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen w-full bg-[#121212] text-gray-100 antialiased">
       {/* <Navbar title="Automated Motion Graphics" /> */}
-      <Navbar />
+      <Navbar renders={renders} />
       <div className="mx-auto max-w-[1700px] px-4 py-2 sm:px-6 lg:px-8 mt-2">
         <div className="w-full flow-root min-h-screen">
           <ScriptSidebar
@@ -330,6 +335,7 @@ export default function LandingPage() {
                   deleteScene={(i) => setLocalConfig((c) => c.filter((_, idx) => idx !== i))} updateSceneMeta={updateSceneMeta} updateWidgetType={updateWidgetType}
                   updateWidgetProp={updateWidgetProp} handleApplyConfigRefresh={handleApplyConfigRefresh} widgetOptions={DYNAMIC_WIDGET_OPTIONS}
                   defaultWidgetType={DEFAULT_WIDGET_TYPE} setDashboardOpen={setDashboardOpen} aspectRatio={selectedAspect.value}
+                  onRenderComplete={handleRenderComplete}
                 />
               ) : (
                 <ThemeEditor themePresetId={themePresetId} themeConfig={themeConfig} selectThemePreset={selectThemePreset} updateThemeProp={updateThemeProp} />

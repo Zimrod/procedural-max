@@ -1,11 +1,13 @@
 // src/components/RenderAndSaveButtons.tsx
 import React, { useState } from "react";
+import type { RenderedVideoItem } from "./Navbar";
 
 type RenderAndSaveButtonsProps = {
   readonly rawText: string;
   readonly sceneConfig: any[];
   readonly projectId?: string; 
   readonly aspectRatio?: number;
+  readonly onRenderComplete?: (render: RenderedVideoItem) => void;
 };
 
 export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({ 
@@ -13,6 +15,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
   sceneConfig,
   projectId,
   aspectRatio = 16 / 9,
+  onRenderComplete,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoName, setVideoName] = useState("");
@@ -74,16 +77,42 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         throw new Error("Could not retrieve a valid renderId from response.");
       }
 
+      // Lambda returns an output URL only after the render is complete. Poll the
+      // backend instead of trying to download the object while it is still rendering.
+      let renderResult: { url: string; size: number } | null = null;
+      for (;;) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const progressResponse = await fetch(`${API}/render/lambda/progress`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: renderId, bucketName }),
+        });
+        const progressData = await progressResponse.json();
+        if (!progressResponse.ok || progressData.type === "error") {
+          throw new Error(progressData.message || "Lambda render failed.");
+        }
+        const progress = progressData.data || progressData;
+        if (progress.type === "done") {
+          renderResult = { url: progress.url, size: progress.size };
+          break;
+        }
+      }
+
       setRenderStatus("success");
+      const downloadUrl = renderResult.url;
+      onRenderComplete?.({
+        id: renderId,
+        title: finalTitle,
+        downloadUrl,
+        createdAt: new Date().toLocaleString(),
+        fileSize: `${(renderResult.size / (1024 * 1024)).toFixed(1)} MB`,
+        status: "completed",
+      });
 
-      // Construct the direct S3 URL using the renderId and custom filename
-      const downloadUrl = `https://${bucketName}.s3.us-east-1.amazonaws.com/renders/${renderId}/${encodeURIComponent(sanitizedFileName)}`;
-
-      // Note: Lambda renders asynchronously. Trigger download after brief delay or via link.
+      // Start the browser download after Lambda has produced the final object.
       const link = document.createElement("a");
       link.href = downloadUrl;
       link.setAttribute("download", sanitizedFileName);
-      link.target = "_blank";
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

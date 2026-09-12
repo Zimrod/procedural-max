@@ -3,6 +3,7 @@ import { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
+  getRenderProgress,
 } from "@remotion/lambda/client";
 import { createClient } from "@supabase/supabase-js";
 
@@ -10,6 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 import { executeApi } from "../helpers/api-response.js";
 import { RenderRequest } from "../types/schema.js";
 import { FastifyInstance } from "fastify";
+import { z } from "zod";
 
 // @ts-ignore
 import {
@@ -169,6 +171,36 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   },
 );
 
+const RenderProgressRequest = z.object({
+  id: z.string(),
+  bucketName: z.string(),
+});
+
+export const PROGRESS = executeApi(
+  RenderProgressRequest,
+  async (req, body) => {
+    const progress = await getRenderProgress({
+      bucketName: body.bucketName,
+      functionName: process.env.LAMBDA_FUNCTION_NAME || speculateFunctionName({
+        diskSizeInMb: DISK,
+        memorySizeInMb: RAM,
+        timeoutInSeconds: TIMEOUT,
+      }),
+      region: "us-east-1",
+      renderId: body.id,
+    });
+
+    if (progress.fatalErrorEncountered) {
+      return { type: "error", message: progress.errors[0]?.message || "Lambda render failed." };
+    }
+    if (progress.done) {
+      return { type: "done", url: progress.outputFile as string, size: progress.outputSizeInBytes as number };
+    }
+    return { type: "progress", progress: Math.max(0.03, progress.overallProgress) };
+  },
+);
+
 export default async function renderRoutes(fastify: FastifyInstance) {
   fastify.post("/render/lambda", POST);
+  fastify.post("/render/lambda/progress", PROGRESS);
 }

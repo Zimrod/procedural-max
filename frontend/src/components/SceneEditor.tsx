@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getWidgetDefinition } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "./RenderAndSaveButtons";
+import type { RenderedVideoItem } from "./Navbar";
 
 const isChartWidget = (widget = "") => widget.toUpperCase().includes("CHART");
 
@@ -177,6 +178,7 @@ interface SceneEditorProps {
   widgetOptions: string[];
   defaultWidgetType: string;
   setDashboardOpen: (open: boolean) => void;
+  onRenderComplete?: (render: RenderedVideoItem) => void;
 }
 
 export function SceneEditor({
@@ -184,7 +186,7 @@ export function SceneEditor({
   aspectRatio,
   toggleSceneCollapse, moveSceneUp, moveSceneDown, addSceneAfter, deleteScene,
   updateSceneMeta, updateWidgetType, updateWidgetProp, handleApplyConfigRefresh,
-  widgetOptions, defaultWidgetType, setDashboardOpen,
+  widgetOptions, defaultWidgetType, setDashboardOpen, onRenderComplete,
 }: SceneEditorProps) {
   const [activePropTab, setActivePropTab] = useState<Record<number, "properties" | "colors">>({});
 
@@ -408,6 +410,7 @@ export function SceneEditor({
           sceneConfig={sceneConfig}
           projectId={currentJobId || undefined}
           aspectRatio={aspectRatio}
+          onRenderComplete={onRenderComplete}
         />
       </div>
     </div>
