@@ -53,6 +53,7 @@ export const VoiceoverScene: React.FC<Props> = ({
           >
             <WidgetComponent
               {...item.props}
+              timelineStartFrame={item.startFrame}
             />
           </Sequence>
         );
