@@ -25,6 +25,11 @@ import { DonutChartRig } from '../graphics/DonutChartRig';
 import { PieChartRig } from '../graphics/PieChartRig';
 import { MultiLineChartRig } from '../graphics/MultiLineChartRig';
 
+// Geography Rigs
+import { CountryDropPinRig } from '../graphics/CountryDropPinRig';
+import { CountryFocusRig } from '../graphics/CountryFocusRig';
+import { CountryRouteRig } from '../graphics/CountryRouteRig';
+
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
     style={{
@@ -62,6 +67,9 @@ const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
   BULLET_POINTS: BulletPointsRig,
   GEOMETRIC_QUOTE: GeometricQuoteRig,
   GRID_PRINCIPLES: GridPrinciplesRig,
+  COUNTRY_DROP_PIN: CountryDropPinRig,
+  COUNTRY_FOCUS: CountryFocusRig,
+  COUNTRY_ROUTE: CountryRouteRig,
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {

@@ -70,6 +70,8 @@ const PLACEHOLDER_MULTI_SERIES_DATA = {
   ],
 };
 
+export const AVAILABLE_COUNTRIES = ['zimbabwe', 'botswana', 'mali', 'kenya', 'zambia'];
+
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   BAR_CHART: {
     category: 'DATA_REPORTING',
@@ -409,6 +411,75 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
         .filter(Boolean);
       return { items: items.length > 1 ? items : [shortSummary || 'KEY TAKEAWAYS'] };
     },
+  },
+  COUNTRY_DROP_PIN: {
+    category: 'GEOGRAPHY',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Drop a pin on a selected country on an animated world map.',
+    bestFor: ['country callouts', 'location highlights', 'geographic context'],
+    previewFileName: 'country_drop_pin.mp4',
+    defaultProps: { country: 'zimbabwe' },
+    editorFields: [
+      field('country', 'Country', 'select', AVAILABLE_COUNTRIES),
+      field('zoomStartFrame', 'Zoom Start Frame', 'number'),
+      field('zoomDurationFrames', 'Zoom Duration Frames', 'number'),
+      field('pinDropDelayFrames', 'Pin Drop Delay Frames', 'number'),
+      field('startScale', 'Start Scale', 'number'),
+      field('endScale', 'End Scale', 'number'),
+      field('pinHeightRatio', 'Pin Height Ratio', 'number'),
+      field('backgroundColor', 'Background Color', 'color'),
+      field('worldOpacity', 'World Opacity', 'number'),
+      field('focusedCountryOpacity', 'Focused Country Opacity', 'number'),
+      field('labelPosition', 'Label Position', 'select', ['above', 'below', 'left', 'right']),
+      field('labelOffset', 'Label Offset', 'number'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({ country: extractedData?.country ?? 'zimbabwe' }),
+  },
+  COUNTRY_FOCUS: {
+    category: 'GEOGRAPHY',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Focus and zoom into a selected country on an animated world map.',
+    bestFor: ['country focus', 'regional context', 'geographic emphasis'],
+    previewFileName: 'country_focus.mp4',
+    defaultProps: { country: 'zimbabwe' },
+    editorFields: [
+      field('country', 'Country', 'select', AVAILABLE_COUNTRIES),
+      field('zoomStartFrame', 'Zoom Start Frame', 'number'),
+      field('zoomDurationFrames', 'Zoom Duration Frames', 'number'),
+      field('startScale', 'Start Scale', 'number'),
+      field('endScale', 'End Scale', 'number'),
+      field('backgroundColor', 'Background Color', 'color'),
+      field('worldOpacity', 'World Opacity', 'number'),
+      field('focusedCountryOpacity', 'Focused Country Opacity', 'number'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({ country: extractedData?.country ?? 'zimbabwe' }),
+  },
+  COUNTRY_ROUTE: {
+    category: 'GEOGRAPHY',
+    intents: ['VALUE_FLOW', 'ACCELERATION_VECTOR'],
+    purpose: 'Animate a route between two distinct countries on a world map.',
+    bestFor: ['country routes', 'travel paths', 'geographic flows'],
+    previewFileName: 'country_route.mp4',
+    defaultProps: { fromCountry: 'zimbabwe', toCountry: 'kenya' },
+    editorFields: [
+      field('fromCountry', 'From Country', 'select', AVAILABLE_COUNTRIES),
+      field('toCountry', 'To Country', 'select', AVAILABLE_COUNTRIES),
+      field('routeStartFrame', 'Route Start Frame', 'number'),
+      field('routeDurationFrames', 'Route Duration Frames', 'number'),
+      field('routeLineDelayFrames', 'Route Line Delay Frames', 'number'),
+      field('labelRevealDurationFrames', 'Label Reveal Duration Frames', 'number'),
+      field('lineColor', 'Line Color', 'color'),
+      field('lineWidth', 'Line Width', 'number'),
+      field('arcHeight', 'Arc Height', 'number'),
+      field('backgroundColor', 'Background Color', 'color'),
+      field('showDots', 'Show Dots', 'boolean'),
+      field('showLabels', 'Show Labels', 'boolean'),
+      field('worldOpacity', 'World Opacity', 'number'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      fromCountry: extractedData?.fromCountry ?? 'zimbabwe',
+      toCountry: extractedData?.toCountry ?? 'kenya',
+    }),
   },
 };
 

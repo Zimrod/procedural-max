@@ -257,6 +257,7 @@ export default function LandingPage() {
     const categoryLabels: Record<string, string> = {
       TEXT_TYPOGRAPHY: "Typography",
       DATA_REPORTING: "Data Visualization",
+      GEOGRAPHY: "Geography",
     };
 
     const groups = filtered.reduce((acc, w) => {
@@ -269,7 +270,7 @@ export default function LandingPage() {
     // Keep the marketplace discoverable while domain-specific widgets are being built.
     if (!widgetSearch.trim()) {
       Object.assign(groups, {
-        Location: ["Interactive Map", "Route Timeline", "Location Pin"],
+        Geography: ["COUNTRY_FOCUS", "COUNTRY_ROUTE", "COUNTRY_DROP_PIN"],
         Finance: ["Stock Ticker", "Portfolio Breakdown", "Financial KPI"],
         Industrial: ["Production Line", "Machine Gauge", "Process Flow"],
         Medical: ["Patient Journey", "Health Metric", "Anatomy Callout"],

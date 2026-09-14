@@ -89,6 +89,21 @@ const manualDescriptions: Record<WidgetType, { description: string; visualStyle:
     visualStyle: 'Structured card layout boundaries span column spaces with consistent internal padding rules.',
     bestForKeywords: ['company values', 'framework matrices', '3-column overview', 'modular descriptions'],
   },
+  COUNTRY_DROP_PIN: {
+    description: 'Drops an animated pin on a selected country.',
+    visualStyle: 'World map with a spring-dropped location pin and country label.',
+    bestForKeywords: ['country location', 'map pin', 'geography callout'],
+  },
+  COUNTRY_FOCUS: {
+    description: 'Zooms the world map into a selected country.',
+    visualStyle: 'Animated world-map camera push with highlighted country geometry.',
+    bestForKeywords: ['country focus', 'zoom map', 'geographic context'],
+  },
+  COUNTRY_ROUTE: {
+    description: 'Draws an animated route between two countries.',
+    visualStyle: 'Glowing curved route line with endpoint dots and labels.',
+    bestForKeywords: ['country route', 'travel path', 'geographic flow'],
+  },
 };
 
 export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(widgetRegistry).reduce((acc, key) => {

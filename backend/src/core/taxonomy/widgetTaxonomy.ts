@@ -9,6 +9,14 @@ export const WIDGET_TAXONOMY = {
       MULTI_LINE_CHART: 'multi_line_chart',
     },
   },
+  GEOGRAPHY: {
+    label: 'Geography',
+    types: {
+      COUNTRY_DROP_PIN: 'country_drop_pin',
+      COUNTRY_FOCUS: 'country_focus',
+      COUNTRY_ROUTE: 'country_route',
+    },
+  },
   TEXT_TYPOGRAPHY: {
     label: 'Text & Typography',
     types: {

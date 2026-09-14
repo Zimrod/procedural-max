@@ -13,6 +13,7 @@ export type WidgetRegistryEntry = {
   purpose: string;
   bestFor: string[];
   avoidFor?: string[];
+  previewFileName?: string;
   defaultProps: Record<string, any>;
   editorFields: WidgetEditorField[];
   buildFallbackProps: (params: {
@@ -45,6 +46,8 @@ const field = (
   options,
   defaultValue,
 });
+
+const AVAILABLE_COUNTRIES = ['zimbabwe', 'botswana', 'mali', 'kenya', 'zambia'];
 
 export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = {
   BAR_CHART: {
@@ -179,6 +182,42 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       ...(extractedData?.labelColor ? { labelColor: extractedData.labelColor } : {}),
       ...(extractedData?.axisColor ? { axisColor: extractedData.axisColor } : {}),
       ...(extractedData?.gridColor ? { gridColor: extractedData.gridColor } : {}),
+    }),
+  },
+  COUNTRY_DROP_PIN: {
+    category: 'GEOGRAPHY',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Drop a pin on a selected country on an animated world map.',
+    bestFor: ['country callouts', 'location highlights', 'geographic context'],
+    previewFileName: 'country_drop_pin.mp4',
+    defaultProps: { country: 'zimbabwe' },
+    editorFields: [field('country', 'Country', 'select', AVAILABLE_COUNTRIES)],
+    buildFallbackProps: ({ extractedData }) => ({ country: extractedData?.country ?? 'zimbabwe' }),
+  },
+  COUNTRY_FOCUS: {
+    category: 'GEOGRAPHY',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Focus and zoom into a selected country on an animated world map.',
+    bestFor: ['country focus', 'regional context', 'geographic emphasis'],
+    previewFileName: 'country_focus.mp4',
+    defaultProps: { country: 'zimbabwe' },
+    editorFields: [field('country', 'Country', 'select', AVAILABLE_COUNTRIES)],
+    buildFallbackProps: ({ extractedData }) => ({ country: extractedData?.country ?? 'zimbabwe' }),
+  },
+  COUNTRY_ROUTE: {
+    category: 'GEOGRAPHY',
+    intents: ['VALUE_FLOW', 'ACCELERATION_VECTOR'],
+    purpose: 'Animate a route between two distinct countries on a world map.',
+    bestFor: ['country routes', 'travel paths', 'geographic flows'],
+    previewFileName: 'country_route.mp4',
+    defaultProps: { fromCountry: 'zimbabwe', toCountry: 'kenya' },
+    editorFields: [
+      field('fromCountry', 'From Country', 'select', AVAILABLE_COUNTRIES),
+      field('toCountry', 'To Country', 'select', AVAILABLE_COUNTRIES),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      fromCountry: extractedData?.fromCountry ?? 'zimbabwe',
+      toCountry: extractedData?.toCountry ?? 'kenya',
     }),
   },
   TITLE_CARD: {

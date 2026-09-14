@@ -545,15 +545,23 @@ export function SceneEditor({
                                     {compactKeys.map((propKey) => {
                                       const schemaField = schemaFieldMap.get(propKey);
                                       const rawValue = scene.props[propKey];
+                                      const routeCountryKey = scene.widget === "COUNTRY_ROUTE" && (propKey === "fromCountry" || propKey === "toCountry");
+                                      const otherRouteCountry = propKey === "fromCountry" ? scene.props.toCountry : scene.props.fromCountry;
+                                      const inputField = routeCountryKey && schemaField?.kind === "select"
+                                        ? { ...schemaField, options: schemaField.options?.filter((option: string) => option !== otherRouteCountry || option === rawValue) }
+                                        : schemaField;
                                       return (
                                         <div key={propKey}>
                                           <label className="block text-[10px] font-medium text-neutral-400 mb-0.5 truncate" title={schemaField?.label ?? propKey}>
                                             {schemaField?.label ?? propKey}
                                           </label>
                                           <PropInput
-                                            field={schemaField}
+                                            field={inputField}
                                             value={rawValue}
-                                            onChange={(value) => updateWidgetProp(sceneIdx, propKey, value)}
+                                            onChange={(value) => {
+                                              if (routeCountryKey && value === otherRouteCountry) return;
+                                              updateWidgetProp(sceneIdx, propKey, value);
+                                            }}
                                           />
                                         </div>
                                       );

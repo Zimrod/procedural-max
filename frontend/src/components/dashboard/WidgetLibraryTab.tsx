@@ -25,6 +25,12 @@ export function WidgetLibraryTab({
   const [sampleVideoUrls, setSampleVideoUrls] = useState<Record<string, string>>({});
   const [selectedFilterTab, setSelectedFilterTab] = useState<string>("all");
 
+  const widgetLabels: Record<string, string> = {
+    COUNTRY_DROP_PIN: "Country Drop Pin",
+    COUNTRY_FOCUS: "Country Focus",
+    COUNTRY_ROUTE: "Country Route",
+  };
+
   const placeholderWidgets = new Set([
     "Interactive Map", "Route Timeline", "Location Pin", "Stock Ticker", "Portfolio Breakdown", "Financial KPI",
     "Production Line", "Machine Gauge", "Process Flow", "Patient Journey", "Health Metric", "Anatomy Callout",
@@ -157,8 +163,9 @@ export function WidgetLibraryTab({
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {visibleItems.map((w) => {
-                  const capitalizedName = w
+                  const capitalizedName = widgetLabels[w] ?? w
                     .toLowerCase()
+                    .replaceAll("_", " ")
                     .split(" ")
                     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                     .join(" ");
