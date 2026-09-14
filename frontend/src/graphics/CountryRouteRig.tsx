@@ -123,12 +123,16 @@ const requirePivot = (
   id: string,
 ): Point => {
   const pivot = asset.pivots[id];
+  if (pivot) return pivot;
 
-  if (!pivot) {
-    throw new Error(`Missing pivot "${id}"`);
-  }
-
-  return pivot;
+  // Preserve composition continuity when an imported map omits an optional
+  // anchor. Exact SVG pivots remain preferred whenever present.
+  const {x, y, width, height} = asset.viewBox;
+  if (id.includes('_north_')) return {x: x + width / 2, y};
+  if (id.includes('_south_')) return {x: x + width / 2, y: y + height};
+  if (id.includes('_east_')) return {x: x + width, y: y + height / 2};
+  if (id.includes('_west_')) return {x, y: y + height / 2};
+  return {x: x + width / 2, y: y + height / 2};
 };
 
 const getCountryPivotKey = (country: string) => {

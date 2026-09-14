@@ -102,11 +102,16 @@ const parseSvgAsset = (svgText: string): ParsedSvgAsset => {
 
 const requirePivot = (asset: ParsedSvgAsset, id: string) => {
   const pivot = asset.pivots[id];
-  if (!pivot) {
-    throw new Error(`Missing required pivot "${id}" in SVG asset.`);
-  }
+  if (pivot) return pivot;
 
-  return pivot;
+  // Keep the scene renderable when a map export omitted a pivot. The fallback
+  // is deterministic and is replaced automatically when the exact pivot exists.
+  const {x, y, width, height} = asset.viewBox;
+  if (id.includes('_north_')) return {x: x + width / 2, y};
+  if (id.includes('_south_')) return {x: x + width / 2, y: y + height};
+  if (id.includes('_east_')) return {x: x + width, y: y + height / 2};
+  if (id.includes('_west_')) return {x, y: y + height / 2};
+  return {x: x + width / 2, y: y + height / 2};
 };
 
 const getCountryPivotKey = (country: string) => {

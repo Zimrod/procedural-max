@@ -12,6 +12,7 @@ import {
 import {
   getWidgetComponent,
 } from '../core/widgetComponentRegistry';
+import { getWidgetDefinition } from '../core/widgetRegistry';
 
 type SceneConfigItem = {
   widget?: string;
@@ -29,7 +30,14 @@ type Props = {
 
 const getSafeProps = (widget: string, props: Record<string, any> = {}) => {
   const normalizedWidget = typeof widget === 'string' ? widget.toUpperCase() : '';
-  const safeProps = props && typeof props === 'object' ? { ...props } : {};
+  // A scene can briefly contain props from the previously selected widget while
+  // the editor is updating. Start with the new widget's defaults so required
+  // values are always present, then let explicit scene props win.
+  const defaultProps = getWidgetDefinition(normalizedWidget)?.defaultProps ?? {};
+  const safeProps = {
+    ...defaultProps,
+    ...(props && typeof props === 'object' ? props : {}),
+  };
 
   if (normalizedWidget === 'TITLE_CARD' && typeof safeProps.title !== 'string') {
     safeProps.title = 'Untitled scene';
@@ -61,6 +69,67 @@ const getSafeProps = (widget: string, props: Record<string, any> = {}) => {
 
   return safeProps;
 };
+
+type WidgetErrorBoundaryProps = {
+  widget: string;
+  resetKey: string;
+  children: React.ReactNode;
+};
+
+type WidgetErrorBoundaryState = {
+  error: Error | null;
+};
+
+/**
+ * Keep one broken widget from unmounting the whole composition. This is
+ * especially important for data-driven SVG rigs, where an asset can be valid
+ * SVG but still be missing a pivot required by a particular animation.
+ */
+class WidgetErrorBoundary extends React.Component<
+  WidgetErrorBoundaryProps,
+  WidgetErrorBoundaryState
+> {
+  state: WidgetErrorBoundaryState = { error: null };
+
+  static getDerivedStateFromError(error: Error): WidgetErrorBoundaryState {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: React.ErrorInfo) {
+    console.error(`[WidgetErrorBoundary] ${this.props.widget}`, error, info);
+  }
+
+  componentDidUpdate(previousProps: WidgetErrorBoundaryProps) {
+    if (previousProps.resetKey !== this.props.resetKey && this.state.error) {
+      this.setState({ error: null });
+    }
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+
+    return (
+      <AbsoluteFill
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          padding: 32,
+          backgroundColor: '#1a0505',
+          border: '3px dashed #ef4444',
+          color: '#fecaca',
+          fontFamily: 'monospace',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 24, fontWeight: 700 }}>Widget unavailable</div>
+        <div style={{ marginTop: 10, fontSize: 14 }}>{this.props.widget}</div>
+        <div style={{ marginTop: 8, maxWidth: 720, fontSize: 11, opacity: 0.8 }}>
+          This scene was isolated because its asset or props are invalid. The rest of the composition can continue rendering.
+        </div>
+      </AbsoluteFill>
+    );
+  }
+}
 
 export const VoiceoverScene: React.FC<Props> = ({
   scenes,
@@ -109,10 +178,15 @@ export const VoiceoverScene: React.FC<Props> = ({
                   transformOrigin: 'center center',
                 }}
               >
-                <WidgetComponent
-                  {...getSafeProps(normalizedWidgetKey, item.props)}
-                  timelineStartFrame={item.startFrame}
-                />
+                <WidgetErrorBoundary
+                  widget={normalizedWidgetKey || 'UNKNOWN_WIDGET'}
+                  resetKey={JSON.stringify({ widget: normalizedWidgetKey, props: item.props })}
+                >
+                  <WidgetComponent
+                    {...getSafeProps(normalizedWidgetKey, item.props)}
+                    timelineStartFrame={item.startFrame}
+                  />
+                </WidgetErrorBoundary>
               </div>
             </AbsoluteFill>
           </Sequence>
