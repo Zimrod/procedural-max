@@ -10,6 +10,7 @@ import { supabase } from '../../lib/supabaseClient';
 export type SelectedWidget = {
   beatId: string;
   widgetType: WidgetType;
+  dataHints: Record<string, any>;
   metadata: {
     intent: string;
     role: string;
@@ -35,6 +36,7 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
   }
 
   const resolvedBeats = sourceBeats ?? [];
+  const supportedCountries = ['zimbabwe', 'botswana', 'mali', 'kenya', 'zambia'];
 
   console.log(`\n==== SELECTING WIDGETS FROM DISK: 04_NARRATIVE_ANALYSIS.JSON (${resolvedBeats.length} Beats) ====`);
 
@@ -48,6 +50,10 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
     const primaryIdeaText = primaryIdea?.phrase || beat.sentenceText;
     const ideaType = primaryIdea?.type || intent;
     const hasDataSignal = /(?:\$\s*)?\d+(?:\.\d+)?\s*(?:%|percent|x|trillion|billion|million)\b/i.test(beat.sentenceText);
+    const country = supportedCountries.find((candidate) =>
+      new RegExp(`\\b${candidate}\\b`, 'i').test(beat.sentenceText)
+    );
+    const hasGeographySignal = Boolean(country) && /\b(country|geograph|region|located|location|map|africa|southern|northern|eastern|western)\b/i.test(text);
 
     let selectedWidgetType: string | null = null;
     const rankedCandidates: Array<{ widgetType: string; category: string; score: number }> = [];
@@ -82,6 +88,22 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
         score += 20;
       }
 
+      // Explicit country/location language is a stronger visual signal than a
+      // bare number. Without this branch, a sentence such as "Zimbabwe has a
+      // population of 15 million" can incorrectly become a chart or TEXT.
+      if (hasGeographySignal && meta.category === 'GEOGRAPHY') {
+        score += 55;
+        if (widgetType === 'COUNTRY_FOCUS' && /\b(country|region|africa|southern|northern|eastern|western|geograph)/i.test(text)) {
+          score += 15;
+        }
+        if (widgetType === 'COUNTRY_DROP_PIN' && /\b(location|located|where|pin|callout)/i.test(text)) {
+          score += 15;
+        }
+        if (widgetType === 'COUNTRY_ROUTE' && !/\b(route|travel|between|from .* to|flow)/i.test(text)) {
+          score -= 30;
+        }
+      }
+
       // Dynamic position weight modifiers
       if (role === 'intro' && widgetType.includes('TITLE')) score += 10;
       if (role === 'outro' && (widgetType.includes('TYPEWRITER') || widgetType.includes('CARD'))) score += 5;
@@ -95,7 +117,9 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
     }
 
     // Keep quantitative scenes from becoming a wall of charts.
-    const shouldInsertTextScene = hasDataSignal && lastWasDataWidget;
+    // Do not force a typography spacer over an explicit geography beat just
+    // because the sentence also contains a number (for example population).
+    const shouldInsertTextScene = hasDataSignal && lastWasDataWidget && !hasGeographySignal;
     const preferredCandidates = (shouldInsertTextScene
       ? rankedCandidates.filter((candidate) => candidate.category === 'TEXT_TYPOGRAPHY')
       : rankedCandidates
@@ -119,6 +143,7 @@ export async function selectWidgetsRobust(beats?: NarrativeBeat[]): Promise<Sele
     return {
       beatId: beat.beatId,
       widgetType: selectedWidgetType as WidgetType,
+      dataHints: country ? { country } : {},
       metadata: {
         intent,
         role,
