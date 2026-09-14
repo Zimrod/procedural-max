@@ -298,6 +298,19 @@ export function PreviewPlayer({
 
   const playheadPercent = Math.min(100, Math.max(0, (currentFrame / computedTotalFrames) * 100));
 
+  // Do not create a new inputProps object on every frameupdate. Remotion treats
+  // changing media props as a source change, which can restart HTMLAudioElement
+  // playback and sounds like a short loop/choppy audio.
+  const playerInputProps = useMemo(() => ({
+    ...inputProps,
+    scenes: sceneConfig,
+    sceneConfig,
+    audioConfig: {
+      ...activeAudioConfig,
+      voUrl: activeAudioConfig.voUrl || inputProps.audioUrl || "",
+    },
+  }), [inputProps, sceneConfig, activeAudioConfig]);
+
   return (
     <div className="flex-1 flex flex-col gap-5">
       <div className="bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 shadow-2xl shadow-black/60 space-y-4">
@@ -333,15 +346,7 @@ export function PreviewPlayer({
               <Player
                 ref={playerRef}
                 component={Main}
-                inputProps={{
-                  ...inputProps,
-                  scenes: sceneConfig,
-                  sceneConfig,
-                  audioConfig: {
-                    ...activeAudioConfig,
-                    voUrl: activeAudioConfig.voUrl || inputProps.audioUrl || "",
-                  },
-                }}
+                inputProps={playerInputProps}
                 durationInFrames={computedTotalFrames}
                 fps={VIDEO_FPS}
                 compositionHeight={compositionDimensions.height}

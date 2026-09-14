@@ -16,6 +16,8 @@ export interface AudioConfig {
 }
 
 export function AudioLayers({ audioConfig }: { audioConfig: AudioConfig }) {
+  // useCurrentFrame() is relative to the containing Sequence. Convert it back
+  // to the composition timeline before calculating ducking/fades.
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const voiceoverDuration = audioConfig.voDurationFrames && audioConfig.voDurationFrames > 0
@@ -57,7 +59,7 @@ export function AudioLayers({ audioConfig }: { audioConfig: AudioConfig }) {
             src={audioConfig.bgmUrl}
             volume={() =>
               getDynamicBgmVolume({
-                frame,
+                frame: frame + bgmStartFrame,
                 totalFrames: durationInFrames,
                 bgmMasterVolume: audioConfig.bgmVolume * masterVolume,
                 duckedVolumeRatio: audioConfig.autoDucking ? 0.15 : 1.0,

@@ -11,6 +11,7 @@ import { PreviewPlayer } from "../components/PreviewPlayer";
 import { SceneEditor } from "../components/SceneEditor";
 import { ThemeEditor } from "../components/ThemeEditor";
 import { Dashboard } from "../components/dashboard/Dashboard";
+import { AudioConfig } from "../graphics/AudioLayers";
 
 const DYNAMIC_WIDGET_OPTIONS = Object.keys(widgetRegistry);
 const DEFAULT_WIDGET_TYPE = DYNAMIC_WIDGET_OPTIONS[0] || "";
@@ -57,6 +58,18 @@ export default function LandingPage() {
   const [customAudioVersion, setCustomAudioVersion] = useState(0);
   const [uploadedAudioUrl, setUploadedAudioUrl] = useState("");
   const [uploadedAudioVersion, setUploadedAudioVersion] = useState(0);
+  const [audioConfig, setAudioConfig] = useState<AudioConfig>({
+    voUrl: "",
+    voVolume: 1,
+    voStartFrame: 0,
+    voDurationFrames: 0,
+    bgmUrl: "",
+    bgmVolume: 0.3,
+    bgmStartFrame: 0,
+    bgmDurationFrames: 0,
+    masterVolume: 1,
+    autoDucking: true,
+  });
 
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
@@ -111,6 +124,14 @@ export default function LandingPage() {
     if (!rawUrl) return "";
     return `${rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`}?v=${version}`;
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, uploadedAudioUrl, uploadedAudioVersion, API]);
+
+  // Keep generated/uploaded voiceover and every editor surface on the same track.
+  // This only changes the source; volume and timeline edits remain intact.
+  useEffect(() => {
+    setAudioConfig((current) => current.voUrl === currentActiveAudio
+      ? current
+      : { ...current, voUrl: currentActiveAudio });
+  }, [currentActiveAudio]);
 
   const handleApplyConfigRefresh = () => {
     setSceneConfig(JSON.parse(JSON.stringify(localConfig.map(normalizeSceneTiming))));
@@ -306,6 +327,8 @@ export default function LandingPage() {
                 : 300}
               themeConfig={themeConfig}
               onScenesChange={setLocalConfig}
+              audioConfig={audioConfig}
+              onAudioConfigChange={setAudioConfig}
             />
 
             <div className="w-full xl:w-[380px] bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col max-h-[660px]">
