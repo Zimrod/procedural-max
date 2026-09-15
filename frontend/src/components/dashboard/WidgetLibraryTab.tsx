@@ -25,6 +25,11 @@ export function WidgetLibraryTab({
   const [sampleVideoUrls, setSampleVideoUrls] = useState<Record<string, string>>({});
   const [selectedFilterTab, setSelectedFilterTab] = useState<string>("all");
 
+  const staticPreviewUrls: Record<string, string> = {
+    PALLET: "/pallet/pallet.svg",
+    OIL_DRUM: "/oil_drum/oil_drum.svg",
+  };
+
   const widgetLabels: Record<string, string> = {
     COUNTRY_DROP_PIN: "Country Drop Pin",
     COUNTRY_FOCUS: "Country Focus",
@@ -170,6 +175,7 @@ export function WidgetLibraryTab({
                     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                     .join(" ");
                   const sampleUrl = sampleVideoUrls[w];
+                  const staticPreviewUrl = staticPreviewUrls[w];
                   const isPlaceholder = placeholderWidgets.has(w);
 
                   // Widget metadata fallbacks
@@ -204,7 +210,13 @@ export function WidgetLibraryTab({
                         )}
 
                         {/* Video / SVG Graphic */}
-                        {sampleUrl ? (
+                        {staticPreviewUrl ? (
+                          <img
+                            src={staticPreviewUrl}
+                            alt={`${capitalizedName} preview`}
+                            className="w-full h-full object-contain rounded-lg"
+                          />
+                        ) : sampleUrl ? (
                           <video
                             src={sampleUrl}
                             autoPlay

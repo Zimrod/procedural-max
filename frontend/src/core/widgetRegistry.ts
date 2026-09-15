@@ -487,7 +487,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Show a warehouse pallet as an industrial logistics prop.',
     bestFor: ['warehouse scenes', 'logistics', 'material handling', 'forklift scenes'],
     avoidFor: ['data visualization', 'text-heavy narration'],
-    previewFileName: 'pallet.mp4',
+    previewFileName: 'pallet.svg',
     defaultProps: { scale: 1, position: { x: 400, y: 400 }, opacity: 1 },
     editorFields: [
       field('scale', 'Scale', 'number', undefined, 1),
@@ -506,7 +506,7 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
     purpose: 'Show an oil drum as an industrial storage or logistics prop.',
     bestFor: ['warehouse scenes', 'oil and gas', 'industrial storage', 'logistics'],
     avoidFor: ['data visualization', 'text-heavy narration'],
-    previewFileName: 'oil_drum.mp4',
+    previewFileName: 'oil_drum.svg',
     defaultProps: { scale: 1, position: { x: 400, y: 400 }, opacity: 1 },
     editorFields: [
       field('scale', 'Scale', 'number', undefined, 1),
