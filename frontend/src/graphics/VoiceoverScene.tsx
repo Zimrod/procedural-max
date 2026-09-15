@@ -2,6 +2,8 @@ import React from 'react';
 import {
   AbsoluteFill,
   Sequence,
+  interpolate,
+  useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
 import {
@@ -70,6 +72,82 @@ const getSafeProps = (widget: string, props: Record<string, any> = {}) => {
   return safeProps;
 };
 
+type ResolvedTransform = {
+  x: number;
+  y: number;
+  scaleX: number;
+  scaleY: number;
+  rotateDeg: number;
+  opacity: number;
+};
+
+const numeric = (value: any, fallback: number) => Number.isFinite(Number(value)) ? Number(value) : fallback;
+
+function resolveTransform(widget: string, props: Record<string, any>, absoluteFrame: number): ResolvedTransform {
+  const isBar = widget === 'BAR_CHART';
+  const base: ResolvedTransform = isBar
+    ? { x: 0, y: 0, scaleX: 1, scaleY: 1, rotateDeg: 0, opacity: 1 }
+    : {
+        x: numeric(props.x ?? props.position?.x, 400),
+        y: numeric(props.y ?? props.position?.y, 400),
+        scaleX: numeric(props.scale, 1),
+        scaleY: numeric(props.scale, 1),
+        rotateDeg: numeric(props.rotateDeg, 0),
+        opacity: numeric(props.opacity, 1),
+      };
+  const keyframes = (props[isBar ? 'barTransformKeyframes' : 'transformKeyframes'] ?? [])
+    .filter((item: any) => Number.isFinite(Number(item?.frame)))
+    .sort((a: any, b: any) => Number(a.frame) - Number(b.frame));
+  if (!keyframes.length) return base;
+
+  const frames = keyframes.map((item: any) => Number(item.frame));
+  const resolve = (key: keyof ResolvedTransform) => {
+    const values = keyframes.map((item: any) => numeric(item[key], base[key]));
+    return interpolate(absoluteFrame, frames, values, { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  };
+  return {
+    x: resolve('x'),
+    y: resolve('y'),
+    scaleX: isBar ? resolve('scaleX') : resolve('scaleX'),
+    scaleY: isBar ? resolve('scaleY') : resolve('scaleY'),
+    rotateDeg: resolve('rotateDeg'),
+    opacity: resolve('opacity'),
+  };
+}
+
+function resolveParentId(props: Record<string, any>, absoluteFrame: number): string {
+  const keyframes = (props.parentKeyframes ?? [])
+    .filter((item: any) => Number.isFinite(Number(item?.frame)))
+    .sort((a: any, b: any) => Number(a.frame) - Number(b.frame));
+  let parentId = typeof props.parentId === 'string' ? props.parentId : '';
+  for (const keyframe of keyframes) {
+    if (absoluteFrame >= Number(keyframe.frame)) parentId = typeof keyframe.parentId === 'string' ? keyframe.parentId : '';
+  }
+  return parentId;
+}
+
+function sceneAssetId(item: any, index: number): string {
+  return String(item.id ?? item.entityId ?? item.sceneId ?? `${item.widget || item.widgetType || 'asset'}_${index + 1}`);
+}
+
+function applyParentDelta(local: ResolvedTransform, parentAtBase: ResolvedTransform, parentNow: ResolvedTransform): ResolvedTransform {
+  const angle = ((parentNow.rotateDeg - parentAtBase.rotateDeg) * Math.PI) / 180;
+  const ratioX = parentAtBase.scaleX === 0 ? 1 : parentNow.scaleX / parentAtBase.scaleX;
+  const ratioY = parentAtBase.scaleY === 0 ? 1 : parentNow.scaleY / parentAtBase.scaleY;
+  const relativeX = (local.x - parentAtBase.x) * ratioX;
+  const relativeY = (local.y - parentAtBase.y) * ratioY;
+  const rotatedX = relativeX * Math.cos(angle) - relativeY * Math.sin(angle);
+  const rotatedY = relativeX * Math.sin(angle) + relativeY * Math.cos(angle);
+  return {
+    x: parentNow.x + rotatedX,
+    y: parentNow.y + rotatedY,
+    scaleX: local.scaleX * ratioX,
+    scaleY: local.scaleY * ratioY,
+    rotateDeg: local.rotateDeg + parentNow.rotateDeg - parentAtBase.rotateDeg,
+    opacity: local.opacity * (parentAtBase.opacity === 0 ? 1 : parentNow.opacity / parentAtBase.opacity),
+  };
+}
+
 type WidgetErrorBoundaryProps = {
   widget: string;
   resetKey: string;
@@ -136,6 +214,7 @@ export const VoiceoverScene: React.FC<Props> = ({
   theme = {},
 }) => {
   const { width, height } = useVideoConfig();
+  const currentFrame = useCurrentFrame();
   const resolvedTheme = {
     ...DEFAULT_COMPOSITION_THEME,
     ...theme,
@@ -162,6 +241,40 @@ export const VoiceoverScene: React.FC<Props> = ({
         const WidgetComponent =
           getWidgetComponent(normalizedWidgetKey) || getWidgetComponent(rawWidgetKey);
 
+        const localProps = getSafeProps(normalizedWidgetKey, item.props);
+        const localTransform = resolveTransform(normalizedWidgetKey, localProps, currentFrame);
+        const findWorldTransform = (sceneIndex: number, frame: number, stack: Set<number>): ResolvedTransform => {
+          const currentItem = scenes[sceneIndex];
+          const currentWidget = String(currentItem?.widget || currentItem?.widgetType || '').toUpperCase();
+          const currentProps = getSafeProps(currentWidget, currentItem?.props);
+          const currentLocal = resolveTransform(currentWidget, currentProps, frame);
+          if (stack.has(sceneIndex)) return currentLocal;
+          const nextStack = new Set(stack);
+          nextStack.add(sceneIndex);
+          const parentId = resolveParentId(currentProps, frame);
+          const parentIndex = scenes.findIndex((candidate, candidateIndex) => candidateIndex !== sceneIndex && sceneAssetId(candidate, candidateIndex) === parentId);
+          if (parentIndex < 0) return currentLocal;
+          const parentItem = scenes[parentIndex];
+          const parentBaseFrame = Number(parentItem.startFrame ?? parentItem.start ?? 0);
+          const parentAtBase = findWorldTransform(parentIndex, parentBaseFrame, nextStack);
+          const parentNow = findWorldTransform(parentIndex, frame, nextStack);
+          return applyParentDelta(currentLocal, parentAtBase, parentNow);
+        };
+        const worldTransform = findWorldTransform(i, currentFrame, new Set());
+        const parentDelta = {
+          x: worldTransform.x - localTransform.x,
+          y: worldTransform.y - localTransform.y,
+          scaleX: localTransform.scaleX === 0 ? 1 : worldTransform.scaleX / localTransform.scaleX,
+          scaleY: localTransform.scaleY === 0 ? 1 : worldTransform.scaleY / localTransform.scaleY,
+          rotateDeg: worldTransform.rotateDeg - localTransform.rotateDeg,
+          opacity: localTransform.opacity === 0 ? 1 : worldTransform.opacity / localTransform.opacity,
+        };
+        const isIndustrial = normalizedWidgetKey === 'PALLET' || normalizedWidgetKey === 'OIL_DRUM';
+        const renderProps = isIndustrial
+          ? { ...localProps, x: localTransform.x, y: localTransform.y, scale: localTransform.scaleX, rotateDeg: localTransform.rotateDeg, opacity: localTransform.opacity }
+          : localProps;
+        const hasParentDelta = Boolean(resolveParentId(localProps, currentFrame));
+
         return (
           <Sequence
             key={`${normalizedWidgetKey || 'WIDGET'}_${i}`}
@@ -182,10 +295,20 @@ export const VoiceoverScene: React.FC<Props> = ({
                   widget={normalizedWidgetKey || 'UNKNOWN_WIDGET'}
                   resetKey={JSON.stringify({ widget: normalizedWidgetKey, props: item.props })}
                 >
-                  <WidgetComponent
-                    {...getSafeProps(normalizedWidgetKey, item.props)}
-                    timelineStartFrame={item.startFrame}
-                  />
+                  <div
+                    style={hasParentDelta ? {
+                      width: '100%',
+                      height: '100%',
+                      transform: `translate(${parentDelta.x}px, ${parentDelta.y}px) rotate(${parentDelta.rotateDeg}deg) scale(${parentDelta.scaleX}, ${parentDelta.scaleY})`,
+                      transformOrigin: `${localTransform.x}px ${localTransform.y}px`,
+                      opacity: parentDelta.opacity,
+                    } : undefined}
+                  >
+                    <WidgetComponent
+                      {...renderProps}
+                      timelineStartFrame={item.startFrame}
+                    />
+                  </div>
                 </WidgetErrorBoundary>
               </div>
             </AbsoluteFill>

@@ -122,6 +122,102 @@ function PropInput({ field, value, onChange }: { field: any; value: any; onChang
   return <input type={field?.kind === "number" ? "number" : field?.kind === "color" ? "color" : "text"} value={value ?? ""} onChange={(e) => onChange(field?.kind === "number" ? Number(e.target.value) : e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />;
 }
 
+type TransformKeyframe = { frame: number; x?: number; y?: number; scale?: number; rotateDeg?: number; opacity?: number };
+
+function TransformKeyframeEditor({
+  keyframes,
+  startFrame,
+  onChange,
+}: {
+  keyframes: TransformKeyframe[];
+  startFrame: number;
+  onChange: (keyframes: TransformKeyframe[]) => void;
+}) {
+  const addKeyframe = () => {
+    const last = keyframes[keyframes.length - 1];
+    const nextFrame = last ? Math.max(startFrame, Number(last.frame) + 30) : startFrame;
+    onChange([...keyframes, { frame: nextFrame, x: 400, y: 400, scale: 1, rotateDeg: 0, opacity: 1 }].sort((a, b) => a.frame - b.frame));
+  };
+
+  const updateKeyframe = (index: number, key: keyof TransformKeyframe, value: number) => {
+    const next = keyframes.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item);
+    onChange(key === 'frame' ? [...next].sort((a, b) => a.frame - b.frame) : next);
+  };
+
+  return (
+    <div className="col-span-3 space-y-2 rounded-lg border border-violet-500/20 bg-violet-950/10 p-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <span className="block text-[10px] font-bold uppercase tracking-wider text-violet-300">Transform Keyframes</span>
+          <span className="text-[9px] text-neutral-500">Animate position, scale, rotation, and opacity at absolute timeline frames.</span>
+        </div>
+        <button type="button" onClick={addKeyframe} className="rounded bg-violet-600 px-2 py-1 text-[10px] font-bold text-white hover:bg-violet-500">+ Add Keyframe</button>
+      </div>
+      {keyframes.map((keyframe, index) => (
+        <div key={index} className="space-y-1.5 rounded border border-neutral-800 bg-[#111111] p-2">
+          <div className="grid grid-cols-3 gap-1.5">
+            {([
+              ['frame', 'Frame'], ['x', 'X'], ['y', 'Y'], ['scale', 'Scale'], ['rotateDeg', 'Rotation'], ['opacity', 'Opacity'],
+            ] as const).map(([key, label]) => (
+              <label key={key} className="min-w-0 text-[9px] font-medium text-neutral-400">
+                {label}
+                <input
+                  type="number"
+                  step={key === 'frame' ? 1 : key === 'opacity' ? 0.05 : 0.1}
+                  min={key === 'frame' ? 0 : undefined}
+                  value={keyframe[key] ?? (key === 'scale' || key === 'opacity' ? 1 : 0)}
+                  onChange={(event) => updateKeyframe(index, key, Number(event.target.value))}
+                  className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200"
+                />
+              </label>
+            ))}
+          </div>
+          <button type="button" onClick={() => onChange(keyframes.filter((_, itemIndex) => itemIndex !== index))} className="rounded border border-rose-500/40 px-2 py-1 text-[10px] font-bold text-rose-300 hover:bg-rose-500/10">Remove</button>
+        </div>
+      ))}
+      {keyframes.length === 0 && <p className="text-[10px] text-neutral-500">Add a keyframe to animate this asset.</p>}
+    </div>
+  );
+}
+
+function ParentKeyframeEditor({
+  keyframes,
+  startFrame,
+  options,
+  onChange,
+}: {
+  keyframes: Array<{ frame: number; parentId: string }>;
+  startFrame: number;
+  options: Array<{ id: string; label: string }>;
+  onChange: (keyframes: Array<{ frame: number; parentId: string }>) => void;
+}) {
+  const addKeyframe = () => {
+    const last = keyframes[keyframes.length - 1];
+    const nextFrame = last ? Math.max(startFrame, Number(last.frame) + 30) : startFrame;
+    onChange([...keyframes, { frame: nextFrame, parentId: options[0]?.id ?? '' }].sort((a, b) => a.frame - b.frame));
+  };
+
+  return (
+    <div className="space-y-2 rounded-lg border border-cyan-500/20 bg-cyan-950/10 p-2.5">
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <span className="block text-[10px] font-bold uppercase tracking-wider text-cyan-300">Parent Keyframes</span>
+          <span className="text-[9px] text-neutral-500">Switch the active parent during the timeline.</span>
+        </div>
+        <button type="button" disabled={options.length === 0} onClick={addKeyframe} className="rounded bg-cyan-600 px-2 py-1 text-[10px] font-bold text-white hover:bg-cyan-500 disabled:cursor-not-allowed disabled:opacity-40">+ Add Keyframe</button>
+      </div>
+      {keyframes.map((keyframe, index) => (
+        <div key={index} className="grid grid-cols-[80px_1fr_auto] items-end gap-2 rounded border border-neutral-800 bg-[#111111] p-2">
+          <label className="text-[9px] font-medium text-neutral-400">Frame<input type="number" min={0} value={keyframe.frame} onChange={(event) => { const next = keyframes.map((item, itemIndex) => itemIndex === index ? { ...item, frame: Number(event.target.value) } : item); onChange([...next].sort((a, b) => a.frame - b.frame)); }} className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200" /></label>
+          <label className="text-[9px] font-medium text-neutral-400">Parent<select value={keyframe.parentId} onChange={(event) => onChange(keyframes.map((item, itemIndex) => itemIndex === index ? { ...item, parentId: event.target.value } : item))} className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200"><option value="">No parent</option>{options.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}</select></label>
+          <button type="button" onClick={() => onChange(keyframes.filter((_, itemIndex) => itemIndex !== index))} className="rounded border border-rose-500/40 px-2 py-1 text-[10px] font-bold text-rose-300 hover:bg-rose-500/10">Remove</button>
+        </div>
+      ))}
+      {keyframes.length === 0 && <p className="text-[10px] text-neutral-500">Add a keyframe to change this asset&apos;s parent.</p>}
+    </div>
+  );
+}
+
 function ColorInput({ value, onChange }: { value: any; onChange: (value: string) => void }) {
   const isPalette = Array.isArray(value);
   const colors = isPalette ? value : [value ?? ""];
@@ -305,6 +401,14 @@ interface SceneEditorProps {
   onRenderComplete?: (render: RenderedVideoItem) => void;
 }
 
+function getSceneAssetId(scene: any, index: number): string {
+  return String(scene.id ?? scene.entityId ?? scene.sceneId ?? `${scene.widget || scene.widgetType || 'asset'}_${index + 1}`);
+}
+
+function getSceneAssetLabel(scene: any, index: number): string {
+  return `${scene.widget || scene.widgetType || 'Asset'} · ${index + 1}`;
+}
+
 export function SceneEditor({
   localConfig, sceneConfig, collapsedScenes, isDirty, rawText, currentJobId,
   aspectRatio,
@@ -435,8 +539,12 @@ export function SceneEditor({
                         const isColorProp = (key: string, field?: any) => field?.kind === "color" || (field?.kind === "array" && /colors?$/i.test(key));
                         const colorKeys = orderedKeys.filter((key) => isColorProp(key, schemaFieldMap.get(key)));
                         const animatedColorKey = scene.widget === "BAR_CHART" ? "barColorKeyframes" : undefined;
-                        const animatedTransformKey = scene.widget === "BAR_CHART" ? "barTransformKeyframes" : undefined;
-                        const compactKeys = orderedKeys.filter((key) => key !== "data" && key !== animatedColorKey && key !== animatedTransformKey && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
+                        const animatedTransformKey = scene.widget === "BAR_CHART"
+                          ? "barTransformKeyframes"
+                          : ["PALLET", "OIL_DRUM"].includes(scene.widget)
+                            ? "transformKeyframes"
+                            : undefined;
+                        const compactKeys = orderedKeys.filter((key) => !["data", "parentId", "parentKeyframes", "transformKeyframes", animatedColorKey, animatedTransformKey].includes(key) && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
                         const activeTab = activePropTab[sceneIdx] ?? "properties";
                         const chartPaletteKey = scene.widget === "BAR_CHART"
                           ? "barColors"
@@ -448,6 +556,30 @@ export function SceneEditor({
 
                         return (
                           <div className="space-y-3">
+                            {localConfig.length > 1 && (
+                              <div className="space-y-2 rounded-lg border border-amber-500/20 bg-amber-950/10 p-2.5">
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-amber-300">Parent Asset</label>
+                                <select
+                                  value={scene.props.parentId ?? ""}
+                                  onChange={(event) => updateWidgetProp(sceneIdx, "parentId", event.target.value)}
+                                  className="w-full rounded border border-neutral-800 bg-[#1e1e1e] px-2 py-1.5 text-xs text-neutral-200"
+                                >
+                                  <option value="">No parent</option>
+                                  {localConfig.map((candidate, candidateIndex) => candidateIndex !== sceneIdx && (
+                                    <option key={getSceneAssetId(candidate, candidateIndex)} value={getSceneAssetId(candidate, candidateIndex)}>
+                                      {getSceneAssetLabel(candidate, candidateIndex)}
+                                    </option>
+                                  ))}
+                                </select>
+                                <ParentKeyframeEditor
+                                  keyframes={Array.isArray(scene.props.parentKeyframes) ? scene.props.parentKeyframes : []}
+                                  startFrame={startFrame}
+                                  options={localConfig.map((candidate, candidateIndex) => ({ id: getSceneAssetId(candidate, candidateIndex), label: getSceneAssetLabel(candidate, candidateIndex) })).filter((_, candidateIndex) => candidateIndex !== sceneIdx)}
+                                  onChange={(keyframes) => updateWidgetProp(sceneIdx, "parentKeyframes", keyframes)}
+                                />
+                              </div>
+                            )}
+
                             {contentKeys.length > 0 && (
                               <div className="space-y-2">
                                 {contentKeys.map((propKey) => {
@@ -532,12 +664,20 @@ export function SceneEditor({
                                   />
                                 )}
 
-                                {activeTab === "colors" && animatedTransformKey && (
-                                  <BarTransformKeyframeEditor
-                                    keyframes={Array.isArray(scene.props[animatedTransformKey]) ? scene.props[animatedTransformKey] : []}
-                                    startFrame={startFrame}
-                                    onChange={(keyframes) => updateWidgetProp(sceneIdx, animatedTransformKey, keyframes)}
-                                  />
+                                {animatedTransformKey && (scene.widget === "BAR_CHART" ? activeTab === "colors" : activeTab === "properties") && (
+                                  scene.widget === "BAR_CHART" ? (
+                                    <BarTransformKeyframeEditor
+                                      keyframes={Array.isArray(scene.props[animatedTransformKey]) ? scene.props[animatedTransformKey] : []}
+                                      startFrame={startFrame}
+                                      onChange={(keyframes) => updateWidgetProp(sceneIdx, animatedTransformKey, keyframes)}
+                                    />
+                                  ) : (
+                                    <TransformKeyframeEditor
+                                      keyframes={Array.isArray(scene.props[animatedTransformKey]) ? scene.props[animatedTransformKey] : []}
+                                      startFrame={startFrame}
+                                      onChange={(keyframes) => updateWidgetProp(sceneIdx, animatedTransformKey, keyframes)}
+                                    />
+                                  )
                                 )}
 
                                 {activeTab === "properties" && compactKeys.length > 0 && (

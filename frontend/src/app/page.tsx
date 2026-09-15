@@ -23,6 +23,11 @@ const ASPECT_RATIOS = [
   { label: "3:2", value: 3 / 2 },
 ];
 
+const ensureSceneId = (scene: any, index: number) => ({
+  ...scene,
+  id: scene.id ?? scene.entityId ?? scene.sceneId ?? `${scene.widget || scene.widgetType || "asset"}_${index + 1}`,
+});
+
 function normalizeSceneTiming(scene: any) {
   const startFrame = Math.max(0, Number(scene.startFrame ?? scene.start ?? 0));
   const endValue = scene.endFrame ?? scene.end;
@@ -108,7 +113,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     if (sceneConfig && sceneConfig.length > 0) {
-      setLocalConfig(JSON.parse(JSON.stringify(sceneConfig)));
+      setLocalConfig(JSON.parse(JSON.stringify(sceneConfig)).map(ensureSceneId));
     }
   }, [sceneConfig]);
 
@@ -359,7 +364,7 @@ export default function LandingPage() {
                   toggleSceneCollapse={(i) => setCollapsedScenes((p) => ({ ...p, [i]: !p[i] }))}
                   moveSceneUp={(i) => i > 0 && setLocalConfig((c) => { const n = [...c]; [n[i - 1], n[i]] = [n[i], n[i - 1]]; return n; })}
                   moveSceneDown={(i) => i < localConfig.length - 1 && setLocalConfig((c) => { const n = [...c]; [n[i + 1], n[i]] = [n[i], n[i + 1]]; return n; })}
-                  addSceneAfter={(i) => setLocalConfig((c) => { const n = [...c]; n.splice(i + 1, 0, { widget: DEFAULT_WIDGET_TYPE, startFrame: 0, durationFrames: 90, props: {} }); return n; })}
+                  addSceneAfter={(i) => setLocalConfig((c) => { const n = [...c]; n.splice(i + 1, 0, { id: `${DEFAULT_WIDGET_TYPE}_${Date.now()}`, widget: DEFAULT_WIDGET_TYPE, startFrame: 0, durationFrames: 90, props: {} }); return n; })}
                   deleteScene={(i) => setLocalConfig((c) => c.filter((_, idx) => idx !== i))} updateSceneMeta={updateSceneMeta} updateWidgetType={updateWidgetType}
                   updateWidgetProp={updateWidgetProp} handleApplyConfigRefresh={handleApplyConfigRefresh} widgetOptions={DYNAMIC_WIDGET_OPTIONS}
                   defaultWidgetType={DEFAULT_WIDGET_TYPE} setDashboardOpen={setDashboardOpen} aspectRatio={selectedAspect.value}

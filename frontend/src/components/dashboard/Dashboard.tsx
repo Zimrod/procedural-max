@@ -47,6 +47,7 @@ export function Dashboard({
     setLocalConfig((prev) => [
       ...prev,
       {
+        id: `${widgetType}_${Date.now()}`,
         widget: widgetType,
         startFrame: 0,
         durationFrames: 90,
