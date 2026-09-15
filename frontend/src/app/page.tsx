@@ -279,6 +279,7 @@ export default function LandingPage() {
       TEXT_TYPOGRAPHY: "Typography",
       DATA_REPORTING: "Data Visualization",
       GEOGRAPHY: "Geography",
+      INDUSTRIAL: "Industrial",
     };
 
     const groups = filtered.reduce((acc, w) => {

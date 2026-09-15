@@ -481,6 +481,44 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       toCountry: extractedData?.toCountry ?? 'kenya',
     }),
   },
+  PALLET: {
+    category: 'INDUSTRIAL',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Show a warehouse pallet as an industrial logistics prop.',
+    bestFor: ['warehouse scenes', 'logistics', 'material handling', 'forklift scenes'],
+    avoidFor: ['data visualization', 'text-heavy narration'],
+    previewFileName: 'pallet.mp4',
+    defaultProps: { scale: 1, position: { x: 400, y: 400 }, opacity: 1 },
+    editorFields: [
+      field('scale', 'Scale', 'number', undefined, 1),
+      field('position', 'Position', 'json', undefined, { x: 400, y: 400 }),
+      field('opacity', 'Opacity', 'number', undefined, 1),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      scale: extractedData?.scale ?? 1,
+      position: extractedData?.position ?? { x: 400, y: 400 },
+      opacity: extractedData?.opacity ?? 1,
+    }),
+  },
+  OIL_DRUM: {
+    category: 'INDUSTRIAL',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Show an oil drum as an industrial storage or logistics prop.',
+    bestFor: ['warehouse scenes', 'oil and gas', 'industrial storage', 'logistics'],
+    avoidFor: ['data visualization', 'text-heavy narration'],
+    previewFileName: 'oil_drum.mp4',
+    defaultProps: { scale: 1, position: { x: 400, y: 400 }, opacity: 1 },
+    editorFields: [
+      field('scale', 'Scale', 'number', undefined, 1),
+      field('position', 'Position', 'json', undefined, { x: 400, y: 400 }),
+      field('opacity', 'Opacity', 'number', undefined, 1),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      scale: extractedData?.scale ?? 1,
+      position: extractedData?.position ?? { x: 400, y: 400 },
+      opacity: extractedData?.opacity ?? 1,
+    }),
+  },
 };
 
 export function getWidgetDefinition(widget: string) {

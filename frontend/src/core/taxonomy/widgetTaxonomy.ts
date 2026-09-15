@@ -17,6 +17,13 @@ export const WIDGET_TAXONOMY = {
       COUNTRY_ROUTE: 'country_route',
     },
   },
+  INDUSTRIAL: {
+    label: 'Industrial',
+    types: {
+      PALLET: 'pallet',
+      OIL_DRUM: 'oil_drum',
+    },
+  },
   TEXT_TYPOGRAPHY: {
     label: 'Typography',
     types: {
