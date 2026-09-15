@@ -27,6 +27,8 @@ import { MultiLineChartRig } from '../graphics/MultiLineChartRig';
 import { CountryDropPinRig } from '../graphics/CountryDropPinRig';
 import { CountryFocusRig } from '../graphics/CountryFocusRig';
 import { CountryRouteRig } from '../graphics/CountryRouteRig';
+import { PalletRig } from '../graphics/PalletRig';
+import { OilDrumRig } from '../graphics/OilDrumRig';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
@@ -68,6 +70,8 @@ const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
   COUNTRY_DROP_PIN: CountryDropPinRig,
   COUNTRY_FOCUS: CountryFocusRig,
   COUNTRY_ROUTE: CountryRouteRig,
+  PALLET: PalletRig,
+  OIL_DRUM: OilDrumRig,
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {

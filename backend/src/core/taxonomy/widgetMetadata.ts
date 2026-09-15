@@ -104,6 +104,16 @@ const manualDescriptions: Record<WidgetType, { description: string; visualStyle:
     visualStyle: 'Glowing curved route line with endpoint dots and labels.',
     bestForKeywords: ['country route', 'travel path', 'geographic flow'],
   },
+  PALLET: {
+    description: 'Shows a warehouse pallet as an industrial logistics prop.',
+    visualStyle: 'Clean outlined pallet with pivot-aware grounded positioning.',
+    bestForKeywords: ['pallet', 'warehouse', 'logistics', 'forklift', 'material handling'],
+  },
+  OIL_DRUM: {
+    description: 'Shows an oil drum as an industrial storage or logistics prop.',
+    visualStyle: 'Outlined oil drum with pivot-aware grounded positioning.',
+    bestForKeywords: ['oil drum', 'warehouse', 'oil and gas', 'industrial storage', 'logistics'],
+  },
 };
 
 export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(widgetRegistry).reduce((acc, key) => {
