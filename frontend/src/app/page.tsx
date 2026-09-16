@@ -307,8 +307,8 @@ export default function LandingPage() {
     <main className="h-screen w-full bg-[#121212] text-gray-100 antialiased flex flex-col overflow-hidden">
       <Navbar renders={renders} />
 
-      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 py-3 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="h-full w-full flex flex-col lg:flex-row gap-5 overflow-hidden">
+      <div className="flex-1 w-full max-w-none mx-0 px-0 py-3 overflow-hidden">
+        <div className="h-full w-full flex flex-col lg:flex-row gap-2 overflow-hidden">
           {/* First Column: ScriptSidebar (380px width) */}
           <div className="w-full lg:w-[380px] shrink-0 h-full overflow-y-auto">
             <ScriptSidebar
@@ -323,7 +323,7 @@ export default function LandingPage() {
           </div>
 
           {/* Center & Right Column Container */}
-          <div className="flex-1 h-full flex flex-col xl:flex-row gap-5 min-w-0 overflow-hidden">
+          <div className="flex-1 h-full flex flex-col xl:flex-row gap-2 min-w-0 overflow-hidden">
             {/* Center Column: PreviewPlayer (Scrollable) */}
             <div className="flex-1 h-full overflow-y-auto pr-1">
               <PreviewPlayer
@@ -340,15 +340,15 @@ export default function LandingPage() {
             </div>
 
             {/* Third Column: Scene / Theme Editor Panel (420px width) */}
-            <div className="w-full xl:w-[420px] shrink-0 bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col h-full overflow-y-auto">
-              <div className="flex border border-neutral-800 mb-3 p-1 bg-[#141414] rounded-xl shrink-0">
+            <div className="w-full xl:w-[calc(420px+5.5rem+max(0px,100vw-1700px))] shrink-0 bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 flex flex-col h-full overflow-y-auto">
+              <div className="flex border border-neutral-800 mb-3 p-1 bg-[#141414] rounded-md shrink-0">
                 <button
                   onClick={() => setRightPanelTab("scene")}
-                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${rightPanelTab === "scene" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+                  className={`flex-1 py-1 text-[10px] font-bold rounded-sm transition-all ${rightPanelTab === "scene" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
                 >Scene Config</button>
                 <button
                   onClick={() => setRightPanelTab("theme")}
-                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${rightPanelTab === "theme" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+                  className={`flex-1 py-1 text-[10px] font-bold rounded-sm transition-all ${rightPanelTab === "theme" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
                 >Theme Config</button>
               </div>
 

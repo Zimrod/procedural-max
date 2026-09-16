@@ -52,7 +52,9 @@ export function WidgetLibraryTab({
   //   Education: new Set(["Knowledge Map"]),
   // };
 
-  const premiumByCategory: Record<string, Set<string>> = {};
+  const premiumByCategory: Record<string, Set<string>> = {
+    "Data Visualization": new Set(["LINE_CHART"]),
+  };
 
   // Fetch sample preview video URLs from Supabase Storage bucket
   useEffect(() => {

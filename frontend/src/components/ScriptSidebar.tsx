@@ -48,7 +48,7 @@ export function ScriptSidebar({
   handleGenerateVoiceover, handleRenderAnimation, onOpenDashboard,
 }: ScriptSidebarProps) {
   return (
-    <div className="w-full bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 shadow-2xl shadow-black/60">
+    <div className="w-full bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 shadow-2xl shadow-black/60">
       {/* Top Bar with Dashboard Icon Button */}
       <div className="flex items-center justify-between mb-3">
         {onOpenDashboard && (
@@ -65,12 +65,12 @@ export function ScriptSidebar({
         )}
       </div>
 
-      <div className="flex border border-neutral-800 mb-4 p-1 bg-[#141414] rounded-xl text-center">
+      <div className="flex border border-neutral-800 mb-4 p-1 bg-[#141414] rounded-md text-center">
         {(["generate", "custom-script", "upload-voiceover"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setLeftTab(tab)}
-            className={`flex-1 py-1.5 px-1 text-[10px] font-semibold tracking-tight rounded-lg transition-all ${
+            className={`flex-1 py-1 px-1 text-[10px] font-semibold tracking-tight rounded-sm transition-all ${
               leftTab === tab ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"
             }`}
           >

@@ -17,7 +17,7 @@ export function ThemeEditor({ themePresetId, themeConfig, selectThemePreset, upd
           <button
             key={preset.id}
             onClick={() => selectThemePreset(preset.id)}
-            className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase transition-all ${
+            className={`rounded-md border px-3 py-1 text-[10px] font-bold uppercase transition-all ${
               themePresetId === preset.id ? "border-emerald-500 bg-emerald-600 text-white" : "border-neutral-800 bg-[#141414] text-neutral-400"
             }`}
           >

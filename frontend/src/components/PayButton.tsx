@@ -39,7 +39,7 @@ export default function PayButton() {
         fontWeight: 'bold',
       }}
     >
-      {loading ? 'Connecting to Paynow...' : 'Test Paynow Checkout ($1.00)'}
+      {loading ? '+...' : '+'}
     </button>
   );
 }

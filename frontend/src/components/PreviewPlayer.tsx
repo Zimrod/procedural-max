@@ -44,6 +44,7 @@ export function PreviewPlayer({
   const trackRef = useRef<HTMLDivElement>(null);
 
   const [currentFrame, setCurrentFrame] = useState(0);
+  const [timelineTotalFrames, setTimelineTotalFrames] = useState<number | null>(null);
   const [draggingSceneIndex, setDraggingSceneIndex] = useState<number | null>(null);
   const [activeEditorTab, setActiveEditorTab] = useState<"timeline" | "audio">("timeline");
   const [draggingAudioTrack, setDraggingAudioTrack] = useState<"vo" | "bgm" | null>(null);
@@ -121,12 +122,31 @@ export function PreviewPlayer({
     return maxFrame > 0 ? maxFrame : 150;
   }, [sceneConfig, totalDurationInFrames]);
 
+  const effectiveTotalFrames = timelineTotalFrames ?? computedTotalFrames;
+
+  const seekToFrame = (frame: number) => {
+    const nextFrame = Math.max(0, Math.min(effectiveTotalFrames, Math.round(Number.isFinite(frame) ? frame : 0)));
+    currentFrameRef.current = nextFrame;
+    setCurrentFrame(nextFrame);
+    playerRef.current?.seekTo(nextFrame);
+  };
+
+  const updateTimelineTotalFrames = (frames: number) => {
+    const nextTotalFrames = Math.max(1, Math.round(Number.isFinite(frames) ? frames : effectiveTotalFrames));
+    setTimelineTotalFrames(nextTotalFrames);
+    if (currentFrame > nextTotalFrames) {
+      currentFrameRef.current = nextTotalFrames;
+      setCurrentFrame(nextTotalFrames);
+      playerRef.current?.seekTo(nextTotalFrames);
+    }
+  };
+
   // Check if voiceover audio extends beyond overall visual workspace
   const isAudioOverflowing = useMemo(() => {
     if (!activeAudioConfig.voUrl || !activeAudioConfig.voDurationFrames) return false;
     const voEnd = (activeAudioConfig.voStartFrame || 0) + activeAudioConfig.voDurationFrames;
-    return voEnd > computedTotalFrames;
-  }, [activeAudioConfig, computedTotalFrames]);
+    return voEnd > effectiveTotalFrames;
+  }, [activeAudioConfig, effectiveTotalFrames]);
 
   // Sync current frame with Remotion Player
   useEffect(() => {
@@ -175,7 +195,7 @@ export function PreviewPlayer({
     const rect = trackRef.current.getBoundingClientRect();
     const trackPadding = 16;
     const timelineWidth = Math.max(1, rect.width - trackPadding);
-    const pxPerFrame = timelineWidth / computedTotalFrames;
+    const pxPerFrame = timelineWidth / effectiveTotalFrames;
 
     const scene = sceneConfig[index];
     const initialStart = scene.startFrame ?? scene.start ?? 0;
@@ -248,7 +268,7 @@ export function PreviewPlayer({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [draggingSceneIndex, sceneConfig, computedTotalFrames, onScenesChange]);
+  }, [draggingSceneIndex, sceneConfig, effectiveTotalFrames, onScenesChange]);
 
   const handleAudioMouseDown = (e: React.MouseEvent, track: "vo" | "bgm") => {
     e.preventDefault();
@@ -259,13 +279,13 @@ export function PreviewPlayer({
     const isVoiceover = track === "vo";
     const initialStart = isVoiceover ? activeAudioConfig.voStartFrame ?? 0 : activeAudioConfig.bgmStartFrame ?? 0;
     const duration = isVoiceover
-      ? activeAudioConfig.voDurationFrames || computedTotalFrames - initialStart
-      : activeAudioConfig.bgmDurationFrames || computedTotalFrames - initialStart;
+      ? activeAudioConfig.voDurationFrames || effectiveTotalFrames - initialStart
+      : activeAudioConfig.bgmDurationFrames || effectiveTotalFrames - initialStart;
     audioDragRef.current = {
       startX: e.clientX,
       initialStart,
       duration: Math.max(1, duration),
-      pxPerFrame: timelineWidth / Math.max(1, computedTotalFrames),
+      pxPerFrame: timelineWidth / Math.max(1, effectiveTotalFrames),
     };
     setDraggingAudioTrack(track);
   };
@@ -276,8 +296,8 @@ export function PreviewPlayer({
       const drag = audioDragRef.current;
       if (!drag) return;
       const deltaFrames = Math.round((e.clientX - drag.startX) / drag.pxPerFrame);
-      const nextStart = Math.max(0, Math.min(computedTotalFrames - 1, drag.initialStart + deltaFrames));
-      const nextDuration = Math.min(drag.duration, computedTotalFrames - nextStart);
+      const nextStart = Math.max(0, Math.min(effectiveTotalFrames - 1, drag.initialStart + deltaFrames));
+      const nextDuration = Math.min(drag.duration, effectiveTotalFrames - nextStart);
       const currentAudioConfig = audioConfigRef.current;
       handleAudioChange(draggingAudioTrack === "vo"
         ? { ...currentAudioConfig, voStartFrame: nextStart, voDurationFrames: nextDuration }
@@ -293,9 +313,9 @@ export function PreviewPlayer({
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [draggingAudioTrack, computedTotalFrames]);
+  }, [draggingAudioTrack, effectiveTotalFrames]);
 
-  const playheadPercent = Math.min(100, Math.max(0, (currentFrame / computedTotalFrames) * 100));
+  const playheadPercent = Math.min(100, Math.max(0, (currentFrame / effectiveTotalFrames) * 100));
 
   const playerInputProps = useMemo(() => ({
     ...inputProps,
@@ -309,7 +329,7 @@ export function PreviewPlayer({
 
   return (
     <div className="flex-1 flex flex-col gap-5">
-      <div className="bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 shadow-2xl shadow-black/60 space-y-4">
+      <div className="bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 shadow-2xl shadow-black/60 space-y-2">
         {/* Header Controls */}
         <div className="flex items-center justify-between">
           <span className="text-xs font-bold uppercase tracking-wider text-neutral-400">Live Preview</span>
@@ -330,7 +350,7 @@ export function PreviewPlayer({
 
         {/* Viewport / Player */}
         <div
-          className={`bg-black rounded-xl overflow-hidden border border-neutral-800 relative transition-all ${
+          className={`bg-black rounded-md overflow-hidden border border-neutral-800 relative transition-all ${
             isVertical
               ? "max-h-[calc(100vh-18rem)] w-auto mx-auto"
               : "w-full"
@@ -343,7 +363,7 @@ export function PreviewPlayer({
                 ref={playerRef}
                 component={Main}
                 inputProps={playerInputProps}
-                durationInFrames={computedTotalFrames}
+                durationInFrames={effectiveTotalFrames}
                 fps={VIDEO_FPS}
                 compositionHeight={compositionDimensions.height}
                 compositionWidth={compositionDimensions.width}
@@ -362,18 +382,18 @@ export function PreviewPlayer({
           </div>
         </div>
 
-        <div className="flex border border-neutral-800 p-1 bg-[#141414] rounded-xl">
+        <div className="flex border border-neutral-800 p-1 bg-[#141414] rounded-md">
           <button
             type="button"
             onClick={() => setActiveEditorTab("timeline")}
-            className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${activeEditorTab === "timeline" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+            className={`flex-1 py-1 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${activeEditorTab === "timeline" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
           >
             Stacked Tracks
           </button>
           <button
             type="button"
             onClick={() => setActiveEditorTab("audio")}
-            className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-all ${activeEditorTab === "audio" ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+            className={`flex-1 py-1 text-[10px] font-bold uppercase tracking-wider rounded-sm transition-all ${activeEditorTab === "audio" ? "bg-cyan-600 text-white shadow-md shadow-cyan-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
           >
             Audio Control Panel
           </button>
@@ -390,15 +410,27 @@ export function PreviewPlayer({
 
         {/* Stacked Multi-Track Concurrent Timeline */}
         {activeEditorTab === "timeline" && (
-          <div className="pt-2 border-t border-neutral-800/80 space-y-2 select-none">
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-neutral-400">
+          <div className="pt-1 border-t border-neutral-800/80 space-y-1 select-none">
+            <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-[10px] font-bold uppercase tracking-wider text-neutral-400">
               <span className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 Independent Widget Tracks
               </span>
-              <span className="font-mono text-emerald-400">
-                {formatSeconds(currentFrame)} / {formatSeconds(computedTotalFrames)} ({computedTotalFrames} Frames)
-              </span>
+              <div className="flex flex-wrap items-center justify-end gap-1.5 font-normal normal-case">
+                <label className="flex items-center gap-1 text-neutral-500">
+                  <span>Seconds</span>
+                  <input type="number" min="0" step="0.1" value={(currentFrame / VIDEO_FPS).toFixed(1)} onChange={(event) => seekToFrame(Number(event.target.value) * VIDEO_FPS)} aria-label="Elapsed seconds" className="w-16 rounded border border-neutral-700 bg-[#141414] px-1.5 py-0.5 text-right font-mono text-[10px] text-emerald-400 focus:border-emerald-500 focus:outline-none" />
+                  <span>/</span>
+                  <input type="number" min="0.1" step="0.1" value={(effectiveTotalFrames / VIDEO_FPS).toFixed(1)} onChange={(event) => updateTimelineTotalFrames(Number(event.target.value) * VIDEO_FPS)} aria-label="Total duration seconds" className="w-16 rounded border border-neutral-700 bg-[#141414] px-1.5 py-0.5 text-right font-mono text-[10px] text-neutral-300 focus:border-emerald-500 focus:outline-none" />
+                  <span>s</span>
+                </label>
+                <label className="flex items-center gap-1 text-neutral-500">
+                  <span>Frames</span>
+                  <input type="number" min="0" step="1" value={currentFrame} onChange={(event) => seekToFrame(Number(event.target.value))} aria-label="Elapsed frames" className="w-16 rounded border border-neutral-700 bg-[#141414] px-1.5 py-0.5 text-right font-mono text-[10px] text-emerald-400 focus:border-emerald-500 focus:outline-none" />
+                  <span>/</span>
+                  <input type="number" min="1" step="1" value={effectiveTotalFrames} onChange={(event) => updateTimelineTotalFrames(Number(event.target.value))} aria-label="Total frames" className="w-16 rounded border border-neutral-700 bg-[#141414] px-1.5 py-0.5 text-right font-mono text-[10px] text-neutral-300 focus:border-emerald-500 focus:outline-none" />
+                </label>
+              </div>
             </div>
 
             <div
@@ -427,8 +459,8 @@ export function PreviewPlayer({
                     const duration = scene.durationFrames ?? scene.durationInFrames ?? scene.duration ?? 90;
                     const endFrame = scene.endFrame ?? scene.end ?? startFrame + duration;
 
-                    const leftPercent = (startFrame / computedTotalFrames) * 100;
-                    const widthPercent = (duration / computedTotalFrames) * 100;
+                    const leftPercent = (startFrame / effectiveTotalFrames) * 100;
+                    const widthPercent = (duration / effectiveTotalFrames) * 100;
                     const widgetName = scene.widget || scene.type || `Widget #${idx + 1}`;
                     const durationSec = formatSeconds(duration);
 
@@ -482,9 +514,9 @@ export function PreviewPlayer({
                 {activeAudioConfig.voUrl ? (
                   (() => {
                     const voStart = activeAudioConfig.voStartFrame || 0;
-                    const voDur = activeAudioConfig.voDurationFrames || computedTotalFrames;
-                    const startPercent = (voStart / computedTotalFrames) * 100;
-                    const widthPercent = Math.min(100 - startPercent, (voDur / computedTotalFrames) * 100);
+                    const voDur = activeAudioConfig.voDurationFrames || effectiveTotalFrames;
+                    const startPercent = (voStart / effectiveTotalFrames) * 100;
+                    const widthPercent = Math.min(100 - startPercent, (voDur / effectiveTotalFrames) * 100);
 
                     return (
                       <div
@@ -515,8 +547,8 @@ export function PreviewPlayer({
                   <div
                     onMouseDown={(e) => handleAudioMouseDown(e, "bgm")}
                     style={{
-                      left: `${((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100}%`,
-                      width: `${Math.min(100 - ((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100, ((activeAudioConfig.bgmDurationFrames || computedTotalFrames) / computedTotalFrames) * 100)}%`,
+                      left: `${((activeAudioConfig.bgmStartFrame ?? 0) / effectiveTotalFrames) * 100}%`,
+                      width: `${Math.min(100 - ((activeAudioConfig.bgmStartFrame ?? 0) / effectiveTotalFrames) * 100, ((activeAudioConfig.bgmDurationFrames || effectiveTotalFrames) / effectiveTotalFrames) * 100)}%`,
                     }}
                     className="absolute h-3 bg-cyan-500/20 border border-cyan-500/60 rounded flex items-center justify-between px-1.5 text-[7.5px] font-mono text-cyan-300 cursor-grab active:cursor-grabbing"
                   >
