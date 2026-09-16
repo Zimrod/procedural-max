@@ -20,6 +20,7 @@ type SceneConfigItem = {
   widget?: string;
   widgetType?: string; // Fallback field support
   startFrame: number;
+  start?: number; // Fallback field support
   durationFrames: number;
   mainDurationInFrames?: number;
   props: Record<string, any>;
