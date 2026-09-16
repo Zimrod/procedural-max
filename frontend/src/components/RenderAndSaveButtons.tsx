@@ -1,5 +1,5 @@
 // src/components/RenderAndSaveButtons.tsx
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import type { RenderedVideoItem } from "./Navbar";
 
 type RenderAndSaveButtonsProps = {
@@ -21,8 +21,42 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
   const [videoName, setVideoName] = useState("");
   const [isRendering, setIsRendering] = useState(false); 
   const [renderStatus, setRenderStatus] = useState<"idle" | "rendering" | "success" | "error">("idle");
+  const [isStatusOpen, setIsStatusOpen] = useState(false);
+  const [statusPosition, setStatusPosition] = useState({ left: 24, bottom: 24 });
+  const dragState = useRef<{ offsetX: number; offsetY: number } | null>(null);
 
   const isPopulated = sceneConfig && sceneConfig.length > 0;
+
+  useEffect(() => {
+    const handlePointerMove = (event: PointerEvent) => {
+      if (!dragState.current) return;
+      setStatusPosition({
+        left: Math.max(8, event.clientX - dragState.current.offsetX),
+        bottom: Math.max(8, window.innerHeight - event.clientY - dragState.current.offsetY),
+      });
+    };
+
+    const handlePointerUp = () => {
+      dragState.current = null;
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, []);
+
+  const handleStatusDragStart = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.parentElement?.getBoundingClientRect();
+    if (!rect) return;
+    dragState.current = {
+      offsetX: event.clientX - rect.left,
+      offsetY: rect.bottom - event.clientY,
+    };
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  };
 
   const handleOpenModal = () => {
     if (!isPopulated) return;
@@ -40,6 +74,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
     setIsModalOpen(false);
     setIsRendering(true);
     setRenderStatus("rendering");
+    setIsStatusOpen(true);
 
     try {
       const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
@@ -99,6 +134,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
       }
 
       setRenderStatus("success");
+      setIsStatusOpen(true);
       const downloadUrl = renderResult.url;
       onRenderComplete?.({
         id: renderId,
@@ -121,6 +157,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
     } catch (err) {
       console.error("Serverless render initialization failed:", err);
       setRenderStatus("error");
+      setIsStatusOpen(true);
     } finally {
       setIsRendering(false);
     }
@@ -131,8 +168,6 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
       <button
         disabled={!isPopulated || isRendering}
         style={{
-          width: "100%",
-          padding: "14px",
           background: "#326597",
           color: isPopulated ? "#ffffff" : "#94a3b8",
           border: isPopulated ? "none" : "1px solid #e2e8f0",
@@ -144,7 +179,16 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
           cursor: (isPopulated && !isRendering) ? "pointer" : "not-allowed",
           marginBottom: "10px",
           transition: "all 0.2s ease",
-          boxShadow: isPopulated && !isRendering ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none"
+          boxShadow: isPopulated && !isRendering ? "0 4px 6px -1px rgb(0 0 0 / 0.1)" : "none",
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width: 1,
+          height: 1,
+          padding: 0,
+          margin: 0,
+          overflow: "hidden",
+          clip: "rect(0, 0, 0, 0)",
         }}
         onClick={handleOpenModal}
       >
@@ -211,6 +255,49 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {isStatusOpen && renderStatus !== "idle" && (
+        <div
+          className="fixed z-[60] w-[320px] max-w-[calc(100vw-2rem)] rounded-xl border border-slate-700 bg-slate-950/95 p-4 text-white shadow-2xl backdrop-blur-md pointer-events-auto"
+          style={{ left: statusPosition.left, bottom: statusPosition.bottom }}
+          role="status"
+          aria-live="polite"
+        >
+          <div
+            className="flex cursor-move items-start gap-3 select-none"
+            onPointerDown={handleStatusDragStart}
+          >
+            {renderStatus === "rendering" ? (
+              <span className="mt-0.5 h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-violet-300/30 border-t-violet-300" aria-hidden="true" />
+            ) : renderStatus === "success" ? (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white" aria-hidden="true">✓</span>
+            ) : (
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-rose-500 text-xs font-bold text-white" aria-hidden="true">!</span>
+            )}
+            <div className="min-w-0 flex-1 pr-5">
+              <p className="text-xs font-bold">
+                {renderStatus === "rendering" ? "Render in progress" : renderStatus === "success" ? "Render complete" : "Render failed"}
+              </p>
+              <p className="mt-1 text-[11px] text-slate-300">
+                {renderStatus === "rendering"
+                  ? "Your video is rendering in the background. You can continue using the page."
+                  : renderStatus === "success"
+                    ? "Your video has finished rendering and the download has started."
+                    : "The render could not be completed. Check the server logs and try again."}
+              </p>
+            </div>
+            <button
+              type="button"
+              onPointerDown={(event) => event.stopPropagation()}
+              onClick={() => setIsStatusOpen(false)}
+              className="absolute right-2 top-2 rounded p-1 text-slate-400 hover:bg-slate-800 hover:text-white"
+              aria-label="Close render status"
+            >
+              ×
+            </button>
           </div>
         </div>
       )}

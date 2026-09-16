@@ -52,6 +52,8 @@ export const OilDrumRig: React.FC<{
   anchorX?: number;
   anchorY?: number;
   scale?: number;
+  scaleX?: number;
+  scaleY?: number;
   rotateDeg?: number;
   pivotId?: string;
   oilDrumPath?: string;
@@ -63,6 +65,8 @@ export const OilDrumRig: React.FC<{
   anchorX = CANVAS_SIZE / 2,
   anchorY = CANVAS_SIZE / 2,
   scale = 1.0,
+  scaleX,
+  scaleY,
   rotateDeg = 0,
   pivotId = 'pivot_ground',
   oilDrumPath = 'oil_drum/oil_drum.svg',
@@ -100,9 +104,10 @@ export const OilDrumRig: React.FC<{
     };
 
   // Base canvas scale relative to bounding viewBox height
-  const finalScale = (CANVAS_SIZE * 0.4 * scale) / drum.viewBox.h;
-  const px = pivot.x * finalScale;
-  const py = pivot.y * finalScale;
+  const finalScaleX = (CANVAS_SIZE * 0.4 * (scaleX ?? scale)) / drum.viewBox.h;
+  const finalScaleY = (CANVAS_SIZE * 0.4 * (scaleY ?? scale)) / drum.viewBox.h;
+  const px = pivot.x * finalScaleX;
+  const py = pivot.y * finalScaleY;
 
   return (
     <svg
@@ -113,7 +118,7 @@ export const OilDrumRig: React.FC<{
       xmlns="http://www.w3.org/2000/svg"
     >
       <g transform={`rotate(${rotateDeg}, ${resolvedAnchorX}, ${resolvedAnchorY})`}>
-        <g transform={`translate(${resolvedAnchorX - px}, ${resolvedAnchorY - py}) scale(${finalScale})`}>
+        <g transform={`translate(${resolvedAnchorX - px}, ${resolvedAnchorY - py}) scale(${finalScaleX} ${finalScaleY})`}>
           <g dangerouslySetInnerHTML={{ __html: drum.svgText }} />
         </g>
       </g>

@@ -104,8 +104,6 @@ export default function LandingPage() {
     return JSON.stringify(sceneConfig) !== JSON.stringify(localConfig);
   }, [sceneConfig, localConfig]);
 
-  // The editor is a draft, but the preview should still respond while it is being edited.
-  // Each widget owns its own timeline window. Never derive one widget's start from another.
   const previewSceneConfig = useMemo(() => {
     const source = localConfig.length > 0 ? localConfig : sceneConfig;
     return source.map(normalizeSceneTiming);
@@ -130,8 +128,6 @@ export default function LandingPage() {
     return `${rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`}?v=${version}`;
   }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, uploadedAudioUrl, uploadedAudioVersion, API]);
 
-  // Keep generated/uploaded voiceover and every editor surface on the same track.
-  // This only changes the source; volume and timeline edits remain intact.
   useEffect(() => {
     setAudioConfig((current) => current.voUrl === currentActiveAudio
       ? current
@@ -294,7 +290,6 @@ export default function LandingPage() {
       return acc;
     }, {} as Record<string, string[]>);
 
-    // Keep the marketplace discoverable while domain-specific widgets are being built.
     if (!widgetSearch.trim()) {
       Object.assign(groups, {
         Geography: ["COUNTRY_FOCUS", "COUNTRY_ROUTE", "COUNTRY_DROP_PIN"],
@@ -309,52 +304,52 @@ export default function LandingPage() {
   }, [widgetSearch]);
 
   return (
-    <main className="min-h-screen w-full bg-[#121212] text-gray-100 antialiased">
-      {/* <Navbar title="Automated Motion Graphics" /> */}
+    <main className="h-screen w-full bg-[#121212] text-gray-100 antialiased flex flex-col overflow-hidden">
       <Navbar renders={renders} />
-      <div className="mx-auto max-w-[1700px] px-4 py-2 sm:px-6 lg:px-8 mt-2">
-        <div className="w-full flow-root min-h-screen">
-          <ScriptSidebar
-            leftTab={leftTab} setLeftTab={setLeftTab} prompt={prompt} setPrompt={setPrompt}
-            aiScript={aiScript} setAiScript={setAiScript} customScript={customScript} setCustomScript={setCustomScript}
-            uploadedScript={uploadedScript} setUploadedScript={setUploadedScript} aiAudioUrl={aiAudioUrl} aiAudioVersion={aiAudioVersion}
-            customAudioUrl={customAudioUrl} customAudioVersion={customAudioVersion} uploadedAudioUrl={uploadedAudioUrl} uploadedAudioVersion={uploadedAudioVersion}
-            activeLoading={activeLoading} currentJobId={currentJobId} pipelineResult={pipelineResult} currentActiveScript={currentActiveScript}
-            handleGenerateScript={handleGenerateScript} handleFileUpload={handleFileUpload} handleGenerateVoiceover={handleGenerateVoiceover} handleRenderAnimation={handleRenderAnimation}
-            onOpenDashboard={() => setDashboardOpen(true)}
-          />
 
-          <div className="w-full lg:w-[calc(100%-445px)] lg:ml-[25px] mt-6 lg:mt-0 lg:float-left flex flex-col xl:flex-row gap-5">
-            <PreviewPlayer
-              playerRef={playerRef} selectedAspect={selectedAspect} setSelectedAspect={setSelectedAspect} aspectRatios={ASPECT_RATIOS}
-              sceneConfig={previewSceneConfig} inputProps={{ audioUrl: currentActiveAudio, scenes: previewSceneConfig, captions: transcription?.words ?? [], theme: themeConfig }}
-              totalDurationInFrames={previewSceneConfig.length
-                ? Math.max(...previewSceneConfig.map((scene) => scene.endFrame))
-                : 300}
-              themeConfig={themeConfig}
-              onScenesChange={setLocalConfig}
-              audioConfig={audioConfig}
-              onAudioConfigChange={setAudioConfig}
+      <div className="flex-1 w-full max-w-[1700px] mx-auto px-4 py-3 sm:px-6 lg:px-8 overflow-hidden">
+        <div className="h-full w-full flex flex-col lg:flex-row gap-5 overflow-hidden">
+          {/* First Column: ScriptSidebar (380px width) */}
+          <div className="w-full lg:w-[380px] shrink-0 h-full overflow-y-auto">
+            <ScriptSidebar
+              leftTab={leftTab} setLeftTab={setLeftTab} prompt={prompt} setPrompt={setPrompt}
+              aiScript={aiScript} setAiScript={setAiScript} customScript={customScript} setCustomScript={setCustomScript}
+              uploadedScript={uploadedScript} setUploadedScript={setUploadedScript} aiAudioUrl={aiAudioUrl} aiAudioVersion={aiAudioVersion}
+              customAudioUrl={customAudioUrl} customAudioVersion={customAudioVersion} uploadedAudioUrl={uploadedAudioUrl} uploadedAudioVersion={uploadedAudioVersion}
+              activeLoading={activeLoading} currentJobId={currentJobId} pipelineResult={pipelineResult} currentActiveScript={currentActiveScript}
+              handleGenerateScript={handleGenerateScript} handleFileUpload={handleFileUpload} handleGenerateVoiceover={handleGenerateVoiceover} handleRenderAnimation={handleRenderAnimation}
+              onOpenDashboard={() => setDashboardOpen(true)}
             />
+          </div>
 
-            <div className="w-full xl:w-[380px] bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col max-h-[660px]">
-              <div className="flex border border-neutral-800 mb-3 p-1 bg-[#141414] rounded-xl">
+          {/* Center & Right Column Container */}
+          <div className="flex-1 h-full flex flex-col xl:flex-row gap-5 min-w-0 overflow-hidden">
+            {/* Center Column: PreviewPlayer (Scrollable) */}
+            <div className="flex-1 h-full overflow-y-auto pr-1">
+              <PreviewPlayer
+                playerRef={playerRef} selectedAspect={selectedAspect} setSelectedAspect={setSelectedAspect} aspectRatios={ASPECT_RATIOS}
+                sceneConfig={previewSceneConfig} inputProps={{ audioUrl: currentActiveAudio, scenes: previewSceneConfig, captions: transcription?.words ?? [], theme: themeConfig }}
+                totalDurationInFrames={previewSceneConfig.length
+                  ? Math.max(...previewSceneConfig.map((scene) => scene.endFrame))
+                  : 300}
+                themeConfig={themeConfig}
+                onScenesChange={setLocalConfig}
+                audioConfig={audioConfig}
+                onAudioConfigChange={setAudioConfig}
+              />
+            </div>
+
+            {/* Third Column: Scene / Theme Editor Panel (420px width) */}
+            <div className="w-full xl:w-[420px] shrink-0 bg-[#1e1e1e] rounded-2xl border border-neutral-800 p-4 flex flex-col h-full overflow-y-auto">
+              <div className="flex border border-neutral-800 mb-3 p-1 bg-[#141414] rounded-xl shrink-0">
                 <button
                   onClick={() => setRightPanelTab("scene")}
-                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${
-                    rightPanelTab === "scene" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"
-                  }`}
-                >
-                  Scene Config
-                </button>
+                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${rightPanelTab === "scene" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+                >Scene Config</button>
                 <button
                   onClick={() => setRightPanelTab("theme")}
-                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${
-                    rightPanelTab === "theme" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"
-                  }`}
-                >
-                  Theme Config
-                </button>
+                  className={`flex-1 py-1.5 text-[10px] font-bold rounded-lg transition-all ${rightPanelTab === "theme" ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/20" : "text-neutral-400 hover:text-neutral-200"}`}
+                >Theme Config</button>
               </div>
 
               {rightPanelTab === "scene" ? (

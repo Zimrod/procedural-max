@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { getWidgetDefinition } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "./RenderAndSaveButtons";
 import type { RenderedVideoItem } from "./Navbar";
@@ -122,7 +122,7 @@ function PropInput({ field, value, onChange }: { field: any; value: any; onChang
   return <input type={field?.kind === "number" ? "number" : field?.kind === "color" ? "color" : "text"} value={value ?? ""} onChange={(e) => onChange(field?.kind === "number" ? Number(e.target.value) : e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />;
 }
 
-type TransformKeyframe = { frame: number; x?: number; y?: number; scale?: number; rotateDeg?: number; opacity?: number };
+type TransformKeyframe = { frame: number; x?: number; y?: number; scaleX?: number; scaleY?: number; rotateDeg?: number; opacity?: number };
 
 function TransformKeyframeEditor({
   keyframes,
@@ -136,7 +136,7 @@ function TransformKeyframeEditor({
   const addKeyframe = () => {
     const last = keyframes[keyframes.length - 1];
     const nextFrame = last ? Math.max(startFrame, Number(last.frame) + 30) : startFrame;
-    onChange([...keyframes, { frame: nextFrame, x: 400, y: 400, scale: 1, rotateDeg: 0, opacity: 1 }].sort((a, b) => a.frame - b.frame));
+    onChange([...keyframes, { frame: nextFrame, x: 400, y: 400, scaleX: 1, scaleY: 1, rotateDeg: 0, opacity: 1 }].sort((a, b) => a.frame - b.frame));
   };
 
   const updateKeyframe = (index: number, key: keyof TransformKeyframe, value: number) => {
@@ -157,7 +157,7 @@ function TransformKeyframeEditor({
         <div key={index} className="space-y-1.5 rounded border border-neutral-800 bg-[#111111] p-2">
           <div className="grid grid-cols-3 gap-1.5">
             {([
-              ['frame', 'Frame'], ['x', 'X'], ['y', 'Y'], ['scale', 'Scale'], ['rotateDeg', 'Rotation'], ['opacity', 'Opacity'],
+              ['frame', 'Frame'], ['x', 'X'], ['y', 'Y'], ['scaleX', 'Scale X'], ['scaleY', 'Scale Y'], ['rotateDeg', 'Rotation'], ['opacity', 'Opacity'],
             ] as const).map(([key, label]) => (
               <label key={key} className="min-w-0 text-[9px] font-medium text-neutral-400">
                 {label}
@@ -165,7 +165,7 @@ function TransformKeyframeEditor({
                   type="number"
                   step={key === 'frame' ? 1 : key === 'opacity' ? 0.05 : 0.1}
                   min={key === 'frame' ? 0 : undefined}
-                  value={keyframe[key] ?? (key === 'scale' || key === 'opacity' ? 1 : 0)}
+                  value={keyframe[key] ?? (key === 'scaleX' || key === 'scaleY' || key === 'opacity' ? 1 : 0)}
                   onChange={(event) => updateKeyframe(index, key, Number(event.target.value))}
                   className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200"
                 />
@@ -345,7 +345,6 @@ function BarTransformKeyframeEditor({
       </div>
       {keyframes.map((keyframe, keyframeIndex) => (
         <div key={keyframeIndex} className="space-y-1.5 rounded border border-neutral-800 bg-[#111111] p-2">
-          {/* Changed grid-cols-6 to grid-cols-3 below */}
           <div className="grid grid-cols-3 gap-1.5">
             {([
               ["frame", "Frame", keyframe.frame ?? startFrame],
@@ -416,11 +415,127 @@ export function SceneEditor({
   updateSceneMeta, updateWidgetType, updateWidgetProp, handleApplyConfigRefresh,
   widgetOptions, defaultWidgetType, setDashboardOpen, onRenderComplete,
 }: SceneEditorProps) {
-  const [activePropTab, setActivePropTab] = useState<Record<number, "properties" | "colors">>({});
+  const [activePropTab, setActivePropTab] = useState<Record<number, "properties" | "colors" | "animation">>({});
+  const [activeLeftTab, setActiveLeftTab] = useState<"dashboard" | "refresh" | "render" | null>(null);
+
+  const renderContainerRef = useRef<HTMLDivElement>(null);
+  const toolbarRef = useRef<HTMLDivElement>(null);
+
+  // Retract buttons when clicking outside the floating toolbar area
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (toolbarRef.current && !toolbarRef.current.contains(event.target as Node)) {
+        setActiveLeftTab(null);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
-    <div className="flex-1 flex flex-col justify-between overflow-hidden">
-      <div className="flex-1 overflow-y-auto space-y-3 pr-1 mb-3">
+    <div className="relative flex-1 h-full w-full overflow-visible bg-[#0d0d0e]">
+      {/* Offscreen Render Controller. Its modal must remain mounted and visible. */}
+      <div className="absolute left-0 top-0 z-50 h-0 w-0">
+        <div ref={renderContainerRef}>
+          <RenderAndSaveButtons
+            rawText={rawText}
+            sceneConfig={sceneConfig}
+            projectId={currentJobId || undefined}
+            aspectRatio={aspectRatio}
+            onRenderComplete={onRenderComplete}
+          />
+        </div>
+      </div>
+
+      {/* Floating Overlay Toolbar */}
+      <div ref={toolbarRef} className="absolute left-[-8px] top-1/2 z-20 flex -translate-y-1/2 flex-col items-start gap-2.5 pointer-events-none">
+
+        {/* 1. Dashboard Button */}
+        <div className="relative pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (activeLeftTab !== "dashboard") {
+                setActiveLeftTab("dashboard");
+              } else {
+                setDashboardOpen(true);
+              }
+            }}
+            title="Open Dashboard"
+            className={`flex items-center h-9 transition-all duration-200 ease-out rounded-lg border text-xs font-semibold overflow-hidden shadow-2xl backdrop-blur-md ${
+              activeLeftTab === "dashboard"
+                ? "w-32 px-2.5 bg-emerald-950/90 border-emerald-500/60 text-emerald-300 shadow-emerald-950/50"
+                : "w-9 justify-center bg-[#1a1a1c]/90 hover:bg-neutral-800/90 border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
+          >
+            <svg className="w-4 h-4 shrink-0 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            <span className={`ml-2 whitespace-nowrap transition-opacity duration-200 ${activeLeftTab === "dashboard" ? "opacity-100" : "opacity-0 hidden"}`}>
+              Dashboard
+            </span>
+          </button>
+        </div>
+
+        {/* 2. Refresh Animation Button */}
+        <div className="relative pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => {
+              if (activeLeftTab !== "refresh") {
+                setActiveLeftTab("refresh");
+              } else {
+                if (isDirty) handleApplyConfigRefresh();
+              }
+            }}
+            disabled={!isDirty}
+            title="Refresh Animation"
+            className={`flex items-center h-9 transition-all duration-200 ease-out rounded-lg border text-xs font-semibold overflow-hidden shadow-2xl backdrop-blur-md disabled:opacity-30 disabled:cursor-not-allowed ${
+              activeLeftTab === "refresh"
+                ? "w-44 px-2.5 bg-sky-950/90 border-sky-500/60 text-sky-300 shadow-sky-950/50"
+                : "w-9 justify-center bg-[#1a1a1c]/90 hover:bg-neutral-800/90 border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
+          >
+            <svg className="w-4 h-4 shrink-0 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span className={`ml-2 whitespace-nowrap transition-opacity duration-200 ${activeLeftTab === "refresh" ? "opacity-100" : "opacity-0 hidden"}`}>
+              Refresh Animation
+            </span>
+          </button>
+        </div>
+
+        {/* 3. Render Animation Button */}
+        <div className="relative pointer-events-auto">
+          <button
+            type="button"
+            onClick={() => {
+              setActiveLeftTab("render");
+              renderContainerRef.current?.querySelector("button")?.click();
+            }}
+            title="Render Animation"
+            className={`flex items-center h-9 transition-all duration-200 ease-out rounded-lg border text-xs font-semibold overflow-hidden shadow-2xl backdrop-blur-md ${
+              activeLeftTab === "render"
+                ? "w-40 px-2.5 bg-violet-950/90 border-violet-500/60 text-violet-300 shadow-violet-950/50"
+                : "w-9 justify-center bg-[#1a1a1c]/90 hover:bg-neutral-800/90 border-neutral-800 text-neutral-400 hover:text-neutral-200"
+            }`}
+          >
+            <svg className="w-4 h-4 shrink-0 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            </svg>
+            <span className={`ml-2 whitespace-nowrap transition-opacity duration-200 ${activeLeftTab === "render" ? "opacity-100" : "opacity-0 hidden"}`}>
+              Render Animation
+            </span>
+          </button>
+        </div>
+
+      </div>
+
+      {/* Main Content Area */}
+      <div className="w-full h-full overflow-y-auto p-3 space-y-3">
         {localConfig.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-6 text-neutral-500 border border-dashed border-neutral-800 rounded-xl bg-[#141414]/50">
             <span className="text-xs">No scenes yet. Trigger animation or add scenes to populate.</span>
@@ -435,7 +550,7 @@ export function SceneEditor({
             const endFrame = scene.endFrame ?? scene.end ?? startFrame + duration;
 
             return (
-              <div key={sceneIdx} className="p-3.5 bg-[#141414] border border-neutral-800 rounded-xl space-y-3">
+              <div key={sceneIdx} className="p-3.5 bg-[#141414] border border-white/40 rounded-xl space-y-3">
                 <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
                   <div className="flex items-center gap-2">
                     <button onClick={() => toggleSceneCollapse(sceneIdx)} className="w-5 h-5 text-neutral-400 hover:text-white">
@@ -456,7 +571,6 @@ export function SceneEditor({
 
                 <div className={`overflow-hidden transition-all duration-300 ${collapsedScenes[sceneIdx] ? "max-h-0 opacity-0" : "max-h-[1500px] opacity-100"}`}>
                   <div className="space-y-3">
-                    {/* Unchained Independent Timing Inputs */}
                     <div className="grid grid-cols-3 gap-2">
                       <div>
                         <label className="block text-[10px] font-bold text-neutral-400 mb-1">Start Frame</label>
@@ -544,7 +658,10 @@ export function SceneEditor({
                           : ["PALLET", "OIL_DRUM"].includes(scene.widget)
                             ? "transformKeyframes"
                             : undefined;
-                        const compactKeys = orderedKeys.filter((key) => !["data", "parentId", "parentKeyframes", "transformKeyframes", animatedColorKey, animatedTransformKey].includes(key) && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
+                        const baseTransformKeys = ["PALLET", "OIL_DRUM"].includes(scene.widget)
+                          ? ["x", "y", "scale", "scaleX", "scaleY", "rotateDeg", "opacity"]
+                          : [];
+                        const compactKeys = orderedKeys.filter((key) => !["data", "parentId", "parentMode", "parentKeyframes", "transformKeyframes", animatedColorKey, animatedTransformKey, ...baseTransformKeys].includes(key) && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
                         const activeTab = activePropTab[sceneIdx] ?? "properties";
                         const chartPaletteKey = scene.widget === "BAR_CHART"
                           ? "barColors"
@@ -570,6 +687,18 @@ export function SceneEditor({
                                       {getSceneAssetLabel(candidate, candidateIndex)}
                                     </option>
                                   ))}
+                                </select>
+                                <label className="block text-[10px] font-bold uppercase tracking-wider text-amber-300">Parent Transform Channels</label>
+                                <select
+                                  value={scene.props.parentMode ?? "all"}
+                                  onChange={(event) => updateWidgetProp(sceneIdx, "parentMode", event.target.value)}
+                                  className="w-full rounded border border-neutral-800 bg-[#1e1e1e] px-2 py-1.5 text-xs text-neutral-200"
+                                >
+                                  <option value="all">All transforms</option>
+                                  <option value="position">Position only</option>
+                                  <option value="scale">Scale only</option>
+                                  <option value="rotation">Rotation only</option>
+                                  <option value="opacity">Opacity only</option>
                                 </select>
                                 <ParentKeyframeEditor
                                   keyframes={Array.isArray(scene.props.parentKeyframes) ? scene.props.parentKeyframes : []}
@@ -612,7 +741,7 @@ export function SceneEditor({
                               />
                             )}
 
-                            {(compactKeys.length > 0 || colorKeys.length > 0) && (
+                            {(compactKeys.length > 0 || colorKeys.length > 0 || animatedTransformKey || localConfig.length > 1) && (
                               <>
                                 <div className="flex items-center gap-1 border-b border-neutral-800">
                                   {compactKeys.length > 0 && (
@@ -720,37 +849,6 @@ export function SceneEditor({
             );
           })
         )}
-      </div>
-
-      {/* Action Buttons Section */}
-      <div className="pt-2 space-y-2 border-t border-neutral-800">
-        {localConfig.length > 0 && (
-          <button
-            onClick={() => setDashboardOpen(true)}
-            className="w-full py-3.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 border border-neutral-700/50"
-          >
-            <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
-            <span>Open Dashboard</span>
-          </button>
-        )}
-
-        <button
-          onClick={handleApplyConfigRefresh}
-          disabled={!isDirty}
-          className="w-full py-3.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/10 bg-emerald-600 text-white hover:bg-emerald-500 disabled:bg-neutral-800 disabled:text-neutral-600 disabled:shadow-none flex items-center justify-center gap-2"
-        >
-          <span>Refresh Animation</span>
-        </button>
-
-        <RenderAndSaveButtons
-          rawText={rawText}
-          sceneConfig={sceneConfig}
-          projectId={currentJobId || undefined}
-          aspectRatio={aspectRatio}
-          onRenderComplete={onRenderComplete}
-        />
       </div>
     </div>
   );

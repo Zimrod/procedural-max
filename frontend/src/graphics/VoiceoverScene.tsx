@@ -81,6 +81,8 @@ type ResolvedTransform = {
   opacity: number;
 };
 
+type ParentMode = 'all' | 'position' | 'scale' | 'rotation' | 'opacity';
+
 const numeric = (value: any, fallback: number) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
 function resolveTransform(widget: string, props: Record<string, any>, absoluteFrame: number): ResolvedTransform {
@@ -90,8 +92,8 @@ function resolveTransform(widget: string, props: Record<string, any>, absoluteFr
     : {
         x: numeric(props.x ?? props.position?.x, 400),
         y: numeric(props.y ?? props.position?.y, 400),
-        scaleX: numeric(props.scale, 1),
-        scaleY: numeric(props.scale, 1),
+        scaleX: numeric(props.scaleX ?? props.scale, 1),
+        scaleY: numeric(props.scaleY ?? props.scale, 1),
         rotateDeg: numeric(props.rotateDeg, 0),
         opacity: numeric(props.opacity, 1),
       };
@@ -130,7 +132,7 @@ function sceneAssetId(item: any, index: number): string {
   return String(item.id ?? item.entityId ?? item.sceneId ?? `${item.widget || item.widgetType || 'asset'}_${index + 1}`);
 }
 
-function applyParentDelta(local: ResolvedTransform, parentAtBase: ResolvedTransform, parentNow: ResolvedTransform): ResolvedTransform {
+function applyParentDelta(local: ResolvedTransform, parentAtBase: ResolvedTransform, parentNow: ResolvedTransform, mode: ParentMode): ResolvedTransform {
   const angle = ((parentNow.rotateDeg - parentAtBase.rotateDeg) * Math.PI) / 180;
   const ratioX = parentAtBase.scaleX === 0 ? 1 : parentNow.scaleX / parentAtBase.scaleX;
   const ratioY = parentAtBase.scaleY === 0 ? 1 : parentNow.scaleY / parentAtBase.scaleY;
@@ -138,13 +140,17 @@ function applyParentDelta(local: ResolvedTransform, parentAtBase: ResolvedTransf
   const relativeY = (local.y - parentAtBase.y) * ratioY;
   const rotatedX = relativeX * Math.cos(angle) - relativeY * Math.sin(angle);
   const rotatedY = relativeX * Math.sin(angle) + relativeY * Math.cos(angle);
+  const usesPosition = mode === 'all' || mode === 'position';
+  const usesScale = mode === 'all' || mode === 'scale';
+  const usesRotation = mode === 'all' || mode === 'rotation';
+  const usesOpacity = mode === 'all' || mode === 'opacity';
   return {
-    x: parentNow.x + rotatedX,
-    y: parentNow.y + rotatedY,
-    scaleX: local.scaleX * ratioX,
-    scaleY: local.scaleY * ratioY,
-    rotateDeg: local.rotateDeg + parentNow.rotateDeg - parentAtBase.rotateDeg,
-    opacity: local.opacity * (parentAtBase.opacity === 0 ? 1 : parentNow.opacity / parentAtBase.opacity),
+    x: usesPosition ? parentNow.x + rotatedX : local.x,
+    y: usesPosition ? parentNow.y + rotatedY : local.y,
+    scaleX: usesScale ? local.scaleX * ratioX : local.scaleX,
+    scaleY: usesScale ? local.scaleY * ratioY : local.scaleY,
+    rotateDeg: usesRotation ? local.rotateDeg + parentNow.rotateDeg - parentAtBase.rotateDeg : local.rotateDeg,
+    opacity: usesOpacity ? local.opacity * (parentAtBase.opacity === 0 ? 1 : parentNow.opacity / parentAtBase.opacity) : local.opacity,
   };
 }
 
@@ -258,7 +264,9 @@ export const VoiceoverScene: React.FC<Props> = ({
           const parentBaseFrame = Number(parentItem.startFrame ?? parentItem.start ?? 0);
           const parentAtBase = findWorldTransform(parentIndex, parentBaseFrame, nextStack);
           const parentNow = findWorldTransform(parentIndex, frame, nextStack);
-          return applyParentDelta(currentLocal, parentAtBase, parentNow);
+          const requestedMode = currentProps.parentMode;
+          const mode: ParentMode = ['all', 'position', 'scale', 'rotation', 'opacity'].includes(requestedMode) ? requestedMode : 'all';
+          return applyParentDelta(currentLocal, parentAtBase, parentNow, mode);
         };
         const worldTransform = findWorldTransform(i, currentFrame, new Set());
         const parentDelta = {
@@ -271,7 +279,7 @@ export const VoiceoverScene: React.FC<Props> = ({
         };
         const isIndustrial = normalizedWidgetKey === 'PALLET' || normalizedWidgetKey === 'OIL_DRUM';
         const renderProps = isIndustrial
-          ? { ...localProps, x: localTransform.x, y: localTransform.y, scale: localTransform.scaleX, rotateDeg: localTransform.rotateDeg, opacity: localTransform.opacity }
+          ? { ...localProps, x: localTransform.x, y: localTransform.y, scaleX: localTransform.scaleX, scaleY: localTransform.scaleY, rotateDeg: localTransform.rotateDeg, opacity: localTransform.opacity }
           : localProps;
         const hasParentDelta = Boolean(resolveParentId(localProps, currentFrame));
 

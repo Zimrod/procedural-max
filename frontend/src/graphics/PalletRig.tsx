@@ -52,6 +52,8 @@ export const PalletRig: React.FC<{
   anchorX?: number;
   anchorY?: number;
   scale?: number;
+  scaleX?: number;
+  scaleY?: number;
   rotateDeg?: number;
   pivotId?: string;
   palletPath?: string;
@@ -63,6 +65,8 @@ export const PalletRig: React.FC<{
   anchorX = CANVAS_SIZE / 2,
   anchorY = CANVAS_SIZE / 2,
   scale = 1.0,
+  scaleX,
+  scaleY,
   rotateDeg = 0,
   pivotId = 'pivot_ground',
   palletPath = 'pallet/pallet.svg',
@@ -99,9 +103,10 @@ export const PalletRig: React.FC<{
     };
 
   // Base canvas scale relative to bounding viewBox width
-  const finalScale = (CANVAS_SIZE * 0.5 * scale) / pallet.viewBox.w;
-  const px = pivot.x * finalScale;
-  const py = pivot.y * finalScale;
+  const finalScaleX = (CANVAS_SIZE * 0.5 * (scaleX ?? scale)) / pallet.viewBox.w;
+  const finalScaleY = (CANVAS_SIZE * 0.5 * (scaleY ?? scale)) / pallet.viewBox.w;
+  const px = pivot.x * finalScaleX;
+  const py = pivot.y * finalScaleY;
 
   return (
     <svg
@@ -112,7 +117,7 @@ export const PalletRig: React.FC<{
       xmlns="http://www.w3.org/2000/svg"
     >
       <g transform={`rotate(${rotateDeg}, ${resolvedAnchorX}, ${resolvedAnchorY})`}>
-        <g transform={`translate(${resolvedAnchorX - px}, ${resolvedAnchorY - py}) scale(${finalScale})`}>
+        <g transform={`translate(${resolvedAnchorX - px}, ${resolvedAnchorY - py}) scale(${finalScaleX} ${finalScaleY})`}>
           <g dangerouslySetInnerHTML={{ __html: pallet.svgText }} />
         </g>
       </g>

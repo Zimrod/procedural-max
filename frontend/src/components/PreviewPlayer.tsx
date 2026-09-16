@@ -204,7 +204,6 @@ export function PreviewPlayer({
       const minFrames = 15;
 
       const updated = sceneConfig.map((s, idx) => {
-        // Only modify the explicitly targeted scene; adjacent scenes remain strictly untouched
         if (idx !== sceneIndex) return s;
 
         let newStart = s.startFrame ?? s.start ?? 0;
@@ -298,9 +297,6 @@ export function PreviewPlayer({
 
   const playheadPercent = Math.min(100, Math.max(0, (currentFrame / computedTotalFrames) * 100));
 
-  // Do not create a new inputProps object on every frameupdate. Remotion treats
-  // changing media props as a source change, which can restart HTMLAudioElement
-  // playback and sounds like a short loop/choppy audio.
   const playerInputProps = useMemo(() => ({
     ...inputProps,
     scenes: sceneConfig,
@@ -407,14 +403,14 @@ export function PreviewPlayer({
 
             <div
               ref={trackRef}
-              className="w-full bg-black/80 rounded-xl p-2.5 border border-neutral-800 flex flex-col gap-2 relative cursor-default"
+              className="w-full bg-black/80 rounded-xl p-2.5 border border-neutral-800 flex flex-col gap-1.5 relative cursor-default"
             >
               {/* Playhead Line */}
               <div
                 style={{ left: `${playheadPercent}%` }}
                 className="pointer-events-none absolute top-0 bottom-0 z-40 flex flex-col items-center"
               >
-                <div className="w-3 h-3 bg-amber-400 border-2 border-neutral-900 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.9)] -mt-1" />
+                <div className="w-2.5 h-2.5 bg-amber-400 border-2 border-neutral-900 rounded-full shadow-[0_0_8px_rgba(251,191,36,0.9)] -mt-0.5" />
                 <div className="w-[2px] h-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.9)]" />
               </div>
 
@@ -423,8 +419,8 @@ export function PreviewPlayer({
                 <div className="w-[2px] h-full bg-emerald-500/80" />
               </div>
 
-              {/* INDEPENDENT WIDGET TRACKS (Parallel / Decoupled Layers) */}
-              <div className="w-full flex flex-col gap-1.5 relative min-h-[60px]">
+              {/* INDEPENDENT WIDGET TRACKS */}
+              <div className="w-full flex flex-col gap-1 relative min-h-[40px]">
                 {sceneConfig.length > 0 ? (
                   sceneConfig.map((scene, idx) => {
                     const startFrame = scene.startFrame ?? scene.start ?? 0;
@@ -439,7 +435,7 @@ export function PreviewPlayer({
                     return (
                       <div
                         key={scene.id || idx}
-                        className="w-full h-9 bg-neutral-900/60 rounded-lg relative overflow-hidden border border-neutral-800/80 flex items-center"
+                        className="w-full h-6 bg-neutral-900/60 rounded-md relative overflow-hidden border border-neutral-800/80 flex items-center"
                       >
                         <div
                           style={{
@@ -447,42 +443,42 @@ export function PreviewPlayer({
                             width: `${widthPercent}%`,
                           }}
                           onMouseDown={(e) => handleWidgetMouseDown(e, idx, "move")}
-                          className="group absolute h-7 bg-neutral-800 hover:bg-emerald-950/70 border border-neutral-700 hover:border-emerald-500/80 rounded-md px-2 flex items-center justify-between text-[9px] cursor-grab active:cursor-grabbing transition-colors"
+                          className="group absolute h-[18px] bg-neutral-800 hover:bg-emerald-950/70 border border-neutral-700 hover:border-emerald-500/80 rounded px-1.5 flex items-center justify-between text-[8px] cursor-grab active:cursor-grabbing transition-colors"
                         >
                           {/* Left Resize Handle */}
                           <div
                             onMouseDown={(e) => handleWidgetMouseDown(e, idx, "resize-start")}
-                            className="absolute left-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-emerald-400/80 rounded-l-md"
+                            className="absolute left-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400/80 rounded-l"
                           />
 
-                          <div className="flex items-center gap-1.5 truncate pointer-events-none">
+                          <div className="flex items-center gap-1 truncate pointer-events-none">
                             <span className="font-bold text-neutral-200 group-hover:text-emerald-300 truncate">
                               #{idx + 1} {widgetName}
                             </span>
                           </div>
 
-                          <span className="font-mono text-neutral-400 group-hover:text-emerald-400 text-[8px] flex-shrink-0 pointer-events-none">
+                          <span className="font-mono text-neutral-400 group-hover:text-emerald-400 text-[7.5px] flex-shrink-0 pointer-events-none">
                             f:{startFrame}–{endFrame} ({durationSec})
                           </span>
 
                           {/* Right Resize Handle */}
                           <div
                             onMouseDown={(e) => handleWidgetMouseDown(e, idx, "resize-end")}
-                            className="absolute right-0 top-0 bottom-0 w-2 cursor-col-resize hover:bg-emerald-400/80 rounded-r-md"
+                            className="absolute right-0 top-0 bottom-0 w-1.5 cursor-col-resize hover:bg-emerald-400/80 rounded-r"
                           />
                         </div>
                       </div>
                     );
                   })
                 ) : (
-                  <div className="w-full h-10 bg-neutral-900/30 border border-dashed border-neutral-800/80 rounded-lg flex items-center justify-center text-[10px] text-neutral-600 font-medium">
+                  <div className="w-full h-7 bg-neutral-900/30 border border-dashed border-neutral-800/80 rounded-lg flex items-center justify-center text-[9px] text-neutral-600 font-medium">
                     Empty Timeline — Add scenes to populate tracks
                   </div>
                 )}
               </div>
 
               {/* VOICE OVER TRACK */}
-              <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
+              <div className="w-full h-4 bg-neutral-900/50 border border-neutral-800/80 rounded relative overflow-hidden flex items-center px-1">
                 {activeAudioConfig.voUrl ? (
                   (() => {
                     const voStart = activeAudioConfig.voStartFrame || 0;
@@ -497,7 +493,7 @@ export function PreviewPlayer({
                           width: `${widthPercent}%`,
                         }}
                         onMouseDown={(e) => handleAudioMouseDown(e, "vo")}
-                        className={`absolute h-4 border rounded flex items-center justify-between px-2 text-[8px] font-mono transition-colors cursor-grab active:cursor-grabbing ${
+                        className={`absolute h-3 border rounded flex items-center justify-between px-1.5 text-[7.5px] font-mono transition-colors cursor-grab active:cursor-grabbing ${
                           isAudioOverflowing
                             ? "bg-amber-500/20 border-amber-500/80 text-amber-300"
                             : "bg-emerald-500/20 border-emerald-500/60 text-emerald-300"
@@ -509,12 +505,12 @@ export function PreviewPlayer({
                     );
                   })()
                 ) : (
-                  <span className="text-[8px] font-mono text-neutral-600 px-2">🎙️ Voiceover (No Track Loaded)</span>
+                  <span className="text-[7.5px] font-mono text-neutral-600 px-1">🎙️ Voiceover (No Track Loaded)</span>
                 )}
               </div>
 
               {/* BACKGROUND MUSIC TRACK */}
-              <div className="w-full h-6 bg-neutral-900/50 border border-neutral-800/80 rounded-md relative overflow-hidden flex items-center px-1">
+              <div className="w-full h-4 bg-neutral-900/50 border border-neutral-800/80 rounded relative overflow-hidden flex items-center px-1">
                 {activeAudioConfig.bgmUrl ? (
                   <div
                     onMouseDown={(e) => handleAudioMouseDown(e, "bgm")}
@@ -522,13 +518,13 @@ export function PreviewPlayer({
                       left: `${((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100}%`,
                       width: `${Math.min(100 - ((activeAudioConfig.bgmStartFrame ?? 0) / computedTotalFrames) * 100, ((activeAudioConfig.bgmDurationFrames || computedTotalFrames) / computedTotalFrames) * 100)}%`,
                     }}
-                    className="absolute h-4 bg-cyan-500/20 border border-cyan-500/60 rounded flex items-center justify-between px-2 text-[8px] font-mono text-cyan-300 cursor-grab active:cursor-grabbing"
+                    className="absolute h-3 bg-cyan-500/20 border border-cyan-500/60 rounded flex items-center justify-between px-1.5 text-[7.5px] font-mono text-cyan-300 cursor-grab active:cursor-grabbing"
                   >
                     <span className="truncate">🎵 Background Music</span>
                     <span className="opacity-80">Full Length</span>
                   </div>
                 ) : (
-                  <span className="text-[8px] font-mono text-neutral-600 px-2">🎵 Background Music (No Track Loaded)</span>
+                  <span className="text-[7.5px] font-mono text-neutral-600 px-1">🎵 Background Music (No Track Loaded)</span>
                 )}
               </div>
             </div>
