@@ -195,7 +195,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         {isRendering ? "⚡ Saving & Rendering..." : "🎬 Render Animation"}
       </button>
 
-      {renderStatus === "success" && (
+      {/* {renderStatus === "success" && (
         <p style={{ color: "#22c55e", fontSize: "11px", marginTop: "4px", textAlign: "center", fontWeight: "500" }}>
           🚀 Saved, rendered & downloaded successfully!
         </p>
@@ -204,7 +204,7 @@ export const RenderAndSaveButtons: React.FC<RenderAndSaveButtonsProps> = ({
         <p style={{ color: "#dc2626", fontSize: "11px", marginTop: "4px", textAlign: "center", fontWeight: "500" }}>
           ✕ Serverless invocation or database save failed. Verify backend terminal logs.
         </p>
-      )}
+      )}  */}
 
       {/* Light Theme Video Naming Modal */}
       {isModalOpen && (

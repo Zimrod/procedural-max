@@ -12,8 +12,9 @@ export default function PayButton() {
       const data = await res.json();
 
       if (data.success && data.redirectUrl) {
-        // Redirect browser to Paynow hosted payment page
         window.location.href = data.redirectUrl;
+      } else if (data.success && data.testMode) {
+        alert(`Paynow test payment initiated (${data.status || 'pending'}). Paynow will send the result shortly.`);
       } else {
         alert(`Payment error: ${data.error}`);
       }
