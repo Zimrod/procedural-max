@@ -2,19 +2,32 @@
 
 import { useState } from 'react';
 
-export default function PayButton() {
+interface PayButtonProps {
+  amount: number;
+  title?: string;
+  email?: string;
+}
+
+export default function PayButton({
+  amount,
+  title = 'Purchase Item',
+  email = 'customer@example.com',
+}: PayButtonProps) {
   const [loading, setLoading] = useState(false);
 
   const handlePayment = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/checkout', { method: 'POST' });
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, amount, title }),
+      });
+
       const data = await res.json();
 
       if (data.success && data.redirectUrl) {
         window.location.href = data.redirectUrl;
-      } else if (data.success && data.testMode) {
-        alert(`Paynow test payment initiated (${data.status || 'pending'}). Paynow will send the result shortly.`);
       } else {
         alert(`Payment error: ${data.error}`);
       }
@@ -40,7 +53,7 @@ export default function PayButton() {
         fontWeight: 'bold',
       }}
     >
-      {loading ? '+...' : '+'}
+      {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
     </button>
   );
 }

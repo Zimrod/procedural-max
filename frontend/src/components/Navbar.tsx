@@ -1,23 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState } from "react";
 import {
   Menu,
   X,
-  User,
-  Coins,
-  Clapperboard,
   Download,
   Film,
   Clock,
   HardDrive,
   Loader2,
 } from "lucide-react";
-import { useAuth } from "./AuthContext";
-
-const MAIN_SITE = process.env.NEXT_PUBLIC_MAIN_SITE_URL || "https://journey18miles.com";
-
 export interface RenderedVideoItem {
   id: string;
   title: string;
@@ -34,21 +26,8 @@ interface NavbarProps {
 }
 
 export function Navbar({ renders = [] }: NavbarProps) {
-  const { user, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [showDownloads, setShowDownloads] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentUrl(window.location.href);
-    }
-  }, []);
-
-  const loginRedirectUrl = `${MAIN_SITE}?auth=login&redirect=${encodeURIComponent(
-    currentUrl || "https://studio.journey18miles.com"
-  )}`;
 
   const activeRendersCount = renders.filter((r) => r.status === "completed").length;
 
@@ -63,32 +42,11 @@ export function Navbar({ renders = [] }: NavbarProps) {
 
         {/* Desktop Navigation & User Controls */}
         <div className="hidden lg:flex items-center gap-4">
-          <Link
-            href={MAIN_SITE}
-            className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-neutral-100"
-          >
-            <svg
-              className="h-3.5 w-3.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            <span>Main Site</span>
-          </Link>
-
           {/* ---------------- DOWNLOADS DROPDOWN BUTTON ---------------- */}
           <div className="relative">
             <button
               onClick={() => {
                 setShowDownloads(!showDownloads);
-                setShowUserMenu(false);
               }}
               className="flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 transition-colors relative"
             >
@@ -161,68 +119,6 @@ export function Navbar({ renders = [] }: NavbarProps) {
             )}
           </div>
 
-          <div className="h-4 w-px bg-neutral-800" />
-
-          {/* User Area */}
-          <div className="relative">
-            {user ? (
-              <button
-                onClick={() => {
-                  setShowUserMenu(!showUserMenu);
-                  setShowDownloads(false);
-                }}
-                className="flex items-center gap-2 text-white hover:text-zinc-300 transition-colors"
-              >
-                <User size={18} />
-                <span className="text-xs font-medium">
-                  {user.name || user.email?.split("@")[0]}
-                </span>
-              </button>
-            ) : (
-              <a
-                href={loginRedirectUrl}
-                className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-md bg-emerald-500 text-black hover:bg-emerald-400 transition-colors"
-              >
-                <User size={16} />
-                <span>Log in</span>
-              </a>
-            )}
-
-            {/* User Dropdown */}
-            {user && showUserMenu && (
-              <div className="absolute right-0 mt-2 w-56 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl py-2 z-50 text-zinc-100">
-                <div className="px-4 py-2 border-b border-zinc-800">
-                  <p className="text-sm font-medium text-white">{user.name || user.email}</p>
-                  <p className="text-xs text-zinc-400 truncate">{user.email}</p>
-                </div>
-
-                <div className="px-4 py-2.5 border-b border-zinc-800 bg-zinc-950/50 space-y-1.5">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-1.5 text-zinc-400">
-                      <Coins size={14} className="text-amber-400" /> AI Tokens:
-                    </span>
-                    <span className="font-bold text-amber-400">{user?.ai_tokens ?? 0}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="flex items-center gap-1.5 text-zinc-400">
-                      <Clapperboard size={14} className="text-emerald-400" /> Render Credits:
-                    </span>
-                    <span className="font-bold text-emerald-400">{user?.credits ?? 0}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => {
-                    setShowUserMenu(false);
-                    logout();
-                  }}
-                  className="block w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-zinc-800 transition-colors mt-1"
-                >
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Mobile Hamburger */}

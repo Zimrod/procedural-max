@@ -282,7 +282,9 @@ export function WidgetLibraryTab({
                             …
                           </button>
                         ) : isPremium ? (
-                          <PayButton />
+                          <PayButton amount={7} title="Starter Plan" />
+                          // <PayButton amount={15} title="Pro Plan" />
+                          // <PayButton amount={39} title="Enterprise Plan" />
                         ) : (
                           <button
                             onClick={() => handleAddWidget(w)}

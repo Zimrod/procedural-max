@@ -4,6 +4,36 @@ const { Paynow } = require('paynow');
 
 export async function POST(request: Request) {
   try {
+    const body = await request.json().catch(() => ({}));
+    const customerEmail = body.email;
+    const rawAmount = Number(body.amount);
+    const itemTitle = body.title || 'Purchase Item';
+
+    // Validate payment amount
+    if (isNaN(rawAmount) || rawAmount <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'A valid payment amount is required.' },
+        { status: 400 }
+      );
+    }
+
+    const amount = Number(rawAmount.toFixed(2));
+    const testMode = process.env.PAYNOW_TEST_MODE === 'true';
+    const merchantAccountEmail = process.env.PAYNOW_MERCHANT_EMAIL;
+
+    if (testMode && !merchantAccountEmail) {
+      throw new Error('PAYNOW_MERCHANT_EMAIL is not configured');
+    }
+
+    if (!testMode && (!customerEmail || typeof customerEmail !== 'string')) {
+      return NextResponse.json(
+        { success: false, error: 'Customer email is required for checkout.' },
+        { status: 400 }
+      );
+    }
+
+    const paymentEmail = testMode ? merchantAccountEmail! : customerEmail;
+
     const paynow = new Paynow(
       process.env.PAYNOW_INTEGRATION_ID!,
       process.env.PAYNOW_INTEGRATION_KEY!
@@ -13,26 +43,14 @@ export async function POST(request: Request) {
     paynow.resultUrl = `${baseUrl}/api/paynow/update`;
     paynow.returnUrl = `${baseUrl}/payment-status`;
 
-    // In test mode this must be the email address used to log into Paynow.
-    // Do not silently fall back to an address: Paynow will reject fake payments
-    // when authemail does not belong to the merchant account being tested.
-    const merchantAccountEmail = process.env.PAYNOW_MERCHANT_EMAIL;
-    if (!merchantAccountEmail) {
-      throw new Error('PAYNOW_MERCHANT_EMAIL is not configured');
-    }
-
     const payment = paynow.createPayment(
-      `TEST-ORDER-${Date.now()}`,
-      merchantAccountEmail
+      `ORDER-${Date.now()}`,
+      paymentEmail
     );
 
-    payment.add('Test Purchase Item', 1.00);
+    // Pass dynamic title and amount
+    payment.add(itemTitle, amount);
 
-    const testMode = process.env.PAYNOW_TEST_MODE === 'true';
-
-    // Hosted checkout is the correct default for testing. The VMC express
-    // endpoint requires Paynow to explicitly permit tokenized transactions
-    // for the merchant, so do not use it unless Paynow has enabled that flag.
     const response = await paynow.send(payment);
 
     if (response.success) {
