@@ -47,15 +47,22 @@ export function ScriptSidebar({
   pipelineResult, currentActiveScript, handleGenerateScript, handleFileUpload,
   handleGenerateVoiceover, handleRenderAnimation, onOpenDashboard,
 }: ScriptSidebarProps) {
+  // Helper booleans to map activeLoading states
+  const isScriptLoading = activeLoading === "script";
+  const isVoiceoverLoading = activeLoading === "generating_audio" || activeLoading === "assembling_scenes" || activeLoading === "voiceover";
+  const isUploadLoading = activeLoading === "uploading_audio" || activeLoading === "transcribing";
+  const isAnimationLoading = activeLoading === "animation" || activeLoading === "rendering";
+
   return (
     <div className="w-full bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 shadow-2xl shadow-black/60">
-      {/* Top Bar with Dashboard Icon Button */}
+      {/* Top Bar with Dashboard Button */}
       <div className="flex items-center justify-between mb-3">
         {onOpenDashboard && (
           <button
             onClick={onOpenDashboard}
+            disabled={activeLoading !== null}
             title="Open Dashboard"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#141414] hover:bg-neutral-800 border border-neutral-800 rounded-lg text-xs font-semibold text-neutral-300 hover:text-white transition-all shadow-sm"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 bg-[#141414] hover:bg-neutral-800 border border-neutral-800 rounded-lg text-xs font-semibold text-neutral-300 hover:text-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
@@ -65,12 +72,14 @@ export function ScriptSidebar({
         )}
       </div>
 
+      {/* Navigation Tabs */}
       <div className="flex border border-neutral-800 mb-4 p-1 bg-[#141414] rounded-md text-center">
         {(["generate", "custom-script", "upload-voiceover"] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setLeftTab(tab)}
-            className={`flex-1 py-1 px-1 text-[10px] font-semibold tracking-tight rounded-sm transition-all ${
+            disabled={activeLoading !== null}
+            className={`flex-1 py-1 px-1 text-[10px] font-semibold tracking-tight rounded-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed ${
               leftTab === tab ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" : "text-neutral-400 hover:text-neutral-200"
             }`}
           >
@@ -79,6 +88,7 @@ export function ScriptSidebar({
         ))}
       </div>
 
+      {/* AI Prompt Tab */}
       {leftTab === "generate" && (
         <div className="space-y-3">
           <div>
@@ -86,25 +96,28 @@ export function ScriptSidebar({
             <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              disabled={activeLoading !== null}
               placeholder="Describe the type of script you want created..."
-              className="w-full min-h-[80px] p-3 bg-[#141414] border border-neutral-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-neutral-100 placeholder:text-neutral-600 resize-none transition-all"
+              className="w-full min-h-[80px] p-3 bg-[#141414] border border-neutral-800 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/50 text-neutral-100 placeholder:text-neutral-600 resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
           <button
             onClick={handleGenerateScript}
             disabled={activeLoading !== null || !prompt.trim()}
-            className="w-full py-2.5 bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-900/50 disabled:text-neutral-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 border border-neutral-700/50"
+            className="w-full py-2.5 bg-neutral-800 hover:bg-neutral-700 disabled:bg-neutral-900/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-sm flex items-center justify-center gap-2 border border-neutral-700/50"
           >
-            <span>{activeLoading === "script" ? "Processing Narrative..." : "Step 1: Generate Script"}</span>
-            {activeLoading === "script" && <Spinner colorClass="text-emerald-400" />}
+            {isScriptLoading && <Spinner colorClass="text-emerald-400" />}
+            <span>{isScriptLoading ? "Processing Narrative..." : "Step 1: Generate Script"}</span>
           </button>
+
           {aiScript && (
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1.5">Editable Generated Script</label>
               <textarea
                 value={aiScript}
                 onChange={(e) => setAiScript(e.target.value)}
-                className="w-full min-h-[120px] p-3 bg-[#141414] border border-emerald-900/60 rounded-xl text-xs font-mono focus:outline-none text-neutral-100 transition-all"
+                disabled={activeLoading !== null}
+                className="w-full min-h-[120px] p-3 bg-[#141414] border border-emerald-900/60 rounded-xl text-xs font-mono focus:outline-none text-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
           )}
@@ -117,6 +130,7 @@ export function ScriptSidebar({
         </div>
       )}
 
+      {/* Custom Script Tab */}
       {leftTab === "custom-script" && (
         <div className="space-y-3">
           <div>
@@ -124,8 +138,9 @@ export function ScriptSidebar({
             <textarea
               value={customScript}
               onChange={(e) => setCustomScript(e.target.value)}
+              disabled={activeLoading !== null}
               placeholder="Paste your script directly here..."
-              className="w-full min-h-[160px] p-3 bg-[#141414] border border-neutral-800 rounded-xl text-xs font-mono text-neutral-100 focus:outline-none transition-all"
+              className="w-full min-h-[160px] p-3 bg-[#141414] border border-neutral-800 rounded-xl text-xs font-mono text-neutral-100 focus:outline-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
           {customAudioUrl && (
@@ -137,13 +152,33 @@ export function ScriptSidebar({
         </div>
       )}
 
+      {/* Upload Voiceover Tab */}
       {leftTab === "upload-voiceover" && (
         <div className="space-y-3">
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-neutral-400 mb-1.5">Upload Audio File (.mp3, .wav, .m4a)</label>
-            <label className="flex flex-col items-center justify-center border-2 border-dashed border-neutral-800 hover:border-emerald-500/50 rounded-xl p-3 bg-[#141414] cursor-pointer transition-all">
-              <span className="text-xs text-neutral-400 font-medium">Click to select audio file</span>
-              <input type="file" accept="audio/*" onChange={handleFileUpload} className="hidden" disabled={activeLoading !== null} />
+            <label
+              className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-3 bg-[#141414] transition-all ${
+                activeLoading !== null
+                  ? "border-neutral-800 opacity-50 cursor-not-allowed"
+                  : "border-neutral-800 hover:border-emerald-500/50 cursor-pointer"
+              }`}
+            >
+              {isUploadLoading ? (
+                <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
+                  <Spinner colorClass="text-emerald-400" />
+                  <span>Transcribing Audio...</span>
+                </div>
+              ) : (
+                <span className="text-xs text-neutral-400 font-medium">Click to select audio file</span>
+              )}
+              <input
+                type="file"
+                accept="audio/*"
+                onChange={handleFileUpload}
+                className="hidden"
+                disabled={activeLoading !== null}
+              />
             </label>
           </div>
           {uploadedAudioUrl && (
@@ -157,34 +192,53 @@ export function ScriptSidebar({
             <textarea
               value={uploadedScript}
               onChange={(e) => setUploadedScript(e.target.value)}
-              className="w-full min-h-[120px] p-3 bg-[#141414] border border-emerald-900/60 rounded-xl text-xs font-mono text-neutral-100 transition-all"
+              disabled={activeLoading !== null}
+              className="w-full min-h-[120px] p-3 bg-[#141414] border border-emerald-900/60 rounded-xl text-xs font-mono text-neutral-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
         </div>
       )}
 
+      {/* Main Workflow Action Buttons */}
       <div className="mt-5 pt-4 border-t border-neutral-800 space-y-2.5">
         {leftTab !== "upload-voiceover" && (
           <button
             onClick={handleGenerateVoiceover}
             disabled={activeLoading !== null || !currentActiveScript.trim()}
-            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
           >
+            {isVoiceoverLoading && <Spinner colorClass="text-amber-300" />}
             <span>
-              {activeLoading === "generating_audio" ? "Generating Audio..." : activeLoading === "assembling_scenes" ? "Assembling Scenes..." : currentJobId ? "Step 2: Update Voiceover & Script" : "Step 2: Generate Voiceover"}
+              {activeLoading === "generating_audio"
+                ? "Generating Audio..."
+                : activeLoading === "assembling_scenes"
+                ? "Assembling Scenes..."
+                : isVoiceoverLoading
+                ? "Processing Voiceover..."
+                : currentJobId
+                ? "Step 2: Update Voiceover & Script"
+                : "Step 2: Generate Voiceover"}
             </span>
-            {(activeLoading === "generating_audio" || activeLoading === "assembling_scenes") && <Spinner colorClass="text-amber-300" />}
           </button>
         )}
+
         <button
           onClick={handleRenderAnimation}
           disabled={activeLoading !== null || !pipelineResult}
-          className="w-full py-3 bg-rose-600 hover:bg-rose-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
+          className="w-full py-3 bg-rose-600 hover:bg-rose-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
         >
+          {(isAnimationLoading || (leftTab === "upload-voiceover" && isUploadLoading)) && (
+            <Spinner colorClass="text-rose-200" />
+          )}
           <span>
-            {activeLoading === "animation" ? "Rendering Animation..." : activeLoading === "uploading_audio" ? "Transcribing Audio..." : leftTab === "upload-voiceover" ? "Step 2: Render Animation" : "Step 3: Generate Animation"}
+            {isAnimationLoading
+              ? "Rendering Animation..."
+              : isUploadLoading
+              ? "Transcribing Audio..."
+              : leftTab === "upload-voiceover"
+              ? "Step 2: Render Animation"
+              : "Step 3: Generate Animation"}
           </span>
-          {(activeLoading === "animation" || activeLoading === "uploading_audio") && <Spinner colorClass="text-rose-200" />}
         </button>
       </div>
     </div>
