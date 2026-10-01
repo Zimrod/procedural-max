@@ -40,8 +40,8 @@ export function Navbar({ renders = [] }: NavbarProps) {
 
   const activeRendersCount = renders.filter((r) => r.status === "completed").length;
 
-  const renderCredits = user?.credits ?? user?.render_credits ?? 0;
-  const aiCredits = user?.ai_tokens ?? user?.ai_credits ?? 0;
+  const renderCredits = user?.credits ?? (user as Record<string, any>)?.render_credits ?? 0;
+  const aiCredits = (user as Record<string, any>)?.ai_tokens ?? (user as Record<string, any>)?.ai_credits ?? 0;
 
   return (
     <>
