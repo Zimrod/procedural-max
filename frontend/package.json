@@ -43,6 +43,7 @@
     "@next/eslint-plugin-next": "15.1.6",
     "@remotion/eslint-config-flat": "4.0.486",
     "@remotion/eslint-plugin": "4.0.486",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "20.12.14",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
