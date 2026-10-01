@@ -114,6 +114,11 @@ const manualDescriptions: Record<WidgetType, { description: string; visualStyle:
     visualStyle: 'Outlined oil drum with pivot-aware grounded positioning.',
     bestForKeywords: ['oil drum', 'warehouse', 'oil and gas', 'industrial storage', 'logistics'],
   },
+  FORKLIFT: {
+    description: 'Animates a forklift travelling across the canvas with independently controlled fork elevation.',
+    visualStyle: 'Pivot-aware outlined SVG vehicle with rotating wheels and a liftable fork.',
+    bestForKeywords: ['forklift', 'warehouse', 'logistics', 'material handling', 'loading bay'],
+  },
 };
 
 export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(widgetRegistry).reduce((acc, key) => {

@@ -114,6 +114,11 @@ const manualDescriptions: Record<WidgetType, { description: string; visualStyle:
     visualStyle: 'Loaded SVG asset pinned to a configurable position with scale and opacity controls.',
     bestForKeywords: ['oil drum', 'barrel', 'warehouse', 'oil and gas', 'industrial storage'],
   },
+  FORKLIFT: {
+    description: 'Animates a forklift travelling across the canvas with independently controlled fork elevation.',
+    visualStyle: 'Pivot-aware outlined SVG vehicle with rotating wheels and a liftable fork.',
+    bestForKeywords: ['forklift', 'warehouse', 'logistics', 'material handling', 'loading bay'],
+  },
 };
 
 export const widgetMetadata: Record<WidgetType, WidgetMetadata> = Object.keys(widgetRegistry).reduce((acc, key) => {

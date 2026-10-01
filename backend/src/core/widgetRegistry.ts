@@ -28,9 +28,12 @@ export type WidgetRegistryEntry = {
 export type WidgetEditorField = {
   key: string;
   label: string;
-  kind: "text" | "number" | "color" | "boolean" | "json" | "array" | "select";
+  kind: "text" | "number" | "range" | "color" | "boolean" | "json" | "array" | "select";
   options?: string[];
   defaultValue?: any;
+  min?: number;
+  max?: number;
+  step?: number;
 };
 
 const field = (
@@ -38,13 +41,19 @@ const field = (
   label: string,
   kind: WidgetEditorField["kind"],
   options?: string[],
-  defaultValue?: any
+  defaultValue?: any,
+  min?: number,
+  max?: number,
+  step?: number
 ): WidgetEditorField => ({
   key,
   label,
   kind,
   options,
   defaultValue,
+  min,
+  max,
+  step,
 });
 
 const AVAILABLE_COUNTRIES = ['zimbabwe', 'botswana', 'mali', 'kenya', 'zambia'];
@@ -264,6 +273,31 @@ export const widgetRegistry: Partial<Record<WidgetType, WidgetRegistryEntry>> = 
       scale: extractedData?.scale ?? 1,
       rotateDeg: extractedData?.rotateDeg ?? 0,
       opacity: extractedData?.opacity ?? 1,
+    }),
+  },
+  FORKLIFT: {
+    category: 'INDUSTRIAL',
+    intents: ['CORE_THESIS', 'STATUS_BADGE'],
+    purpose: 'Animate a forklift moving through a warehouse while its fork raises and lowers.',
+    bestFor: ['warehouse scenes', 'logistics', 'material handling', 'loading and unloading', 'forklift motion'],
+    avoidFor: ['data visualization', 'text-heavy narration'],
+    previewFileName: 'forklift.mp4',
+    defaultProps: { distanceCovered: 0, forkPosition: 0, invertDirection: false, positionX: -80, positionY: 624, scale: 0.6, transformKeyframes: [], forkliftKeyframes: [] },
+    editorFields: [
+      field('distanceCovered', 'Distance Covered (%)', 'range', undefined, 0, 0, 100, 1),
+      field('forkPosition', 'Fork Height (0–1)', 'range', undefined, 0, 0, 1, 0.1),
+      field('invertDirection', 'Invert Direction', 'boolean'),
+      field('positionX', 'Position X', 'number'),
+      field('positionY', 'Position Y', 'number'),
+      field('scale', 'Scale', 'number'),
+      field('transformKeyframes', 'Transform Keyframes', 'array'),
+      field('forkliftKeyframes', 'Forklift Motion Keyframes', 'array'),
+    ],
+    buildFallbackProps: ({ extractedData }) => ({
+      distanceCovered: extractedData?.distanceCovered ?? 0, forkPosition: extractedData?.forkPosition ?? 0,
+      invertDirection: extractedData?.invertDirection ?? false, positionX: extractedData?.positionX ?? -80,
+      positionY: extractedData?.positionY ?? 624, scale: extractedData?.scale ?? 0.6,
+      transformKeyframes: extractedData?.transformKeyframes ?? [], forkliftKeyframes: extractedData?.forkliftKeyframes ?? [],
     }),
   },
   TITLE_CARD: {

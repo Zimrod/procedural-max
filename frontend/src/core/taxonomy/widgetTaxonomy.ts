@@ -22,6 +22,7 @@ export const WIDGET_TAXONOMY = {
     types: {
       PALLET: 'pallet',
       OIL_DRUM: 'oil_drum',
+      FORKLIFT: 'forklift',
     },
   },
   TEXT_TYPOGRAPHY: {

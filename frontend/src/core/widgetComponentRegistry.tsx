@@ -31,6 +31,7 @@ import { CountryFocusRig } from '../graphics/CountryFocusRig';
 import { CountryRouteRig } from '../graphics/CountryRouteRig';
 import { PalletRig } from '../graphics/PalletRig';
 import { OilDrumRig } from '../graphics/OilDrumRig';
+import { Forklift } from '../graphics/ForkliftRig';
 
 export const DiagnosticFallbackRig: React.FC<{ widget: string }> = ({ widget }) => (
   <div
@@ -74,6 +75,7 @@ const componentMapping: Record<WidgetType, React.ComponentType<any>> = {
   COUNTRY_ROUTE: CountryRouteRig,
   PALLET: PalletRig,
   OIL_DRUM: OilDrumRig,
+  FORKLIFT: Forklift,
 };
 
 export function getWidgetComponent(widgetType: string): React.ComponentType<any> {

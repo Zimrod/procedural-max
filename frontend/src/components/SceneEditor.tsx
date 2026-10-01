@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { getWidgetDefinition } from "../core/widgetRegistry";
 import { RenderAndSaveButtons } from "./RenderAndSaveButtons";
 import type { RenderedVideoItem } from "./Navbar";
+import { VIDEO_FPS } from "../types/constants";
 
 const isChartWidget = (widget = "") => widget.toUpperCase().includes("CHART");
 const DEFAULT_BAR_COLORS = ["#FFB3BA", "#B5EAD7", "#FFDAC1", "#E2F0CB", "#B5E3FF", "#C7CEE6", "#FFC8DD", "#FDE2C4"];
@@ -119,10 +120,43 @@ function ChartDataEditor({
 function PropInput({ field, value, onChange }: { field: any; value: any; onChange: (value: any) => void }) {
   if (field?.kind === "boolean") return <input type="checkbox" checked={Boolean(value)} onChange={(e) => onChange(e.target.checked)} className="rounded bg-black border-neutral-700 text-emerald-500" />;
   if (field?.kind === "select") return <select value={value ?? field.options?.[0] ?? ""} onChange={(e) => onChange(e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200">{field.options?.map((option: string) => <option key={option} value={option}>{option}</option>)}</select>;
+  if (field?.kind === "range") return <div className="flex items-center gap-2"><input type="range" min={field.min} max={field.max} step={field.step} value={value ?? field.defaultValue ?? field.min ?? 0} onChange={(e) => onChange(Number(e.target.value))} className="min-w-0 flex-1 accent-emerald-500" /><span className="w-10 text-right font-mono text-[10px] text-emerald-300">{value ?? field.defaultValue ?? field.min ?? 0}</span></div>;
   return <input type={field?.kind === "number" ? "number" : field?.kind === "color" ? "color" : "text"} value={value ?? ""} onChange={(e) => onChange(field?.kind === "number" ? Number(e.target.value) : e.target.value)} className="w-full p-1.5 bg-[#1e1e1e] border border-neutral-800 rounded text-xs text-neutral-200 focus:ring-1 focus:ring-emerald-500 focus:outline-none" />;
 }
 
 type TransformKeyframe = { frame: number; x?: number; y?: number; scaleX?: number; scaleY?: number; rotateDeg?: number; opacity?: number };
+type ForkliftKeyframe = { frame: number; distanceCovered?: number; forkPosition?: number; positionX?: number; positionY?: number; scale?: number };
+
+function ForkliftKeyframeEditor({ keyframes, startFrame, onChange }: { keyframes: ForkliftKeyframe[]; startFrame: number; onChange: (keyframes: ForkliftKeyframe[]) => void }) {
+  const defaultValues = { distanceCovered: 0, forkPosition: 0, positionX: 0, positionY: 0, scale: 0.6 };
+  const addKeyframe = () => {
+    const last = keyframes[keyframes.length - 1];
+    const frame = last ? Math.max(startFrame, Number(last.frame) + 30) : startFrame;
+    onChange([...keyframes, { frame, ...(last ? { ...last, frame } : defaultValues) }].sort((a, b) => a.frame - b.frame));
+  };
+  const update = (index: number, key: keyof ForkliftKeyframe, value: number) => {
+    const next = keyframes.map((item, itemIndex) => itemIndex === index ? { ...item, [key]: value } : item);
+    onChange(key === 'frame' ? [...next].sort((a, b) => a.frame - b.frame) : next);
+  };
+  return <div className="col-span-3 space-y-2 rounded-lg border border-amber-500/20 bg-amber-950/10 p-2.5">
+    <div className="flex items-center justify-between gap-2"><div><span className="block text-[10px] font-bold uppercase tracking-wider text-amber-300">Forklift Keyframes</span><span className="text-[9px] text-neutral-500">All forklift sliders are authored at absolute timeline frames.</span></div><button type="button" onClick={addKeyframe} className="rounded bg-amber-600 px-2 py-1 text-[10px] font-bold text-white hover:bg-amber-500">+ Add Keyframe</button></div>
+    {keyframes.map((keyframe, index) => <div key={index} className="space-y-2 rounded border border-neutral-800 bg-[#111111] p-2">
+      <div className="grid w-1/2 grid-cols-2 gap-1.5">
+        <label className="text-[9px] text-neutral-400">Frame<input type="number" min={0} value={keyframe.frame} onChange={(e) => update(index, 'frame', Math.max(0, Number(e.target.value)))} className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200 [color-scheme:dark]" /></label>
+        <label className="text-[9px] text-neutral-400">Seconds<input type="number" min={0} step={0.01} value={(Number(keyframe.frame) / VIDEO_FPS).toFixed(2)} onChange={(e) => update(index, 'frame', Math.max(0, Math.round(Number(e.target.value) * VIDEO_FPS)))} className="mt-0.5 w-full rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200 [color-scheme:dark]" /></label>
+      </div>
+      <div className="grid grid-cols-2 gap-x-3 gap-y-2">
+        {([['distanceCovered', 'Distance %', 0, 100, 1], ['forkPosition', 'Fork height', 0, 1, 0.1], ['positionX', 'Position X %', 0, 100, 1], ['positionY', 'Position Y %', 0, 100, 1], ['scale', 'Scale', 0.1, 2, 0.05]] as const).map(([key, label, min, max, step]) => {
+          const value = Number(keyframe[key] ?? defaultValues[key]);
+          const setValue = (nextValue: number) => update(index, key, Math.min(max, Math.max(min, nextValue)));
+          return <label key={key} className="min-w-0 text-[9px] text-neutral-400">{label}<div className="mt-1 flex items-center gap-2"><input type="range" min={min} max={max} step={step} value={value} onChange={(e) => setValue(Number(e.target.value))} className="h-1 min-w-0 flex-1 accent-amber-500" /><input type="number" min={min} max={max} step={step} value={value} onChange={(e) => setValue(Number(e.target.value))} className="w-14 rounded border border-neutral-800 bg-[#1e1e1e] px-1.5 py-1 text-[11px] text-neutral-200 [color-scheme:dark]" /></div></label>;
+        })}
+      </div>
+      <button type="button" onClick={() => onChange(keyframes.filter((_, itemIndex) => itemIndex !== index))} className="rounded border border-rose-500/40 px-2 py-1 text-[10px] font-bold text-rose-300 hover:bg-rose-500/10">Remove</button>
+    </div>)}
+    {keyframes.length === 0 && <p className="text-[10px] text-neutral-500">Add a keyframe to animate the forklift.</p>}
+  </div>;
+}
 
 function TransformKeyframeEditor({
   keyframes,
@@ -658,10 +692,11 @@ export function SceneEditor({
                           : ["PALLET", "OIL_DRUM"].includes(scene.widget)
                             ? "transformKeyframes"
                             : undefined;
+                        const animatedForkliftKey = scene.widget === "FORKLIFT" ? "forkliftKeyframes" : undefined;
                         const baseTransformKeys = ["PALLET", "OIL_DRUM"].includes(scene.widget)
                           ? ["x", "y", "scale", "scaleX", "scaleY", "rotateDeg", "opacity"]
                           : [];
-                        const compactKeys = orderedKeys.filter((key) => !["data", "parentId", "parentMode", "parentKeyframes", "transformKeyframes", animatedColorKey, animatedTransformKey, ...baseTransformKeys].includes(key) && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
+                        const compactKeys = scene.widget === "FORKLIFT" ? [] : orderedKeys.filter((key) => !["data", "parentId", "parentMode", "parentKeyframes", "transformKeyframes", "forkliftKeyframes", animatedColorKey, animatedTransformKey, animatedForkliftKey, ...baseTransformKeys].includes(key) && !isContentProp(key, schemaFieldMap.get(key)) && !colorKeys.includes(key));
                         const activeTab = activePropTab[sceneIdx] ?? "properties";
                         const chartPaletteKey = scene.widget === "BAR_CHART"
                           ? "barColors"
@@ -741,7 +776,7 @@ export function SceneEditor({
                               />
                             )}
 
-                            {(compactKeys.length > 0 || colorKeys.length > 0 || animatedTransformKey || localConfig.length > 1) && (
+                            {(compactKeys.length > 0 || colorKeys.length > 0 || animatedTransformKey || animatedForkliftKey || localConfig.length > 1) && (
                               <>
                                 <div className="flex items-center gap-1 border-b border-neutral-800">
                                   {compactKeys.length > 0 && (
@@ -807,6 +842,13 @@ export function SceneEditor({
                                       onChange={(keyframes) => updateWidgetProp(sceneIdx, animatedTransformKey, keyframes)}
                                     />
                                   )
+                                )}
+                                {animatedForkliftKey && activeTab === "properties" && (
+                                  <ForkliftKeyframeEditor
+                                    keyframes={Array.isArray(scene.props[animatedForkliftKey]) ? scene.props[animatedForkliftKey] : []}
+                                    startFrame={startFrame}
+                                    onChange={(keyframes) => updateWidgetProp(sceneIdx, animatedForkliftKey, keyframes)}
+                                  />
                                 )}
 
                                 {activeTab === "properties" && compactKeys.length > 0 && (

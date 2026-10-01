@@ -294,7 +294,7 @@ export default function LandingPage() {
       Object.assign(groups, {
         Geography: ["COUNTRY_FOCUS", "COUNTRY_ROUTE", "COUNTRY_DROP_PIN"],
         Finance: ["Stock Ticker", "Portfolio Breakdown", "Financial KPI"],
-        Industrial: ["PALLET", "OIL_DRUM"],
+        Industrial: ["PALLET", "OIL_DRUM", "FORKLIFT"],
         Medical: ["Patient Journey", "Health Metric", "Anatomy Callout"],
         Education: ["Lesson Timeline", "Knowledge Map", "Quiz Progress"],
       });

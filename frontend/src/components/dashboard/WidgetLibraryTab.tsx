@@ -3,7 +3,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { getWidgetDefinition } from "../../core/widgetRegistry";
-import PayButton from "../PayButton"; // Adjust path if PayButton is located elsewhere (e.g., "../components/PayButton")
+import PayButton from "../PayButton";
+
+// Helper to check if a URL points to a video format
+const isVideoUrl = (url: string) => /\.(mp4|webm|ogg|mov)($|\?)/i.test(url);
 
 interface WidgetLibraryTabProps {
   widgetSearch: string;
@@ -25,11 +28,6 @@ export function WidgetLibraryTab({
   const [sampleVideoUrls, setSampleVideoUrls] = useState<Record<string, string>>({});
   const [selectedFilterTab, setSelectedFilterTab] = useState<string>("all");
 
-  const staticPreviewUrls: Record<string, string> = {
-    PALLET: "/pallet/pallet.svg",
-    OIL_DRUM: "/oil_drum/oil_drum.svg",
-  };
-
   const widgetLabels: Record<string, string> = {
     COUNTRY_DROP_PIN: "Country Drop Pin",
     COUNTRY_FOCUS: "Country Focus",
@@ -42,21 +40,10 @@ export function WidgetLibraryTab({
     "Lesson Timeline", "Knowledge Map", "Quiz Progress",
   ]);
 
-  // const premiumByCategory: Record<string, Set<string>> = {
-  //   Typography: new Set(["SVG_DRAW_IN_TEXT", "SEQUENTIAL_ELASTIC_TEXT"]),
-  //   "Data Visualization": new Set(["LINE_CHART", "MULTI_LINE_CHART"]),
-  //   Location: new Set(["Route Timeline"]),
-  //   Finance: new Set(["Portfolio Breakdown"]),
-  //   Industrial: new Set(["Machine Gauge"]),
-  //   Medical: new Set(["Patient Journey"]),
-  //   Education: new Set(["Knowledge Map"]),
-  // };
-
   const premiumByCategory: Record<string, Set<string>> = {
     "Data Visualization": new Set(["LINE_CHART"]),
   };
 
-  // Fetch sample preview video URLs from Supabase Storage bucket
   useEffect(() => {
     const fetchSampleUrls = async () => {
       const allWidgets = Object.values(displayGroups).flat();
@@ -83,7 +70,6 @@ export function WidgetLibraryTab({
     }
   }, [displayGroups]);
 
-  // Tab filters mixing Core categories and Marketplace options
   const baseCategories = Object.keys(displayGroups);
   const filterTabs = ["all", "submissions", ...baseCategories];
 
@@ -108,7 +94,6 @@ export function WidgetLibraryTab({
   return (
     <div className="space-y-6">
       <div className="sticky top-0 z-30 -mx-6 px-6 pr-14 pt-6 pb-4 bg-[#fcfdfe]">
-        {/* Header & Search */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h3 className="text-sm font-bold text-slate-800">Widget & Component Library</h3>
@@ -125,7 +110,6 @@ export function WidgetLibraryTab({
           />
         </div>
 
-        {/* Mixed Marketplace & Category Tabs */}
         <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200/80 no-scrollbar">
           {filterTabs.map((tab) => {
             const label =
@@ -152,7 +136,6 @@ export function WidgetLibraryTab({
         </div>
       </div>
 
-      {/* Widget Cards Grid Grouped by Category */}
       <div className="space-y-6">
         {Object.entries(filteredDisplayGroups).map(([category, items]) => {
           const isExpanded = !!expandedCategories[category];
@@ -177,12 +160,10 @@ export function WidgetLibraryTab({
                     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
                     .join(" ");
                   const sampleUrl = sampleVideoUrls[w];
-                  const staticPreviewUrl = staticPreviewUrls[w];
                   const isPlaceholder = placeholderWidgets.has(w);
 
-                  // Widget metadata fallbacks
                   const isPremium = premiumByCategory[category]?.has(w) ?? false;
-                  const price = isPremium ? "$4" : "";
+                  // const price = isPremium ? "$4" : "";
                   const creator = isPlaceholder ? "Coming Soon" : isPremium ? "Pro Creator" : "Studio Core";
                   const description =
                     isPlaceholder
@@ -194,10 +175,9 @@ export function WidgetLibraryTab({
                       key={w}
                       className="p-3 bg-white border border-slate-200/90 hover:border-emerald-500/60 rounded-2xl flex flex-col justify-between group transition-all shadow-xs hover:shadow-md relative overflow-hidden"
                     >
-                      {/* Preview Box & Hover Overlay */}
+                      {/* Preview Box */}
                       <div className="w-full aspect-square bg-[#f4f7fa] border border-slate-100 rounded-xl p-2 flex items-center justify-center relative overflow-hidden group-hover:bg-slate-100/60 transition-colors">
                         
-                        {/* Crown on Premium Widgets */}
                         {isPremium && (
                           <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5">
                             <span
@@ -211,22 +191,24 @@ export function WidgetLibraryTab({
                           </div>
                         )}
 
-                        {/* Video / SVG Graphic */}
-                        {staticPreviewUrl ? (
-                          <img
-                            src={staticPreviewUrl}
-                            alt={`${capitalizedName} preview`}
-                            className="w-full h-full object-contain rounded-lg"
-                          />
-                        ) : sampleUrl ? (
-                          <video
-                            src={sampleUrl}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            className="w-full h-full object-cover rounded-lg"
-                          />
+                        {/* Media Renderer: Dynamically switch Video vs Image based on Supabase URL */}
+                        {sampleUrl ? (
+                          isVideoUrl(sampleUrl) ? (
+                            <video
+                              src={sampleUrl}
+                              autoPlay
+                              loop
+                              muted
+                              playsInline
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          ) : (
+                            <img
+                              src={sampleUrl}
+                              alt={`${capitalizedName} preview`}
+                              className="w-full h-full object-contain rounded-lg"
+                            />
+                          )
                         ) : (
                           <svg
                             className="w-8 h-8 text-slate-400 group-hover:text-emerald-500 transition-colors"
@@ -239,7 +221,7 @@ export function WidgetLibraryTab({
                           </svg>
                         )}
 
-                        {/* Overlaid Description on Hover */}
+                        {/* Hover Overlay */}
                         <div className="absolute inset-0 bg-slate-900/90 backdrop-blur-xs p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col justify-between text-left z-10 rounded-xl pointer-events-none">
                           <div>
                             <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 mb-1">
@@ -251,7 +233,7 @@ export function WidgetLibraryTab({
                           </div>
                           <div className="flex items-center justify-between text-[10px] text-slate-400 pt-2 border-t border-slate-800">
                             <span>Author: {creator}</span>
-                            {isPremium && <span className="text-amber-400 font-bold">{price}</span>}
+                            {/* {isPremium && <span className="text-amber-400 font-bold">{price}</span>} */}
                           </div>
                         </div>
                       </div>
@@ -263,16 +245,15 @@ export function WidgetLibraryTab({
                             <h5 className="text-xs font-semibold text-slate-800 truncate">
                               {capitalizedName}
                             </h5>
-                            <span className={`text-[13px] font-bold flex-shrink-0 ${isPremium ? "text-amber-500" : "text-slate-400"}`}>
+                            {/* <span className={`text-[13px] font-bold flex-shrink-0 ${isPremium ? "text-amber-500" : "text-slate-400"}`}>
                               {price}
-                            </span>
+                            </span> */}
                           </div>
                           <p className="text-[10px] font-medium text-slate-400 truncate">
                             by {creator}
                           </p>
                         </div>
 
-                        {/* Card Action Button */}
                         {isPlaceholder ? (
                           <button
                             disabled
@@ -283,8 +264,6 @@ export function WidgetLibraryTab({
                           </button>
                         ) : isPremium ? (
                           <PayButton amount={7} title="Starter Plan" />
-                          // <PayButton amount={15} title="Pro Plan" />
-                          // <PayButton amount={39} title="Enterprise Plan" />
                         ) : (
                           <button
                             onClick={() => handleAddWidget(w)}

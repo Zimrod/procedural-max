@@ -86,26 +86,33 @@ type ParentMode = 'all' | 'position' | 'scale' | 'rotation' | 'opacity';
 
 const numeric = (value: any, fallback: number) => Number.isFinite(Number(value)) ? Number(value) : fallback;
 
-function resolveTransform(widget: string, props: Record<string, any>, absoluteFrame: number): ResolvedTransform {
+function resolveTransform(widget: string, props: Record<string, any>, absoluteFrame: number, canvasWidth: number, canvasHeight: number): ResolvedTransform {
   const isBar = widget === 'BAR_CHART';
+  const isForklift = widget === 'FORKLIFT';
+  const positionToCanvas = (value: any, extent: number, fallback: number) => -extent * 0.1 + extent * 1.2 * (numeric(value, fallback) / 100);
   const base: ResolvedTransform = isBar
     ? { x: 0, y: 0, scaleX: 1, scaleY: 1, rotateDeg: 0, opacity: 1 }
     : {
-        x: numeric(props.x ?? props.position?.x, 400),
-        y: numeric(props.y ?? props.position?.y, 400),
+        x: isForklift ? positionToCanvas(props.positionX, canvasWidth, 50) : numeric(props.x ?? props.position?.x, 400),
+        y: isForklift ? positionToCanvas(props.positionY, canvasHeight, 50) : numeric(props.y ?? props.position?.y, 400),
         scaleX: numeric(props.scaleX ?? props.scale, 1),
         scaleY: numeric(props.scaleY ?? props.scale, 1),
         rotateDeg: numeric(props.rotateDeg, 0),
         opacity: numeric(props.opacity, 1),
       };
-  const keyframes = (props[isBar ? 'barTransformKeyframes' : 'transformKeyframes'] ?? [])
+  const keyframes = (props[isBar ? 'barTransformKeyframes' : isForklift ? 'forkliftKeyframes' : 'transformKeyframes'] ?? [])
     .filter((item: any) => Number.isFinite(Number(item?.frame)))
     .sort((a: any, b: any) => Number(a.frame) - Number(b.frame));
   if (!keyframes.length) return base;
 
   const frames = keyframes.map((item: any) => Number(item.frame));
   const resolve = (key: keyof ResolvedTransform) => {
-    const values = keyframes.map((item: any) => numeric(item[key], base[key]));
+    const values = keyframes.map((item: any) => {
+      if (isForklift && key === 'x') return positionToCanvas(item.positionX, canvasWidth, 50);
+      if (isForklift && key === 'y') return positionToCanvas(item.positionY, canvasHeight, 50);
+      if (isForklift && (key === 'scaleX' || key === 'scaleY')) return numeric(item.scale, base[key]);
+      return numeric(item[key], base[key]);
+    });
     return interpolate(absoluteFrame, frames, values, { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
   };
   return {
@@ -249,12 +256,12 @@ export const VoiceoverScene: React.FC<Props> = ({
           getWidgetComponent(normalizedWidgetKey) || getWidgetComponent(rawWidgetKey);
 
         const localProps = getSafeProps(normalizedWidgetKey, item.props);
-        const localTransform = resolveTransform(normalizedWidgetKey, localProps, currentFrame);
+        const localTransform = resolveTransform(normalizedWidgetKey, localProps, currentFrame, width, height);
         const findWorldTransform = (sceneIndex: number, frame: number, stack: Set<number>): ResolvedTransform => {
           const currentItem = scenes[sceneIndex];
           const currentWidget = String(currentItem?.widget || currentItem?.widgetType || '').toUpperCase();
           const currentProps = getSafeProps(currentWidget, currentItem?.props);
-          const currentLocal = resolveTransform(currentWidget, currentProps, frame);
+          const currentLocal = resolveTransform(currentWidget, currentProps, frame, width, height);
           if (stack.has(sceneIndex)) return currentLocal;
           const nextStack = new Set(stack);
           nextStack.add(sceneIndex);
@@ -278,9 +285,34 @@ export const VoiceoverScene: React.FC<Props> = ({
           rotateDeg: worldTransform.rotateDeg - localTransform.rotateDeg,
           opacity: localTransform.opacity === 0 ? 1 : worldTransform.opacity / localTransform.opacity,
         };
-        const isIndustrial = normalizedWidgetKey === 'PALLET' || normalizedWidgetKey === 'OIL_DRUM';
+        const isForklift = normalizedWidgetKey === 'FORKLIFT';
+        const isIndustrial = normalizedWidgetKey === 'PALLET' || normalizedWidgetKey === 'OIL_DRUM' || isForklift;
+        const forkliftKeyframes = isForklift
+          ? [...(localProps.forkliftKeyframes ?? [])].filter((keyframe: any) => Number.isFinite(Number(keyframe?.frame))).sort((a: any, b: any) => Number(a.frame) - Number(b.frame))
+          : [];
+        const resolveForkliftValue = (key: 'distanceCovered' | 'forkPosition', fallback: number) => {
+          if (!forkliftKeyframes.length) return fallback;
+          const frames = forkliftKeyframes.map((keyframe: any) => Number(keyframe.frame));
+          const values = forkliftKeyframes.map((keyframe: any) => Number(keyframe[key] ?? fallback));
+          return interpolate(currentFrame, frames, values, { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+        };
         const renderProps = isIndustrial
-          ? { ...localProps, x: localTransform.x, y: localTransform.y, scaleX: localTransform.scaleX, scaleY: localTransform.scaleY, rotateDeg: localTransform.rotateDeg, opacity: localTransform.opacity }
+          ? {
+              ...localProps,
+              x: localTransform.x,
+              y: localTransform.y,
+              ...(isForklift ? {
+                positionX: localTransform.x,
+                positionY: localTransform.y,
+                scale: localTransform.scaleX,
+                distanceCovered: resolveForkliftValue('distanceCovered', Number(localProps.distanceCovered ?? 0)),
+                forkPosition: Math.round(resolveForkliftValue('forkPosition', Number(localProps.forkPosition ?? 0)) * 10) / 10,
+              } : {}),
+              scaleX: localTransform.scaleX,
+              scaleY: localTransform.scaleY,
+              rotateDeg: localTransform.rotateDeg,
+              opacity: localTransform.opacity,
+            }
           : localProps;
         const hasParentDelta = Boolean(resolveParentId(localProps, currentFrame));
 

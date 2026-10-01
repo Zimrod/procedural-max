@@ -1,27 +1,32 @@
 'use client';
 
 import { useState } from 'react';
+import { useAuth } from './AuthContext';
 
 interface PayButtonProps {
   amount: number;
   title?: string;
-  email?: string;
 }
 
 export default function PayButton({
   amount,
   title = 'Purchase Item',
-  email = 'customer@example.com',
 }: PayButtonProps) {
   const [loading, setLoading] = useState(false);
+  const { user, loading: authLoading } = useAuth();
 
   const handlePayment = async () => {
+    if (!user?.email) {
+      alert('Please log in before making a payment.');
+      return;
+    }
+
     setLoading(true);
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, amount, title }),
+        body: JSON.stringify({ email: user.email, amount, title }),
       });
 
       const data = await res.json();
@@ -42,18 +47,19 @@ export default function PayButton({
   return (
     <button
       onClick={handlePayment}
-      disabled={loading}
+      disabled={loading || authLoading}
       style={{
-        padding: '12px 24px',
-        backgroundColor: '#00875A',
-        color: '#FFFFFF',
+        padding: '4px 6px',
+        backgroundColor: '#ffae00',
+        color: '#2e2828',
         border: 'none',
-        borderRadius: '6px',
+        borderRadius: '4px',
         cursor: 'pointer',
         fontWeight: 'bold',
+        fontSize: '12px',
       }}
     >
-      {loading ? 'Processing...' : `Pay $${amount.toFixed(2)}`}
+      {loading ? 'Processing...' : `$${amount.toFixed(2)}`}
     </button>
   );
 }
