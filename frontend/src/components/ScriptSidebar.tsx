@@ -47,15 +47,37 @@ export function ScriptSidebar({
   pipelineResult, currentActiveScript, handleGenerateScript, handleFileUpload,
   handleGenerateVoiceover, handleRenderAnimation, onOpenDashboard,
 }: ScriptSidebarProps) {
-  // Helper booleans to map activeLoading states
   const isScriptLoading = activeLoading === "script";
   const isVoiceoverLoading = activeLoading === "generating_audio" || activeLoading === "assembling_scenes" || activeLoading === "voiceover";
   const isUploadLoading = activeLoading === "uploading_audio" || activeLoading === "transcribing";
   const isAnimationLoading = activeLoading === "animation" || activeLoading === "rendering";
+  const isSceneCompilationInProgress = activeLoading === "assembling_scenes" || activeLoading === "voiceover";
+
+  // Dynamic progress text helper for the status banner
+  const getStatusBannerText = () => {
+    switch (activeLoading) {
+      case "script":
+        return "Generating AI script from prompt...";
+      case "generating_audio":
+        return "Step 1/2: Synthesizing voiceover audio track...";
+      case "assembling_scenes":
+        return "Step 2/2: Backend compiling scene layouts & matching widgets...";
+      case "uploading_audio":
+      case "transcribing":
+        return "Transcribing audio track and building timeline...";
+      case "animation":
+      case "rendering":
+        return "Rendering video animation elements...";
+      default:
+        return null;
+    }
+  };
+
+  const statusText = getStatusBannerText();
 
   return (
     <div className="w-full bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 shadow-2xl shadow-black/60">
-      {/* Top Bar with Dashboard Button */}
+      {/* Top Bar */}
       <div className="flex items-center justify-between mb-3">
         {onOpenDashboard && (
           <button
@@ -72,7 +94,7 @@ export function ScriptSidebar({
         )}
       </div>
 
-      {/* Navigation Tabs */}
+      {/* Tabs */}
       <div className="flex border border-neutral-800 mb-4 p-1 bg-[#141414] rounded-md text-center">
         {(["generate", "custom-script", "upload-voiceover"] as const).map((tab) => (
           <button
@@ -199,12 +221,29 @@ export function ScriptSidebar({
         </div>
       )}
 
-      {/* Main Workflow Action Buttons */}
+      {/* Action Area & Status Banner */}
       <div className="mt-5 pt-4 border-t border-neutral-800 space-y-2.5">
+        {isSceneCompilationInProgress && (
+          <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 shadow-lg shadow-amber-900/10">
+            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-300">Scene compilation in progress</p>
+            <p className="mt-1.5 text-[11px] leading-relaxed text-amber-100/90">
+              Your voiceover is ready. We are compiling the final scene layout and matching widgets in the background before Step 3 unlocks.
+            </p>
+          </div>
+        )}
+
+        {/* Background Task Banner */}
+        {statusText && (
+          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 animate-pulse">
+            <Spinner colorClass="text-amber-400 shrink-0" />
+            <p className="text-[11px] font-medium leading-tight">{statusText}</p>
+          </div>
+        )}
+
         {leftTab !== "upload-voiceover" && (
           <button
             onClick={handleGenerateVoiceover}
-            disabled={activeLoading !== null || !currentActiveScript.trim()}
+            disabled={activeLoading !== null || !currentActiveScript.trim() || isSceneCompilationInProgress}
             className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
           >
             {isVoiceoverLoading && <Spinner colorClass="text-amber-300" />}
@@ -213,8 +252,6 @@ export function ScriptSidebar({
                 ? "Generating Audio..."
                 : activeLoading === "assembling_scenes"
                 ? "Assembling Scenes..."
-                : isVoiceoverLoading
-                ? "Processing Voiceover..."
                 : currentJobId
                 ? "Step 2: Update Voiceover & Script"
                 : "Step 2: Generate Voiceover"}
@@ -227,14 +264,10 @@ export function ScriptSidebar({
           disabled={activeLoading !== null || !pipelineResult}
           className="w-full py-3 bg-rose-600 hover:bg-rose-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
         >
-          {(isAnimationLoading || (leftTab === "upload-voiceover" && isUploadLoading)) && (
-            <Spinner colorClass="text-rose-200" />
-          )}
+          {isAnimationLoading && <Spinner colorClass="text-rose-200" />}
           <span>
             {isAnimationLoading
               ? "Rendering Animation..."
-              : isUploadLoading
-              ? "Transcribing Audio..."
               : leftTab === "upload-voiceover"
               ? "Step 2: Render Animation"
               : "Step 3: Generate Animation"}

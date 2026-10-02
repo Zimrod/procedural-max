@@ -98,7 +98,7 @@ export default function LandingPage() {
   const [rightPanelTab, setRightPanelTab] = useState<"scene" | "theme">("scene");
   const [widgetSearch, setWidgetSearch] = useState("");
 
-  const API = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
+  const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL!.replace(/\/$/, "");
 
   const isDirty = useMemo(() => {
     return JSON.stringify(sceneConfig) !== JSON.stringify(localConfig);
@@ -125,8 +125,8 @@ export default function LandingPage() {
     let rawUrl = leftTab === "generate" ? aiAudioUrl : leftTab === "custom-script" ? customAudioUrl : uploadedAudioUrl;
     let version = leftTab === "generate" ? aiAudioVersion : leftTab === "custom-script" ? customAudioVersion : uploadedAudioVersion;
     if (!rawUrl) return "";
-    return `${rawUrl.startsWith("http") ? rawUrl : `${API}${rawUrl}`}?v=${version}`;
-  }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, uploadedAudioUrl, uploadedAudioVersion, API]);
+    return `${rawUrl.startsWith("http") ? rawUrl : `${BACKEND_URL}${rawUrl}`}?v=${version}`;
+  }, [leftTab, aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion, uploadedAudioUrl, uploadedAudioVersion, BACKEND_URL]);
 
   useEffect(() => {
     setAudioConfig((current) => current.voUrl === currentActiveAudio
@@ -147,7 +147,7 @@ export default function LandingPage() {
     if (!prompt.trim()) return;
     try {
       setActiveLoading("script");
-      const res = await fetch(`${API}/script`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+      const res = await fetch(`${BACKEND_URL}/script`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
       const data = await res.json();
       setAiScript(data.script);
     } finally {
@@ -164,7 +164,7 @@ export default function LandingPage() {
       formData.append("audio", file);
       if (currentJobId) formData.append("jobId", currentJobId);
 
-      const res = await fetch(`${API}/voiceover/upload`, { method: "POST", body: formData });
+      const res = await fetch(`${BACKEND_URL}/voiceover/upload`, { method: "POST", body: formData });
       const data = await res.json();
       if (data.success) {
         setUploadedAudioUrl(data.audioUrl);
@@ -182,38 +182,67 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
+      setPipelineResult(null);
       setActiveLoading("generating_audio");
-      const res = await fetch(`${API}/voiceover`, {
+
+      const res = await fetch(`${BACKEND_URL}/voiceover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ script: currentActiveScript, jobId: currentJobId || undefined }),
       });
       const data = await res.json();
-      if (data.success) {
-        if (leftTab === "generate") {
-          setAiAudioUrl(data.audioUrl);
-          setAiAudioVersion((v) => v + 1);
-        } else {
-          setCustomAudioUrl(data.audioUrl);
-          setCustomAudioVersion((v) => v + 1);
-        }
-        setCurrentJobId(data.jobId);
-        setActiveLoading("assembling_scenes");
-        startBackgroundSync(data.jobId);
+
+      if (!data.success) {
+        throw new Error(data.error || "Voiceover generation failed.");
       }
-    } finally {
+
+      if (leftTab === "generate") {
+        setAiAudioUrl(data.audioUrl);
+        setAiAudioVersion((prev) => prev + 1);
+      } else {
+        setCustomAudioUrl(data.audioUrl);
+        setCustomAudioVersion((prev) => prev + 1);
+      }
+
+      setCurrentJobId(data.jobId);
+      setActiveLoading("assembling_scenes");
+      startBackgroundSync(data.jobId);
+    } catch (err) {
+      console.error(err);
       setActiveLoading(null);
     }
   };
 
   const startBackgroundSync = async (jobId: string) => {
+    let attempts = 0;
     const interval = setInterval(async () => {
-      const res = await fetch(`${API}/voiceover/status/${jobId}`);
-      const statusData = await res.json();
-      if (statusData.status === "done") {
-        clearInterval(interval);
-        setPipelineResult(statusData.result);
-        setActiveLoading(null);
+      try {
+        attempts += 1;
+        if (attempts > 120) {
+          clearInterval(interval);
+          console.error("Background scene pipeline timed out.");
+          setActiveLoading(null);
+          return;
+        }
+
+        const res = await fetch(`${BACKEND_URL}/voiceover/status/${jobId}`);
+        const statusData = await res.json();
+
+        if (statusData.status === "done") {
+          clearInterval(interval);
+          setPipelineResult(statusData.result);
+          setTranscription(statusData.result?.transcript ?? null);
+          if (statusData.result?.sceneConfig) {
+            setSceneConfig(statusData.result.sceneConfig);
+          }
+          setActiveLoading(null);
+        } else if (statusData.status === "failed") {
+          clearInterval(interval);
+          console.error("Pipeline status reported failure.");
+          setActiveLoading(null);
+        }
+      } catch (err) {
+        console.error("Network error during status check", err);
       }
     }, 1500);
   };
