@@ -2,6 +2,14 @@
 
 import { ChangeEvent } from "react";
 
+type PipelineStage =
+  | "idle"
+  | "generating_audio"
+  | "compiling_scenes"
+  | "ready"
+  | "animation"
+  | "error";
+
 interface ScriptSidebarProps {
   leftTab: "generate" | "custom-script" | "upload-voiceover";
   setLeftTab: (tab: "generate" | "custom-script" | "upload-voiceover") => void;
@@ -28,6 +36,8 @@ interface ScriptSidebarProps {
   handleGenerateVoiceover: () => void;
   handleRenderAnimation: () => void;
   onOpenDashboard?: () => void;
+  pipelineStage: PipelineStage;
+  pipelineError: string | null;
 }
 
 function Spinner({ colorClass = "text-white" }: { colorClass?: string }) {
@@ -45,7 +55,7 @@ export function ScriptSidebar({
   aiAudioUrl, aiAudioVersion, customAudioUrl, customAudioVersion,
   uploadedAudioUrl, uploadedAudioVersion, activeLoading, currentJobId,
   pipelineResult, currentActiveScript, handleGenerateScript, handleFileUpload,
-  handleGenerateVoiceover, handleRenderAnimation, onOpenDashboard,
+  handleGenerateVoiceover, handleRenderAnimation, onOpenDashboard, pipelineStage, pipelineError,
 }: ScriptSidebarProps) {
   const isScriptLoading = activeLoading === "script";
   const isVoiceoverLoading = activeLoading === "generating_audio" || activeLoading === "assembling_scenes" || activeLoading === "voiceover";
@@ -222,26 +232,91 @@ export function ScriptSidebar({
 
       {/* Action Area & Status Banner */}
       <div className="mt-5 pt-4 border-t border-neutral-800 space-y-2.5">
-        {/* Background Task Banner */}
-        {statusText && (
-          <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 animate-pulse">
-            <Spinner colorClass="text-amber-400 shrink-0" />
-            <p className="text-[11px] font-medium leading-tight">{statusText}</p>
+        {/* Step 2 / Step 3 Pipeline Status */}
+        {pipelineStage === "generating_audio" && (
+          <div className="rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <Spinner colorClass="text-blue-400 shrink-0" />
+              <span className="text-[11px] font-bold text-blue-300">
+                Generating voiceover...
+              </span>
+            </div>
+            <p className="mt-1.5 pl-6 text-[10px] leading-relaxed text-neutral-400">
+              Creating the voiceover for your script. Please wait while the
+              audio track is generated.
+            </p>
           </div>
         )}
+
+        {pipelineStage === "compiling_scenes" && (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <Spinner colorClass="text-amber-400 shrink-0" />
+              <span className="text-[11px] font-bold text-amber-300">
+                Compiling scenes...
+              </span>
+            </div>
+            <p className="mt-1.5 pl-6 text-[10px] leading-relaxed text-neutral-400">
+              Your voiceover is ready. The backend is now building the scene
+              structure and matching the appropriate widgets. Step 3 will
+              become available when this finishes.
+            </p>
+          </div>
+        )}
+
+        {pipelineStage === "ready" && (
+          <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-2 w-2 shrink-0 rounded-full bg-emerald-400" />
+              <span className="text-[11px] font-bold text-emerald-300">
+                Animation preparation complete
+              </span>
+            </div>
+            <p className="mt-1.5 pl-[18px] text-[10px] leading-relaxed text-neutral-400">
+              Your voiceover and scenes are ready. You can now generate the
+              animation.
+            </p>
+          </div>
+        )}
+
+        {pipelineStage === "error" && (
+          <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3">
+            <div className="text-[11px] font-bold text-red-300">
+              Animation preparation failed
+            </div>
+            <p className="mt-1.5 text-[10px] leading-relaxed text-neutral-400">
+              {pipelineError || "Something went wrong while preparing the animation."}
+            </p>
+          </div>
+        )}
+
+        {statusText &&
+          !["generating_audio", "compiling_scenes", "ready", "error"].includes(
+            pipelineStage
+          ) && (
+            <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 animate-pulse">
+              <Spinner colorClass="text-amber-400 shrink-0" />
+              <p className="text-[11px] font-medium leading-tight">{statusText}</p>
+            </div>
+          )}
 
         {leftTab !== "upload-voiceover" && (
           <button
             onClick={handleGenerateVoiceover}
-            disabled={activeLoading !== null || !currentActiveScript.trim()}
+            disabled={
+              activeLoading !== null ||
+              pipelineStage === "generating_audio" ||
+              pipelineStage === "compiling_scenes" ||
+              !currentActiveScript.trim()
+            }
             className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
           >
             {isVoiceoverLoading && <Spinner colorClass="text-amber-300" />}
             <span>
-              {activeLoading === "generating_audio"
-                ? "Generating Audio..."
-                : activeLoading === "assembling_scenes"
-                ? "Assembling Scenes..."
+              {pipelineStage === "generating_audio"
+                ? "Generating Voiceover..."
+                : pipelineStage === "compiling_scenes"
+                ? "Compiling Scenes..."
                 : currentJobId
                 ? "Step 2: Update Voiceover & Script"
                 : "Step 2: Generate Voiceover"}
@@ -251,13 +326,19 @@ export function ScriptSidebar({
 
         <button
           onClick={handleRenderAnimation}
-          disabled={activeLoading !== null || !pipelineResult}
+          disabled={
+            activeLoading !== null ||
+            pipelineStage !== "ready" ||
+            !pipelineResult
+          }
           className="w-full py-3 bg-rose-600 hover:bg-rose-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-rose-600/20 flex items-center justify-center gap-2"
         >
           {isAnimationLoading && <Spinner colorClass="text-rose-200" />}
           <span>
             {isAnimationLoading
               ? "Rendering Animation..."
+              : pipelineStage === "compiling_scenes"
+              ? "Preparing Animation..."
               : leftTab === "upload-voiceover"
               ? "Step 2: Render Animation"
               : "Step 3: Generate Animation"}

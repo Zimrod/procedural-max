@@ -79,9 +79,22 @@ export default function LandingPage() {
     autoDucking: true,
   });
 
+  type PipelineStage =
+  | "idle"
+  | "generating_audio"
+  | "compiling_scenes"
+  | "ready"
+  | "animation"
+  | "error";
+
   const [activeLoading, setActiveLoading] = useState<string | null>(null);
+  const [pipelineStage, setPipelineStage] =
+    useState<PipelineStage>("idle");
+
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [pipelineResult, setPipelineResult] = useState<any>(null);
+  const [pipelineError, setPipelineError] = useState<string | null>(null);
+
   const [renders, setRenders] = useState<RenderedVideoItem[]>([]);
 
   const [leftTab, setLeftTab] = useState<"generate" | "custom-script" | "upload-voiceover">("generate");
@@ -193,32 +206,87 @@ export default function LandingPage() {
   };
 
   const handleGenerateVoiceover = async () => {
+    if (!currentActiveScript?.trim()) return;
+
     try {
-      // 1. Voiceover TTS Generation stage
+      // Reset pipeline state for this run
+      setPipelineResult(null);
+      setPipelineError(null);
+
+      // --------------------------------------------------
+      // STEP 2A — Generate voiceover
+      // --------------------------------------------------
+      setPipelineStage("generating_audio");
       setActiveLoading("generating_audio");
+
       const audioRes = await fetch("/api/generate-voiceover", {
         method: "POST",
-        body: JSON.stringify({ script: currentActiveScript }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          script: currentActiveScript,
+        }),
       });
+
+      if (!audioRes.ok) {
+        throw new Error(
+          `Voiceover generation failed (${audioRes.status})`
+        );
+      }
+
       const audioData = await audioRes.json();
+
+      if (!audioData.audioUrl) {
+        throw new Error("Voiceover generation returned no audio URL");
+      }
+
       setAiAudioUrl(audioData.audioUrl);
 
-      // 2. Transition state directly to scene compilation stage
+      // --------------------------------------------------
+      // STEP 2B — Scene compilation
+      // --------------------------------------------------
+      setPipelineStage("compiling_scenes");
       setActiveLoading("assembling_scenes");
-      
-      // Send request to Backend Docker container running pipelineOrchestrator
-      const pipelineRes = await fetch(`${BACKEND_URL}/api/process-pipeline`, {
-        method: "POST",
-        body: JSON.stringify({ audioUrl: audioData.audioUrl, script: currentActiveScript }),
-      });
+
+      const pipelineRes = await fetch(
+        `${BACKEND_URL}/api/process-pipeline`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            audioUrl: audioData.audioUrl,
+            script: currentActiveScript,
+          }),
+        }
+      );
+
+      if (!pipelineRes.ok) {
+        throw new Error(
+          `Scene compilation failed (${pipelineRes.status})`
+        );
+      }
+
       const result = await pipelineRes.json();
 
-      // 3. Store result to enable Step 3 button
+      // --------------------------------------------------
+      // Pipeline is now completely finished
+      // --------------------------------------------------
       setPipelineResult(result);
-    } catch (err) {
-      console.error(err);
+      setPipelineStage("ready");
+
+    } catch (err: any) {
+      console.error("Pipeline failed:", err);
+
+      setPipelineError(
+        err?.message || "Something went wrong while preparing the animation."
+      );
+
+      setPipelineStage("error");
+
     } finally {
-      // Release active loading state
       setActiveLoading(null);
     }
   };
@@ -236,13 +304,40 @@ export default function LandingPage() {
   };
 
   const handleRenderAnimation = async () => {
-    if (!pipelineResult) return;
+    if (!pipelineResult || pipelineStage !== "ready") {
+      return;
+    }
+
+    setPipelineStage("animation");
     setActiveLoading("animation");
+
     try {
-      const { transcript, sceneConfig: incomingScenes } = pipelineResult;
-      if (transcript) setTranscription({ text: currentActiveScript || transcript.text, words: transcript.words || [] });
-      const sanitized = (incomingScenes || []).map((s: any) => ({ ...s, widget: s.widget || s.type || DEFAULT_WIDGET_TYPE }));
-      setSceneConfig(applyThemeToScenes(sanitized, themeConfig));
+      const {
+        transcript,
+        sceneConfig: incomingScenes,
+      } = pipelineResult;
+
+      if (transcript) {
+        setTranscription({
+          text: currentActiveScript || transcript.text,
+          words: transcript.words || [],
+        });
+      }
+
+      const sanitized = (incomingScenes || []).map((s: any) => ({
+        ...s,
+        widget:
+          s.widget ||
+          s.type ||
+          DEFAULT_WIDGET_TYPE,
+      }));
+
+      setSceneConfig(
+        applyThemeToScenes(
+          sanitized,
+          themeConfig
+        )
+      );
     } finally {
       setActiveLoading(null);
     }
@@ -329,12 +424,42 @@ export default function LandingPage() {
           {/* First Column: ScriptSidebar (380px width) */}
           <div className="w-full lg:w-[380px] shrink-0 h-full overflow-y-auto">
             <ScriptSidebar
-              leftTab={leftTab} setLeftTab={setLeftTab} prompt={prompt} setPrompt={setPrompt}
-              aiScript={aiScript} setAiScript={setAiScript} customScript={customScript} setCustomScript={setCustomScript}
-              uploadedScript={uploadedScript} setUploadedScript={setUploadedScript} aiAudioUrl={aiAudioUrl} aiAudioVersion={aiAudioVersion}
-              customAudioUrl={customAudioUrl} customAudioVersion={customAudioVersion} uploadedAudioUrl={uploadedAudioUrl} uploadedAudioVersion={uploadedAudioVersion}
-              activeLoading={activeLoading} currentJobId={currentJobId} pipelineResult={pipelineResult} currentActiveScript={currentActiveScript}
-              handleGenerateScript={handleGenerateScript} handleFileUpload={handleFileUpload} handleGenerateVoiceover={handleGenerateVoiceover} handleRenderAnimation={handleRenderAnimation}
+              leftTab={leftTab}
+              setLeftTab={setLeftTab}
+              prompt={prompt}
+              setPrompt={setPrompt}
+
+              aiScript={aiScript}
+              setAiScript={setAiScript}
+
+              customScript={customScript}
+              setCustomScript={setCustomScript}
+
+              uploadedScript={uploadedScript}
+              setUploadedScript={setUploadedScript}
+
+              aiAudioUrl={aiAudioUrl}
+              aiAudioVersion={aiAudioVersion}
+
+              customAudioUrl={customAudioUrl}
+              customAudioVersion={customAudioVersion}
+
+              uploadedAudioUrl={uploadedAudioUrl}
+              uploadedAudioVersion={uploadedAudioVersion}
+
+              activeLoading={activeLoading}
+              pipelineStage={pipelineStage}
+              pipelineError={pipelineError}
+
+              currentJobId={currentJobId}
+              pipelineResult={pipelineResult}
+              currentActiveScript={currentActiveScript}
+
+              handleGenerateScript={handleGenerateScript}
+              handleFileUpload={handleFileUpload}
+              handleGenerateVoiceover={handleGenerateVoiceover}
+              handleRenderAnimation={handleRenderAnimation}
+
               onOpenDashboard={() => setDashboardOpen(true)}
             />
           </div>
