@@ -256,7 +256,7 @@ type PipelineStage =
       if (!voiceoverData.audioUrl) throw new Error("Voiceover generation returned no audio URL.");
       if (!voiceoverData.jobId) throw new Error("Voiceover generation returned no job ID.");
       setAiAudioUrl(voiceoverData.audioUrl);
-      setAiAudioVersion((v) => v + 1);
+      // setAiAudioVersion((v) => v + 1);
       setCurrentJobId(voiceoverData.jobId);
       setPipelineStage("compiling_scenes");
       setActiveLoading("assembling_scenes");
