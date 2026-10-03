@@ -7,7 +7,7 @@ import { getWidgetDefinition, widgetRegistry } from "../core/widgetRegistry";
 import { Navbar, RenderedVideoItem } from "../components/Navbar";
 
 import { ScriptSidebar } from "../components/ScriptSidebar";
-// import { PreviewPlayer } from "../components/PreviewPlayer";
+import { PreviewPlayer } from "../components/PreviewPlayer";
 import { SceneEditor } from "../components/SceneEditor";
 import { ThemeEditor } from "../components/ThemeEditor";
 import { Dashboard } from "../components/dashboard/Dashboard";
@@ -339,7 +339,7 @@ export default function LandingPage() {
           {/* Center & Right Column Container */}
           <div className="flex-1 h-full flex flex-col xl:flex-row gap-2 min-w-0 overflow-hidden">
             {/* Center Column: PreviewPlayer (Scrollable) */}
-            {/* <div className="flex-1 h-full overflow-y-auto pr-1">
+            <div className="flex-1 h-full overflow-y-auto pr-1">
               <PreviewPlayer
                 playerRef={playerRef} selectedAspect={selectedAspect} setSelectedAspect={setSelectedAspect} aspectRatios={ASPECT_RATIOS}
                 sceneConfig={previewSceneConfig} inputProps={{ audioUrl: currentActiveAudio, scenes: previewSceneConfig, captions: transcription?.words ?? [], theme: themeConfig }}
@@ -351,7 +351,7 @@ export default function LandingPage() {
                 audioConfig={audioConfig}
                 onAudioConfigChange={setAudioConfig}
               />
-            </div>  */}
+            </div> 
 
             {/* Third Column: Scene / Theme Editor Panel (420px width) */}
             <div className="w-full xl:w-[calc(420px+5.5rem+max(0px,100vw-1700px))] shrink-0 bg-[#1e1e1e] rounded-lg border border-neutral-800 p-4 flex flex-col h-full overflow-y-auto">
