@@ -51,7 +51,6 @@ export function ScriptSidebar({
   const isVoiceoverLoading = activeLoading === "generating_audio" || activeLoading === "assembling_scenes" || activeLoading === "voiceover";
   const isUploadLoading = activeLoading === "uploading_audio" || activeLoading === "transcribing";
   const isAnimationLoading = activeLoading === "animation" || activeLoading === "rendering";
-  const isSceneCompilationInProgress = activeLoading === "assembling_scenes" || activeLoading === "voiceover";
 
   // Dynamic progress text helper for the status banner
   const getStatusBannerText = () => {
@@ -223,15 +222,6 @@ export function ScriptSidebar({
 
       {/* Action Area & Status Banner */}
       <div className="mt-5 pt-4 border-t border-neutral-800 space-y-2.5">
-        {isSceneCompilationInProgress && (
-          <div className="rounded-2xl border border-amber-500/40 bg-amber-500/10 p-3 shadow-lg shadow-amber-900/10">
-            <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-amber-300">Scene compilation in progress</p>
-            <p className="mt-1.5 text-[11px] leading-relaxed text-amber-100/90">
-              Your voiceover is ready. We are compiling the final scene layout and matching widgets in the background before Step 3 unlocks.
-            </p>
-          </div>
-        )}
-
         {/* Background Task Banner */}
         {statusText && (
           <div className="flex items-center gap-2.5 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 animate-pulse">
@@ -243,7 +233,7 @@ export function ScriptSidebar({
         {leftTab !== "upload-voiceover" && (
           <button
             onClick={handleGenerateVoiceover}
-            disabled={activeLoading !== null || !currentActiveScript.trim() || isSceneCompilationInProgress}
+            disabled={activeLoading !== null || !currentActiveScript.trim()}
             className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:bg-neutral-800/50 disabled:text-neutral-600 disabled:cursor-not-allowed text-white rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
           >
             {isVoiceoverLoading && <Spinner colorClass="text-amber-300" />}

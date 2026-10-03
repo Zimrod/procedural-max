@@ -145,11 +145,37 @@ export default function LandingPage() {
 
   const handleGenerateScript = async () => {
     if (!prompt.trim()) return;
+
     try {
       setActiveLoading("script");
-      const res = await fetch(`${BACKEND_URL}/script`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
-      const data = await res.json();
-      setAiScript(data.script);
+
+      console.log("START FETCH", performance.now());
+
+      const response = await fetch(
+        "https://procedural-backend.onrender.com/script",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            prompt: "Explain inflation in 30 seconds",
+          }),
+        }
+      );
+
+      console.log(
+        "FETCH RESPONSE",
+        performance.now(),
+        response.status
+      );
+
+      const text = await response.text();
+
+      console.log("FETCH BODY", text);
+
+    } catch (err) {
+      console.error("FETCH ERROR", performance.now(), err);
     } finally {
       setActiveLoading(null);
     }
@@ -182,67 +208,43 @@ export default function LandingPage() {
 
   const handleGenerateVoiceover = async () => {
     try {
-      setPipelineResult(null);
+      // 1. Voiceover TTS Generation stage
       setActiveLoading("generating_audio");
-
-      const res = await fetch(`${BACKEND_URL}/voiceover`, {
+      const audioRes = await fetch("/api/generate-voiceover", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript, jobId: currentJobId || undefined }),
+        body: JSON.stringify({ script: currentActiveScript }),
       });
-      const data = await res.json();
+      const audioData = await audioRes.json();
+      setAiAudioUrl(audioData.audioUrl);
 
-      if (!data.success) {
-        throw new Error(data.error || "Voiceover generation failed.");
-      }
-
-      if (leftTab === "generate") {
-        setAiAudioUrl(data.audioUrl);
-        setAiAudioVersion((prev) => prev + 1);
-      } else {
-        setCustomAudioUrl(data.audioUrl);
-        setCustomAudioVersion((prev) => prev + 1);
-      }
-
-      setCurrentJobId(data.jobId);
+      // 2. Transition state directly to scene compilation stage
       setActiveLoading("assembling_scenes");
-      startBackgroundSync(data.jobId);
+      
+      // Send request to Backend Docker container running pipelineOrchestrator
+      const pipelineRes = await fetch(`${BACKEND_URL}/api/process-pipeline`, {
+        method: "POST",
+        body: JSON.stringify({ audioUrl: audioData.audioUrl, script: currentActiveScript }),
+      });
+      const result = await pipelineRes.json();
+
+      // 3. Store result to enable Step 3 button
+      setPipelineResult(result);
     } catch (err) {
       console.error(err);
+    } finally {
+      // Release active loading state
       setActiveLoading(null);
     }
   };
 
   const startBackgroundSync = async (jobId: string) => {
-    let attempts = 0;
     const interval = setInterval(async () => {
-      try {
-        attempts += 1;
-        if (attempts > 120) {
-          clearInterval(interval);
-          console.error("Background scene pipeline timed out.");
-          setActiveLoading(null);
-          return;
-        }
-
-        const res = await fetch(`${BACKEND_URL}/voiceover/status/${jobId}`);
-        const statusData = await res.json();
-
-        if (statusData.status === "done") {
-          clearInterval(interval);
-          setPipelineResult(statusData.result);
-          setTranscription(statusData.result?.transcript ?? null);
-          if (statusData.result?.sceneConfig) {
-            setSceneConfig(statusData.result.sceneConfig);
-          }
-          setActiveLoading(null);
-        } else if (statusData.status === "failed") {
-          clearInterval(interval);
-          console.error("Pipeline status reported failure.");
-          setActiveLoading(null);
-        }
-      } catch (err) {
-        console.error("Network error during status check", err);
+      const res = await fetch(`${BACKEND_URL}/voiceover/status/${jobId}`);
+      const statusData = await res.json();
+      if (statusData.status === "done") {
+        clearInterval(interval);
+        setPipelineResult(statusData.result);
+        setActiveLoading(null);
       }
     }, 1500);
   };
