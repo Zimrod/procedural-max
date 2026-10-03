@@ -60,7 +60,8 @@ export default function LandingPage() {
   const [aiAudioUrl, setAiAudioUrl] = useState("");
   // const [aiAudioVersion, setAiAudioVersion] = useState(0);
   const [aiAudioVersion] = useState(0);
-  const [customAudioUrl, setCustomAudioUrl] = useState("");
+  // const [customAudioUrl, setCustomAudioUrl] = useState("");
+  const [customAudioUrl] = useState("");
   const [customAudioVersion] = useState(0);
   // const [customAudioVersion, setCustomAudioVersion] = useState(0);
   const [uploadedAudioUrl, setUploadedAudioUrl] = useState("");
