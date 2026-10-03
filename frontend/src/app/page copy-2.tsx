@@ -79,7 +79,7 @@ export default function LandingPage() {
     autoDucking: true,
   });
 
-type PipelineStage =
+  type PipelineStage =
   | "idle"
   | "generating_audio"
   | "compiling_scenes"
@@ -180,115 +180,164 @@ type PipelineStage =
     }
   };
 
-  const startBackgroundSync = async (jobId: string) => {
-    try {
-      while (true) {
-        const res = await fetch(`${BACKEND_URL}/voiceover/status/${jobId}`);
-        const statusData = await res.json();
-        if (!res.ok) throw new Error(statusData.error || `Pipeline status check failed (${res.status})`);
-        console.log("[Pipeline Status]", statusData.status);
-        if (statusData.status === "done") {
-          if (!statusData.result) throw new Error("Pipeline completed but returned no scene data.");
-          setPipelineResult(statusData.result);
-          setPipelineStage("ready");
-          setActiveLoading(null);
-          return;
-        }
-        if (statusData.status === "failed") throw new Error(statusData.error || "Scene compilation failed on the backend.");
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-      }
-    } catch (err: any) {
-      console.error("[Pipeline Status Error]", err);
-      setPipelineError(err?.message || "Something went wrong while compiling the scenes.");
-      setPipelineStage("error");
-      setActiveLoading(null);
-    }
-  };
-
   const handleFileUpload = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      setPipelineResult(null);
-      setPipelineError(null);
-      setPipelineStage("generating_audio");
       setActiveLoading("uploading_audio");
       const formData = new FormData();
       formData.append("audio", file);
       if (currentJobId) formData.append("jobId", currentJobId);
+
       const res = await fetch(`${BACKEND_URL}/voiceover/upload`, { method: "POST", body: formData });
       const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || `Voiceover upload failed (${res.status})`);
-      if (!data.jobId) throw new Error("Voiceover upload returned no job ID.");
-      setUploadedAudioUrl(data.audioUrl || "");
-      setUploadedAudioVersion((v) => v + 1);
-      setUploadedScript(data.transcript?.text || "");
-      if (data.transcript) setTranscription(data.transcript);
-      setCurrentJobId(data.jobId);
-      setPipelineStage("compiling_scenes");
-      setActiveLoading("assembling_scenes");
-      await startBackgroundSync(data.jobId);
-    } catch (err: any) {
-      console.error("[Audio Upload / Pipeline Error]", err);
-      setPipelineError(err?.message || "Something went wrong while preparing the animation.");
-      setPipelineStage("error");
+      if (data.success) {
+        setUploadedAudioUrl(data.audioUrl);
+        setUploadedAudioVersion((v) => v + 1);
+        setUploadedScript(data.transcript?.text || "");
+        if (data.transcript) setTranscription(data.transcript);
+        setCurrentJobId(data.jobId);
+        setActiveLoading("assembling_scenes");
+        startBackgroundSync(data.jobId);
+      }
+    } finally {
       setActiveLoading(null);
     }
   };
 
   const handleGenerateVoiceover = async () => {
     if (!currentActiveScript?.trim()) return;
+
     try {
+      // Reset pipeline state for this run
       setPipelineResult(null);
       setPipelineError(null);
-      setCurrentJobId(null);
+
+      // --------------------------------------------------
+      // STEP 2A — Generate voiceover
+      // --------------------------------------------------
       setPipelineStage("generating_audio");
       setActiveLoading("generating_audio");
-      const voiceoverRes = await fetch(`${BACKEND_URL}/voiceover`, {
+
+      const audioRes = await fetch("/api/generate-voiceover", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ script: currentActiveScript }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          script: currentActiveScript,
+        }),
       });
-      const voiceoverData = await voiceoverRes.json();
-      if (!voiceoverRes.ok || !voiceoverData.success) {
-        throw new Error(voiceoverData.error || `Voiceover generation failed (${voiceoverRes.status})`);
+
+      if (!audioRes.ok) {
+        throw new Error(
+          `Voiceover generation failed (${audioRes.status})`
+        );
       }
-      if (!voiceoverData.audioUrl) throw new Error("Voiceover generation returned no audio URL.");
-      if (!voiceoverData.jobId) throw new Error("Voiceover generation returned no job ID.");
-      setAiAudioUrl(voiceoverData.audioUrl);
-      setAiAudioVersion((v) => v + 1);
-      setCurrentJobId(voiceoverData.jobId);
+
+      const audioData = await audioRes.json();
+
+      if (!audioData.audioUrl) {
+        throw new Error("Voiceover generation returned no audio URL");
+      }
+
+      setAiAudioUrl(audioData.audioUrl);
+
+      // --------------------------------------------------
+      // STEP 2B — Scene compilation
+      // --------------------------------------------------
       setPipelineStage("compiling_scenes");
       setActiveLoading("assembling_scenes");
-      await startBackgroundSync(voiceoverData.jobId);
+
+      const pipelineRes = await fetch(
+        `${BACKEND_URL}/api/process-pipeline`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            audioUrl: audioData.audioUrl,
+            script: currentActiveScript,
+          }),
+        }
+      );
+
+      if (!pipelineRes.ok) {
+        throw new Error(
+          `Scene compilation failed (${pipelineRes.status})`
+        );
+      }
+
+      const result = await pipelineRes.json();
+
+      // --------------------------------------------------
+      // Pipeline is now completely finished
+      // --------------------------------------------------
+      setPipelineResult(result);
+      setPipelineStage("ready");
+
     } catch (err: any) {
-      console.error("[Voiceover / Scene Pipeline Error]", err);
-      setPipelineError(err?.message || "Something went wrong while preparing the animation.");
+      console.error("Pipeline failed:", err);
+
+      setPipelineError(
+        err?.message || "Something went wrong while preparing the animation."
+      );
+
       setPipelineStage("error");
+
+    } finally {
       setActiveLoading(null);
     }
   };
 
+  const startBackgroundSync = async (jobId: string) => {
+    const interval = setInterval(async () => {
+      const res = await fetch(`${BACKEND_URL}/voiceover/status/${jobId}`);
+      const statusData = await res.json();
+      if (statusData.status === "done") {
+        clearInterval(interval);
+        setPipelineResult(statusData.result);
+        setActiveLoading(null);
+      }
+    }, 1500);
+  };
+
   const handleRenderAnimation = async () => {
-    if (!pipelineResult || pipelineStage !== "ready") return;
+    if (!pipelineResult || pipelineStage !== "ready") {
+      return;
+    }
+
     setPipelineStage("animation");
     setActiveLoading("animation");
-    setPipelineError(null);
+
     try {
-      const { transcript, sceneConfig: incomingScenes } = pipelineResult;
+      const {
+        transcript,
+        sceneConfig: incomingScenes,
+      } = pipelineResult;
+
       if (transcript) {
-        setTranscription({ text: currentActiveScript || transcript.text || "", words: transcript.words || [] });
+        setTranscription({
+          text: currentActiveScript || transcript.text,
+          words: transcript.words || [],
+        });
       }
+
       const sanitized = (incomingScenes || []).map((s: any) => ({
         ...s,
-        widget: s.widget || s.type || DEFAULT_WIDGET_TYPE,
+        widget:
+          s.widget ||
+          s.type ||
+          DEFAULT_WIDGET_TYPE,
       }));
-      setSceneConfig(applyThemeToScenes(sanitized, themeConfig));
-      setPipelineStage("ready");
-    } catch (err: any) {
-      console.error("[Animation Preparation Error]", err);
-      setPipelineError(err?.message || "Unable to prepare the animation.");
-      setPipelineStage("error");
+
+      setSceneConfig(
+        applyThemeToScenes(
+          sanitized,
+          themeConfig
+        )
+      );
     } finally {
       setActiveLoading(null);
     }
